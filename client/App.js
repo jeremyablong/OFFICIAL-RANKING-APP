@@ -20,6 +20,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { connect } from "react-redux";
 import IntroSlider from "./components/introSlider/index.js";
+import LandingPage from "./components/pages/landing/index.js";
+import SignupPage from "./components/pages/signup/signup.js";
+import LoginPage from "./components/pages/login/index.js";
+import DashboardAfterAuth from "./components/pages/dashboard/index.js";
 
 const Stack = createStackNavigator();
 
@@ -42,9 +46,11 @@ constructor(props) {
     return false;
   }
   getStartingPage = () => {
-      if (!this.props.authenticated) {
-        return "homepage";
-      } 
+      if (this.props.intro !== true) {
+        return "intro";
+      } else if (this.props.authenticated) {
+        return "dashboard";
+      }
       return "homepage";
   }
   render () {
@@ -53,7 +59,11 @@ constructor(props) {
           <Stack.Navigator screenOptions={{
               headerShown: false
             }} initialRouteName={this.getStartingPage()}>
-            <Stack.Screen name="homepage" component={IntroSlider} />
+            <Stack.Screen name="intro" component={IntroSlider} />
+            <Stack.Screen name="homepage" component={LandingPage} />
+            <Stack.Screen name="sign-up" component={SignupPage} />
+            <Stack.Screen name="login" component={LoginPage} />
+            <Stack.Screen name="dashboard" component={DashboardAfterAuth} />
           </Stack.Navigator>
         </NavigationContainer>
     );
@@ -101,7 +111,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   console.log(state);
   return {
-    authenticated: state.auth.authenticated
+    intro: state.intro.intro,
+    authenticated: state.auth.authenticated.fullName
   }
 }
 

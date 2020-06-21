@@ -1,8 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, Dimensions } from "react-native";
 import AppIntroSlider from 'react-native-app-intro-slider';
-// import { registerIntroSeen } from "../../actions/intro.js";
+import { registerIntroSeen } from "../../actions/intro/index.js";
 import { connect } from "react-redux";
+// import { authenticated } from "../../actions/auth/auth.js";
 
 const slides = [
   {
@@ -52,7 +53,8 @@ constructor(props) {
 	    // User finished the introduction. Show real app through
 	    // navigation or simply by controlling state
 	    this.setState({ showRealApp: true });
-	    // this.props.registerIntroSeen(true);
+	    this.props.registerIntroSeen(true);
+      // this.props.authenticated({});
     }
 	render() {
 		return (
@@ -94,4 +96,4 @@ const styles = StyleSheet.create({
 	}
 })
 
-export default connect(null, {  })(IntroSlider);
+export default connect(null, { registerIntroSeen })(IntroSlider);

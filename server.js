@@ -10,12 +10,18 @@ mongoDB();
 
 app.use('*', cors());
 
-app.use(express.json());
-app.use(express.urlencoded({
-	extended: true
-})); 
+app.use(bodyParser.urlencoded({
+  limit: "50mb",
+  extended: false
+}));
+app.use(bodyParser.json({
+	limit: "50mb"
+}));
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true }));
 
-
+app.use("/register/user", require("./routes/auth/register.js"));
+app.use("/login", require("./routes/auth/signin.js"));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {
