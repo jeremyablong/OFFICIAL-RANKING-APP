@@ -37,6 +37,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						message: "User could NOT be found..."
 					})
 				}
+			}).catch((err) => {
+				console.log(err);
 			})
 		} else if (req.body.email) {
 
@@ -44,12 +46,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			const collection = db.collection("users");
 
-			console.log("req.body", req.body);
+			const lowerCaseEmail = email.toLowerCase();
 
-			collection.findOne({ email: email.toLowerCase() }).then((user) => {
+			console.log("req.body", lowerCaseEmail);
+
+			collection.findOne({ email: lowerCaseEmail.trim() }).then((user) => {
 				console.log(user);
 				if (user) {
-					if (user.email === email.toLowerCase() && user.password === password) {
+					if (user.email === email.toLowerCase().trim() && user.password === password) {
 						res.json({
 							message: "User FOUND!",
 							user
@@ -64,6 +68,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						message: "User could NOT be found..."
 					})
 				}
+			}).catch((err) => {
+				console.log(err)
 			})
 		}
 	});

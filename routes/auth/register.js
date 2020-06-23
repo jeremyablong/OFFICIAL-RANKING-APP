@@ -46,23 +46,36 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 	        const bufferImage = new Buffer(base64.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
 			const newUser = new User({
-			    fullName,
-				phoneNumber,
-				password,
+			    fullName: fullName.trim(),
+				phoneNumber: phoneNumber.trim(),
+				password: password.trim(),
 				birthdate,
-				hometown,
-				username,
+				hometown: hometown.trim(),
+				username: username.trim(),
 				profilePic: generatedID,
 	            id: uuidv4()
 			});
 
 			const collection = db.collection("users");
 
-			collection.findOne({ phoneNumber }).then((user) => {
+			console.log("username :", username, "phoneNumber", phoneNumber);
+
+			const lowerUsername = username.toLowerCase().trim();
+			const trimmedPhone = phoneNumber.trim();
+
+			// const collection = db.collection("users");
+
+			collection.findOne({
+			    "$or": [{
+			        "username": lowerUsername
+			    }, {
+			        "phoneNumber": trimmedPhone
+			    }]
+			}).then((user) => {
 				console.log(user);
 				if (user) {
 					res.json({
-						message: "User FOUND - User has already registered with this phone number."
+						message: "User FOUND - User has already registered with this username or phone number."
 					});
 				} else {
 					newUser.save((err, doc) => {
@@ -113,23 +126,35 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 	        const bufferImage = new Buffer(base64.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
 			const newUser = new User({
-			    fullName,
+			    fullName: fullName.trim(),
 				email: email.toLowerCase(),
-				password,
+				password: password.trim(),
 				birthdate,
-				hometown,
-				username,
+				hometown: hometown.trim(),
+				username: username.trim(),
 				profilePic: generatedID,
 				id: uuidv4()
 			});
 
+			console.log("username :", username, "email", email);
+
+			const lowerEmail = email.toLowerCase().trim();
+			const lowerUsername = username.toLowerCase().trim();
+			// const collection = db.collection("users");
+
 			const collection = db.collection("users");
 
-			collection.findOne({ email }).then((user) => {
+			collection.findOne({
+			    "$or": [{
+			        "username": lowerUsername
+			    }, {
+			        "email": lowerEmail
+			    }]
+			}).then((user) => {
 				console.log(user);
 				if (user) {
 					res.json({
-						message: "User FOUND - User has already registered with this email."
+						message: "User FOUND - User has already registered with this username or email."
 					});
 				} else {
 					newUser.save((err, doc) => {

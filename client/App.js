@@ -24,6 +24,9 @@ import LandingPage from "./components/pages/landing/index.js";
 import SignupPage from "./components/pages/signup/signup.js";
 import LoginPage from "./components/pages/login/index.js";
 import DashboardAfterAuth from "./components/pages/dashboard/index.js";
+import ListOfMessages from "./components/pages/chat/list/listOfMessages.js";
+import MessageIndividual from "./components/pages/chat/individual/index.js";
+import ProfileIndividual from "./components/pages/profile/individual.js";
 
 const Stack = createStackNavigator();
 
@@ -45,6 +48,7 @@ constructor(props) {
     return JSON.stringify(this.props.completed) !== JSON.stringify({});
     return false;
   }
+
   getStartingPage = () => {
       if (this.props.intro !== true) {
         return "intro";
@@ -64,6 +68,9 @@ constructor(props) {
             <Stack.Screen name="sign-up" component={SignupPage} />
             <Stack.Screen name="login" component={LoginPage} />
             <Stack.Screen name="dashboard" component={DashboardAfterAuth} />
+            <Stack.Screen name="chat-users" component={ListOfMessages} />
+            <Stack.Screen name="message-individual" component={MessageIndividual} />
+            <Stack.Screen name="profile-individual" component={ProfileIndividual} />
           </Stack.Navigator>
         </NavigationContainer>
     );

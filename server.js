@@ -1,10 +1,18 @@
+// import usable modules
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
-const mongoDB = require("./config/db.js");
 const cors = require("cors");
 const path = require("path");
 const config = require("config");
+const http = require("http");
+const server = http.createServer(app);
+const socket = require("socket.io");
+const io = socket(server);
+
+// !important stuff...
+const PORT = process.env.PORT || 5000;
+const mongoDB = require("./config/db.js");
 
 mongoDB();
 
@@ -22,6 +30,12 @@ app.use(express.urlencoded({limit: '50mb', extended: true }));
 
 app.use("/register/user", require("./routes/auth/register.js"));
 app.use("/login", require("./routes/auth/signin.js"));
+app.use("/gather/all/profiles", require("./routes/gatherAllUsers.js"));
+app.use("/get/user/by/username", require("./routes/singleUser/getSingleUser.js"));
+app.use("/get/specific/user", require("./routes/specificUserRoutes/getSpecificUser.js"));
+app.use("/send/private/message", require("./routes/messages/send/sendMessage.js"));
+// app.use("/get/each/user/picture", require("./routes/general/getUsersPhotos.js"));
+app.use("/get/user/by/username/filter", require("./routes/messages/gather/gatherAndSort.js"));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {
@@ -67,8 +81,26 @@ if (process.env.NODE_ENV === "production") {
 	})
 }; 
 
-const PORT = process.env.PORT || 5000;
+io.on("connection", (socket) => {
+  console.log("New client connected");
+  socket.on("messaged", (data) => {
+    console.log(data);
+    	// mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 
-app.listen(PORT, () => {
+			// const collection =  db.collection("users");
+
+			// collection.findOneAndUpdate({ id: data.reciever }, { $push: { 
+
+			// }})
+		// })
+
+    io.sockets.emit("message", data);
+  })
+  socket.on("disconnect", () => {
+  	console.log("Client disconnected");
+  });
+});
+
+server.listen(PORT, () => {
 	console.log(`Server listening on port ${PORT}!`);
 });

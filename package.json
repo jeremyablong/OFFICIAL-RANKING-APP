@@ -19,10 +19,12 @@
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
+    "moment": "^2.27.0",
     "mongodb": "^2.2.33",
     "mongoose": "^5.9.19",
     "nodemon": "^2.0.4",
     "path": "^0.12.7",
+    "socket.io": "^2.3.0",
     "uuid": "^8.1.0"
   }
 }
