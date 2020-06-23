@@ -5,33 +5,36 @@ const cors = require("cors");
 const app = express();
 const config = require("config");
 const mongo = require("mongodb");
-const moment = require("moment");
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
 
-			const { username } = req.body;
-
-			let messageArray = [];
+			const { id } = req.body;
 
 			const collection = db.collection("users");
 
 			console.log("req.body", req.body);
 
-			collection.findOne({ username }).then((user) => {
-				console.log("USAAAAA :", user.messages.reverse());
-					
-				const reversed = user.messages.sort((left, right) => {
-				    return moment.utc(left.date).diff(moment.utc(right.date));
-				});
+			const finalMessage = [];
 
-				 console.log("REV :", reversed);
-
+			collection.findOne({ "messages.id": id }).then((user) => {
+				console.log(user);
 				if (user) {
+					for (var i = 0; i < user.messages.length; i++) {
+						let element = user.messages[i];
+						if (element.replies) {
+							for (var i = 0; i < element.replies.length; i++) {
+								const message = element.replies[i];
+								console.log("222 :", message);
+								if (message.id === id) {
+									finalMessage.push(message);
+								}
+							}
+						}
+					}
 					res.json({
-						message: "FOUND user!",
-						messages: reversed,
-						user
+						message: "Sorted array of messages, success!",
+						messages: finalMessage
 					})
 				} else {
 					res.json({

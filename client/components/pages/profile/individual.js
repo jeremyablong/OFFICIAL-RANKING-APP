@@ -136,13 +136,13 @@ constructor(props) {
 		              <Text style={styles.info}>{user !== null ? user.username : "--"}</Text>
 		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              
-		              <TouchableOpacity onPress={() => {
+		              {this.props.username !== this.props.route.params.user.username ? <TouchableOpacity onPress={() => {
 		              	this.setState({
 		              		modalIsVisible: true
 		              	})
 		              }} style={styles.buttonContainer}>
 		                <Fragment><Image style={{ width: 30, height: 30 }} source={require("../../../assets/icons/mail-three.png")} /><Text>   Message This User</Text></Fragment>  
-		              </TouchableOpacity>              
+		              </TouchableOpacity> : null}            
 		            {/*  <TouchableOpacity style={styles.buttonContainer}>
 		                <Text>Opcion 2</Text> 
 		              </TouchableOpacity>*/}

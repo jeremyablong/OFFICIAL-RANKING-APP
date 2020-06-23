@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,14 +10,17 @@ import {
   TextInput,
   FlatList,
   Button,
-  Dimensions,
-  KeyboardAvoidingView
+  Dimensions, 
+  TouchableWithoutFeedback, 
+  KeyboardAvoidingView,
+  Keyboard
 } from 'react-native';
 import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText } from 'native-base';
 import axios from "axios";
 import io from "socket.io-client";
 import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import uuid from "react-uuid";
 
 const { width, height } = Dimensions.get('window');
 
@@ -33,45 +36,137 @@ class MessageIndividual extends Component {
       messages: [],
       user: null,
       ready: false,
-      align: false
+      align: false,
+      replies: null,
+      reciever: null,
+      first: null
     };
   }
   componentDidMount() {
   	axios.post("http://recovery-social-media.ngrok.io/get/user/by/username/filter", {
-  		username: this.props.route.params.user.author
+  		username: this.props.username
+  	}).then((res) => {
+  		console.log("RESSSEEEE :", res.data);
+  		if (res.data.message === "FOUND user!") {
+
+  			const replies = [];
+
+  			if (res.data.messages) {
+	  				for (let i = 0; i < res.data.messages.length; i++) {
+	  				let messages = res.data.messages[i].replies;
+	  				console.log("MESSS :", messages);
+	  				if (messages) {
+	  					for (let x = 0; x < messages.length; x++) {
+		  					let message = messages[x];
+		  					console.log("nothing :", message);
+		  					this.setState({
+			  					messages: [message, ...this.state.messages],
+			  					ready: true,
+								user: res.data.user
+			  				})
+		  				}
+	  				} else {
+	  					this.setState({
+		  					messages: res.data.messages,
+		  					ready: true,
+							user: res.data.user
+		  				})
+	  				}
+
+	  			}
+	  		} else {
+	  			this.setState({
+  					messages: res.data.messages,
+  					ready: true,
+					user: res.data.user
+  				})
+	  		}
+	  		console.log("WASSSAM :", this.props.route.params.user.id);
+		  	axios.post("http://recovery-social-media.ngrok.io/get/individual/messages", {
+		  		id: this.props.route.params.user.id
+		  	}).then((res) => {
+		  		console.log(res.data);
+		  		if (res.data.message === "FOUND user!") {
+					console.log('MATCH.');
+					this.setState({
+						messages: res.data.messages
+					})
+		  		}
+		  	}).catch((err) => {
+		  		console.log(err);
+		  	});
+
+			axios.post("http://recovery-social-media.ngrok.io/get/first/message/private", {
+		  		id: this.props.route.params.user.id
+		  	}).then((res) => {
+		  		console.log("POOP: ", res.data);
+		  		if (res.data.message === "FOUND user!") {
+					console.log('MATCH Two.');
+					this.setState({
+						first: res.data.messages
+					})
+		  		}
+		  	}).catch((err) => {
+		  		console.log(err);
+		  	});
+
+  		}
+  	}).catch((err) => {
+  		console.log(err);
+  	});
+	
+	console.log("THIS.PROPS :", this.props.route.params.user.reciever);
+
+
+	console.log("this.state.messages :", this.state.messages)
+
+  }
+  send = () => {
+  	console.log("send message...", this.state.msg);
+  	axios.post("http://recovery-social-media.ngrok.io/post/replay/message/thread", {
+  		message: this.state.msg,
+  		sender: this.state.user.username,
+  		reciever: this.props.route.params.user.author,
+  		messageID: this.props.route.params.user.id
   	}).then((res) => {
   		console.log(res.data);
-  		if (res.data.message === "FOUND user!") {
+  		if (res.data.message === "Successfully updated both users!") {
+			console.log("Successfully updated both users!");
 			this.setState({
-				messages: res.data.messages,
-				ready: true,
-				user: res.data.user
+				align: false
+			}, () => {
+				Keyboard.dismiss;
+				alert("Message sent!")
 			})
   		}
   	}).catch((err) => {
   		console.log(err);
   	});
+  	this.setState({
+  		align: false,
+  		msg: ""
+  	})
   }
-
   _renderItem = ({item}) => {
     // if (item.sent === false) {
-      if (item.id === this.props.route.params.user.id && item.sender === false) {
+      console.log("777 item :", item);
+      if (item.id === this.props.route.params.user.id && item.author !== this.props.username) {
       	return (
         	<View style={styles.eachMsg}>
-	          <Image source={{ uri: item.image }} style={styles.userPic} />
+	          <Image source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic}` }} style={styles.userPic} />
 	          <View style={styles.msgBlock}>
 	            <Text style={styles.msgTxt}>{item.message}</Text>
 	          </View>
 	        </View>
 	      );
       } else{
-    	if (item.id === this.props.route.params.user.id && item.sender === true) {
+    	if (item.id === this.props.route.params.user.id) {
 	      return (
 	        <View style={styles.rightMsg} >
 	          <View style={styles.rightBlock} >
 	            <Text style={styles.rightTxt}>{item.message}</Text>
 	          </View>
-	          <Image source={{uri: item.image}} style={styles.userPic} />
+	          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic}` }} style={styles.userPic} />
 	        </View>
 	      );
 	    }
@@ -84,9 +179,10 @@ class MessageIndividual extends Component {
   }
 
   render() {
-  	console.log(this.state);
+  	console.log("this.state :", this.state);
   	const { user } = this.state;
     return (
+
       <View style={{ flex: 1 }}>
         <Header>
           <Left>
@@ -108,32 +204,55 @@ class MessageIndividual extends Component {
           </Right>
           {this.renderSockets()}
         </Header>
+    
+	    <View style={{ flex: 1 }}> 
           <View behavior="padding" style={styles.keyboard}>
-            {this.state.ready === true ? <FlatList 
+            {this.state.ready === true && this.state.first !== null ? <ScrollView style={{ flex: 1, paddingBottom: 100 }}><FlatList 
               style={styles.list}
               extraData={this.state}
               data={this.state.messages}
               keyExtractor = {(item) => {
-                return item.id;
+                return uuid();
               }}
-              renderItem={this._renderItem}/> : null}
+              renderItem={this._renderItem}/><Fragment><View style={styles.rightMsg} >
+		          <View style={styles.rightBlock} >
+		            <Text style={styles.rightTxt}>{this.state.first.message}</Text>
+		          </View>
+		          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic}` }} style={styles.userPic} />
+		        </View></Fragment></ScrollView> : null}
             <View style={this.state.align ? styles.loadedInput : styles.input}>
             <KeyboardAvoidingView style={{ flex: 1 }} 
 		      behavior={Platform.OS == "ios" ? "padding" : "height"} 
+		      keyboardVerticalOffset={Platform.select({ ios: 80, android: 500 })}
 		    >
+		    <View style={{ flex: 1 }}>
               <TextInput 
-                style={{flex: 1 }}
                 value={this.state.msg}
-                placeholderTextColor = "#696969"
-                onChangeText={msg => this.setState({ msg, align: true })}
+                placeholderTextColor = "#696969" 
+                onEndEditing={() => {
+                	console.log('boooooom');
+                	this.setState({
+                		align: false
+                	})
+                }}
+                onChangeText={msg => this.setState({ msg })}
                 blurOnSubmit={false}
                 onSubmitEditing={() => this.send()}
-                placeholder="Type a message"
+                placeholder="Type a message" 
+                onFocus={() => {
+                	this.setState({
+                		align: true
+                	})
+                }}
                 returnKeyType="send"/>
+            </View>
               </KeyboardAvoidingView>
             </View>
           </View>
+          </View>
+      
       </View>
+    
     );
   }
 }
@@ -267,7 +386,9 @@ const styles = StyleSheet.create({
 });  
 const mapStateToProps = state => {
 	return {
-		id: state.auth.authenticated.id
+		id: state.auth.authenticated.id,
+		profilePic: state.auth.authenticated.profilePic,
+		username: state.auth.authenticated.username
 	}
 }
 export default connect(mapStateToProps, {  })(MessageIndividual);

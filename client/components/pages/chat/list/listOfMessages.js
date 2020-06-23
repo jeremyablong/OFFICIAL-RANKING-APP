@@ -38,10 +38,12 @@ constructor(props) {
   	ready: false,
   	messages: [],
   	inboxActive: true,
-  	groupActive: false
+  	groupActive: false,
+  	id: ""
   };
 }
 	handleRedirect = (user) => {
+		console.log("US :", user);
 		// console.log("handle redirect...", user);
 		this.props.navigation.navigate("message-individual", { user });
 	}

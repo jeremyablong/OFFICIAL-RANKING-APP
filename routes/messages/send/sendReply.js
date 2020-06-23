@@ -13,7 +13,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			
 
 			// sender and reciever are emails from logged in user and the user being messaged - deconstruct
-			const { sender, reciever, message } = req.body;
+			const { sender, reciever, message, messageID } = req.body;
 
 			const collection = db.collection("users");
 
@@ -21,26 +21,21 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			const generatedID = uuidv4();
 
-			const lowerSender = sender.toLowerCase();
-			const lowerReciever = reciever.toLowerCase();
-
-			collection.findOneAndUpdate({ username: lowerSender }, { $push: { messages: {
-				id: generatedID,
+			collection.findOneAndUpdate({ "messages.id": messageID, username: sender }, { $push: { "messages.$.replies": {
 				message,
 				date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 				author: sender,
-				reciever: reciever,
+				id: messageID,
 				sender: true
 			}}}, (err, doc) => {
 				if (err) {
 					console.log(err);
 				} else {
-					collection.findOneAndUpdate({ username: lowerReciever }, { $push: { messages: {
-						id: generatedID,
+					collection.findOneAndUpdate({ "messages.id": messageID, username: reciever }, { $push: { "messages.$.replies": {
 						message,
 						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-						author: sender, 
-						reciever: reciever, 
+						author: sender,
+						id: messageID,
 						sender: false
 					}}}, (err, doc) => {
 						if (err) {

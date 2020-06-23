@@ -36,6 +36,10 @@ app.use("/get/specific/user", require("./routes/specificUserRoutes/getSpecificUs
 app.use("/send/private/message", require("./routes/messages/send/sendMessage.js"));
 // app.use("/get/each/user/picture", require("./routes/general/getUsersPhotos.js"));
 app.use("/get/user/by/username/filter", require("./routes/messages/gather/gatherAndSort.js"));
+app.use("/get/individual/messages", require("./routes/messages/individual/findIndividualMsgs.js"));
+app.use("/post/replay/message/thread", require("./routes/messages/send/sendReply.js"));
+app.use("/get/message/reciever", require("./routes/messages/gather/getReciever.js"));
+app.use("/get/first/message/private", require("./routes/messages/individual/getFirstMessage.js"));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {
