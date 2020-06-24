@@ -40,6 +40,7 @@ app.use("/get/individual/messages", require("./routes/messages/individual/findIn
 app.use("/post/replay/message/thread", require("./routes/messages/send/sendReply.js"));
 app.use("/get/message/reciever", require("./routes/messages/gather/getReciever.js"));
 app.use("/get/first/message/private", require("./routes/messages/individual/getFirstMessage.js"));
+app.use("/get/last/message", require("./routes/messages/gather/getLastMsg.js"));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {
@@ -86,22 +87,23 @@ if (process.env.NODE_ENV === "production") {
 }; 
 
 io.on("connection", (socket) => {
+
   console.log("New client connected");
+
   socket.on("messaged", (data) => {
-    console.log(data);
-    	// mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 
-			// const collection =  db.collection("users");
+    console.log("DATA SOCKET.IO :", data);
 
-			// collection.findOneAndUpdate({ id: data.reciever }, { $push: { 
+    if (data.update === true) {
+    	console.log("PUNTING....");
+    	io.sockets.emit("message", data);
+    }
 
-			// }})
-		// })
-
-    io.sockets.emit("message", data);
   })
   socket.on("disconnect", () => {
+
   	console.log("Client disconnected");
+
   });
 });
 

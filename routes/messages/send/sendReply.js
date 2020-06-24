@@ -42,8 +42,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 							console.log(err);
 						} else {
 							res.json({
-								message: "Successfully updated both users!",
-								doc
+								messageCase: "Successfully updated both users!",
+								doc,
+								message,
+								date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+								author: sender,
+								id: messageID
 							})
 						}
 					})
