@@ -36,6 +36,9 @@ constructor(props) {
 	]
   };
 }
+	clickEventListener = () => {
+		console.log("clicked.");
+	}
 	render() {
 		return (
 			<Fragment>

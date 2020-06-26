@@ -83,7 +83,13 @@ target 'client' do
 
   pod 'react-native-image-resizer', :path => '../node_modules/react-native-image-resizer'
 
-  pod 'RNFS', :path => '../node_modules/react-native-fs'
+  pod 'RNFS', :path => '../node_modules/react-native-fs' 
+  
+  pod 'react-native-camera', path: '../node_modules/react-native-camera', subspecs: [
+    'TextDetector',
+    'FaceDetectorMLKit',
+    'BarcodeDetectorMLKit'
+  ]
 
   target 'clientTests' do
     inherit! :complete

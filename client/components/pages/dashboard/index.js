@@ -14,7 +14,7 @@ import {
   ScrollView, 
   FlatList
 } from 'react-native';
-import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab } from 'native-base';
+import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import { connect } from "react-redux";
 import { authenticated } from "../../../actions/auth/auth.js";
 import Carousel from 'react-native-snap-carousel';
@@ -43,7 +43,7 @@ constructor(props) {
 		console.log("search...");
 		if (this.state.searchValue.length > 0) {
 			axios.post("http://recovery-social-media.ngrok.io/get/specific/user", {
-				searchValue: this.state.searchValue
+				searchValue: this.state.searchValue.toLowerCase()
 			}).then((res) => {
 				console.log(res.data);
 				if (res.data.message === "FOUND user!") {
@@ -89,7 +89,7 @@ constructor(props) {
 	render() {
 		console.log(this.state);
 		return (
-		<React.Fragment>
+		<Fragment>
 		<Header>
           <Left>
             <NativeButton onPress={() => {
@@ -119,7 +119,7 @@ constructor(props) {
 		  		searchValue: value,
 		  		searching: true
 		  	})
-		  }}
+		  }} 
 		  onSearchButtonPress={this.handleSearch}
 		  onCancelButtonPress={this.handleCancel}
 		/>
@@ -150,7 +150,33 @@ constructor(props) {
 		        keyExtractor={item => item.id}
 		      /> : <NativeButton><NativeText>Load page...</NativeText></NativeButton>}
 			</Fragment> : <ShowFeedList />}
-		</React.Fragment>
+
+			<Footer>
+	          <FooterTab>
+	            <NativeButton active onPress={() => {
+		            	this.props.navigation.navigate("dashboard");
+		            }}>
+	              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/home-run.png")} />
+	            </NativeButton>
+	            <NativeButton onPress={() => {
+		            	this.props.navigation.navigate("dashboard");
+		            }}>
+	               <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/sport-team.png")} />
+	            </NativeButton>
+	            <NativeButton onPress={() => {
+		            	this.props.navigation.navigate("chat-users");
+		            }}>
+		          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
+	              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/mail-three.png")} />
+	            </NativeButton>
+	            <NativeButton onPress={() => {
+		            	this.props.navigation.navigate("public-wall");
+		            }}>
+	              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
+	            </NativeButton>
+	          </FooterTab>
+	        </Footer>
+		</Fragment>
 		)
 	}
 }

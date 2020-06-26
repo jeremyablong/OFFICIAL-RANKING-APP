@@ -41,6 +41,7 @@ app.use("/post/replay/message/thread", require("./routes/messages/send/sendReply
 app.use("/get/message/reciever", require("./routes/messages/gather/getReciever.js"));
 app.use("/get/first/message/private", require("./routes/messages/individual/getFirstMessage.js"));
 app.use("/get/last/message", require("./routes/messages/gather/getLastMsg.js"));
+app.use("/upload/cover/photo", require("./routes/coverPhoto/uploadCoverPhoto.js"));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {
@@ -85,6 +86,7 @@ if (process.env.NODE_ENV === "production") {
 	  })
 	})
 }; 
+
 
 io.on("connection", (socket) => {
 

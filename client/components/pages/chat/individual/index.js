@@ -15,6 +15,7 @@ import {
   KeyboardAvoidingView,
   Keyboard
 } from 'react-native';
+import Modal from 'react-native-modal';
 import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText } from 'native-base';
 import axios from "axios";
 import io from "socket.io-client";
@@ -25,7 +26,8 @@ const ENDPOINT = "http://recovery-social-media.ngrok.io";
 import _ from "lodash";
 import LoadingMessage from "../../../chat/loader.js";
 
-const { width, height } = Dimensions.get('window');
+
+const { width, height } = Dimensions.get('window'); 
 
 const socket = io('https://recovery-social-media.ngrok.io', {
 	transport: ['websocket']
@@ -52,7 +54,13 @@ class MessageIndividual extends Component {
       last: null,
       sureUpdate: false,
       loading: false,
-      refresh: false
+      refresh: false,
+      modalIsVisible: false,
+      data: [
+        {id:1,  name: "I'm being scammed...",   image: require("../../../../assets/icons/scam.png")},
+        {id:2,  name: "They're being offensive...",    image: require("../../../../assets/icons/offensive.png")},
+        {id:3,  name: "It's something else...",       image: require("../../../../assets/icons/change.png")}
+      ]
     };
   }
   componentDidMount() {
@@ -263,9 +271,11 @@ class MessageIndividual extends Component {
 	});
   }
   userExists = (element) => {
-	  return this.state.replies.some((el) => {
-	    return el.message === element.message && el.date === element.date;
-	  }); 
+	  if (this.state.replies) {
+	  	return this.state.replies.some((el) => {
+	    	return el.message === element.message && el.date === element.date;
+	    }); 
+	  }
   }
   componentDidUpdate(prevProps, prevState) {
   	if (this.state.sureUpdate === true) {
@@ -283,6 +293,41 @@ class MessageIndividual extends Component {
   }
   _onChange = (text) => {
   	this.setState({ msg: text })
+  }
+  handleProblemRedirect = () => {
+  	console.log("handle redirect - problem.")
+  }
+  renderModalComponent = () => {
+  	if (this.state.modalIsVisible === true) {
+  		return (
+			<Modal isVisible={true}>
+	          <View style={{ flex: 1, width: width, height: height * 0.90, backgroundColor: "white", alignSelf: 'center', justifyContent:"center", alignItems: 'center'}}>
+	           {this.state.data ? this.state.data.map((item, index) => {
+	           	return (
+					<TouchableOpacity style={styles.card} onPress={() => { 
+						this.handleProblemRedirect(item) 
+					}}>
+		              <Image style={styles.image} source={item.image}/>
+		              <View style={styles.cardContent}>
+		                <Text style={styles.name}>{item.name}</Text>
+		                <TouchableOpacity style={styles.followButton} onPress={() => {
+		                	this.handleProblemRedirect(item);
+		                }}>
+		                  <Text style={styles.followButtonText}>Explore now</Text>  
+		                </TouchableOpacity>
+		              </View>
+		            </TouchableOpacity>
+	           	);
+	           }) : null}
+				<NativeButton style={styles.buttonCancel} onPress={() => {
+					this.setState({
+						modalIsVisible: false
+					})
+				}}><NativeText style={{ color: "white", fontSize: 23, fontWeight: "bold", marginLeft: width / 4 }}>Cancel</NativeText></NativeButton>
+	          </View>
+	        </Modal>
+  		);
+  	}
   }
   render() {
   	const { user } = this.state;
@@ -304,6 +349,9 @@ class MessageIndividual extends Component {
           <Right>
             <NativeButton onPress={() => {
             	console.log("clicked chat...");
+            	this.setState({
+            		modalIsVisible: true
+            	})
             }} hasText transparent>
              	<NativeText>Report?</NativeText>
             </NativeButton>
@@ -315,7 +363,7 @@ class MessageIndividual extends Component {
     	</View>
 	    <View style={{ flex: 1 }}> 
           <View behavior="padding" style={styles.keyboard}>
-            {this.state.ready === true && this.state.first !== null ? <ScrollView style={{ flex: 1, paddingBottom: 100 }}>{this.state.replies.map((item, index) => {
+            {this.state.ready === true && this.state.first !== null ? <ScrollView style={{ flex: 1, paddingBottom: 100 }}>{this.state.replies ? this.state.replies.map((item, index) => {
             	if (item.id === this.props.route.params.user.id && item.author !== this.props.username) {
 			      	return (
 			      	<Fragment>
@@ -343,7 +391,7 @@ class MessageIndividual extends Component {
 				      );
 				    }
 			    }
-            })}<Fragment><View style={styles.rightMsg} >
+            }) : null}<Fragment><View style={styles.rightMsg} >
 		          <View style={styles.rightBlock} >
 		            <Text style={styles.rightTxt}>{this.state.first.message}</Text>
 		          </View>
@@ -354,6 +402,7 @@ class MessageIndividual extends Component {
 		      behavior={Platform.OS == "ios" ? "padding" : "height"} 
 		      keyboardVerticalOffset={Platform.select({ ios: 80, android: 500 })}
 		    >
+		    {this.renderModalComponent()}
 		    <View style={{ flex: 1 }}>
               <TextInput 
               	onChangeText={(text) => {
@@ -513,6 +562,74 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: 'white',
     fontWeight: '600',
+  },
+  buttonCancel: {
+  	width: width * 0.90,
+  	marginTop: 50
+  },
+  contentList:{
+    flex:1,
+  },
+  cardContent: {
+    marginLeft:20,
+    marginTop:10
+  },
+  image:{
+    width:90,
+    height:90,
+    borderRadius:45,
+    borderWidth:2,
+    borderColor:"#ebf0f7"
+  },
+
+  card:{
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
+
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop:20,
+    backgroundColor:"white",
+    padding: 10,
+    flexDirection:'row',
+    borderRadius:30,
+  },
+
+  name:{
+    fontSize:18,
+    flex:1,
+    alignSelf:'center',
+    color:"#3399ff",
+    fontWeight:'bold'
+  },
+  count:{
+    fontSize:14,
+    flex:1,
+    alignSelf:'center',
+    color:"#6666ff"
+  },
+  followButton: {
+    marginTop:10,
+    height:35,
+    width:100,
+    padding:10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius:30,
+    backgroundColor: "white",
+    borderWidth:1,
+    borderColor:"#dcdcdc",
+  },
+  followButtonText:{
+    color: "#dcdcdc",
+    fontSize:12,
   },
 });  
 const mapStateToProps = state => {

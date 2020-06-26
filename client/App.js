@@ -27,6 +27,8 @@ import DashboardAfterAuth from "./components/pages/dashboard/index.js";
 import ListOfMessages from "./components/pages/chat/list/listOfMessages.js";
 import MessageIndividual from "./components/pages/chat/individual/index.js";
 import ProfileIndividual from "./components/pages/profile/individual.js";
+import PublicWall from "./components/pages/wall/public/publicWall.js";
+import ProfilePicView from "./components/pages/wall/public/profilePicView.js";
 
 const Stack = createStackNavigator();
 
@@ -57,6 +59,7 @@ constructor(props) {
       }
       return "homepage";
   }
+
   render () {
     return (
       <NavigationContainer>
@@ -71,6 +74,8 @@ constructor(props) {
             <Stack.Screen name="chat-users" component={ListOfMessages} />
             <Stack.Screen name="message-individual" component={MessageIndividual} />
             <Stack.Screen name="profile-individual" component={ProfileIndividual} />
+            <Stack.Screen name="public-wall" component={PublicWall} />
+            <Stack.Screen name="profile-pic-view" component={ProfilePicView} />
           </Stack.Navigator>
         </NavigationContainer>
     );
