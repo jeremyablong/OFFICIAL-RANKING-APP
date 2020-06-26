@@ -20,6 +20,8 @@ import Modal from 'react-native-modal';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { connect } from "react-redux";
+import SlidingUpPanel from 'rn-sliding-up-panel';
+import PhotoUpload from 'react-native-photo-upload';
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,7 +32,8 @@ constructor(props) {
   this.state = {
   	user: null,
   	modalIsVisible: false,
-  	message: ""
+  	message: "",
+  	cover: null
   };
 }
 	componentDidMount() {
@@ -100,6 +103,44 @@ constructor(props) {
 	        </Modal>
 		);
 	}
+	uploadCoverPhoto = () => { 
+		
+		const { avatar } = this.state;
+
+        axios.post("http://recovery-social-media.ngrok.io/upload/cover/photo", {
+          avatar,
+          username: this.props.username
+        }).then((res) => {
+          console.log(res.data);
+          if (res.data.message === "Successfully uploaded cover photo!") {
+          	this.setState({
+          		cover: res.data.image
+          	}, () => {
+          		alert("Successfully uploaded your new cover photo!");
+          	})
+          }
+        }).catch((err) => {
+          console.log(err);
+        })
+	}
+	renderSlideUpContent = () => {
+		const { user } = this.state;
+
+		if (user !== null && (user.username === this.props.username)) {
+			return (
+				 <ImageBackground resizeMode='cover' source={{ uri: this.state.cover !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.cover}` : `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.coverPhoto}` }} style={styles.header}><TouchableOpacity onPress={() => {
+		          	this._panel.show();
+		          }}><Image style={{ width: 50, height: 50, position: "absolute", top: 5, left: 5,  tintColor: "white" }} source={require("../../../assets/icons/upload-two.png")} /></TouchableOpacity></ImageBackground>
+			);
+		} else {
+			return (
+				<Fragment><View style={styles.header}></View></Fragment>
+			);
+		}
+	}
+	redirectUser = () => {
+		this.props.navigation.navigate("profile-pic-view", { user: this.state.user, sendFromIndividual: true });
+	}
 	render() {
 		// const userProps = this.props.route.params.user;
 		console.log(this.state);
@@ -128,8 +169,17 @@ constructor(props) {
 		        </Header>
 		        <ScrollView style={styles.container}>
 				  {this.renderModalConstant()}
-		          <View style={styles.header}><TouchableOpacity><Image style={{ width: 50, height: 50, position: "absolute", top: 5, left: 5 }} source={require("../../../assets/icons/cloud.png")} /></TouchableOpacity></View>
-		          <Image style={styles.avatar} source={{uri: user !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${user.profilePic}` : 'https://bootdey.com/img/Content/avatar/avatar6.png'}}/>
+				  {this.renderSlideUpContent()}
+		          <TouchableOpacity style={styles.avatar} onPress={this.redirectUser}>
+					 <Image style={{ width: 130,
+					    height: 130,
+					    borderRadius: 63,
+					    marginTop: -4,
+					    marginLeft: -4,
+					    borderWidth: 4,
+					    borderColor: "white",
+					    paddingRight: 10 }} source={{ uri: user !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${user.profilePic}` : 'https://bootdey.com/img/Content/avatar/avatar6.png' }}/>
+				  </TouchableOpacity>
 		          <View style={styles.body}>
 		            <View style={styles.bodyContent}>
 		              <Text style={styles.name}>{user !== null ? user.fullName : "--"}</Text>
@@ -149,11 +199,48 @@ constructor(props) {
 		            </View>
 		        </View>
 		      </ScrollView>
+      		<SlidingUpPanel ref={c => this._panel = c}>
+	          <View style={styles.slide}>
+	            <PhotoUpload
+				   onPhotoSelect={avatar => {
+				     if (avatar) {
+				       console.log('Image base64 string: ', avatar);
+				       this.setState({
+				       	avatar
+				       })
+				     }
+				   }}
+				 >
+				   <Image
+				     style={{
+				       paddingVertical: 30,
+				       width: 150,
+				       height: 150,
+				       borderRadius: 75
+				     }}
+				     resizeMode='cover'
+				     source={require("../../../assets/icons/user.png")}
+				   />
+				 </PhotoUpload>
+				 <View style={{ top: -150 }}>
+					<NativeButton onPress={this.uploadCoverPhoto}>
+						<NativeText style={{ color: "white" }}>Submit Cover Photo</NativeText>
+					 </NativeButton>
+				 </View>
+	            <Button title='Hide' onPress={() => this._panel.hide()} />
+	          </View>
+	        </SlidingUpPanel>
 			</Fragment>
 		)
 	}
 }
 const styles = StyleSheet.create({
+  slide: {
+    flex: 1,
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   header:{
     backgroundColor: "#00BFFF",
     height:200,

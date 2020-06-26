@@ -21,6 +21,7 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import { connect } from "react-redux";
 import Popover from 'react-native-popover-view';
+import PhotoUpload from 'react-native-photo-upload';
 
 const { width, height } = Dimensions.get("window");
 
@@ -44,7 +45,9 @@ constructor(props) {
   	replies: [],
   	update: false,
   	alreadyLiked: false,
-  	likes: []
+  	likes: [],
+  	avatar: null,
+  	concatenated: false
   };
 
   this._panResponder = PanResponder.create({
@@ -61,27 +64,64 @@ constructor(props) {
 	_onRelease = () => {
 	  this.setState({ dragPanel: true });
 	}
-	handleCameraSubmission = () => {
-		console.log("handleCameraSubmission - submit.");
-	}
 	handleCommentSubmission = () => {
+
+		const { avatar, comment } = this.state;
+
 		console.log("handle submission - comment.");
-		axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
-			comment: this.state.comment,
-			username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username
-		}).then((res) => {
-			if (res.data.message === "Successfully posted new comment!") {
-				console.log(res.data);
-				this.setState({
-					comment: ""
-				}, () => {
-					this._panel.hide();
-					alert("You've successfully messaged commented on this picture!")
-				})
-			}
-		}).catch((err) => {
-			console.log(err);
-		})
+		if (avatar !== null && comment.length > 0) {
+			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
+				comment,
+				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+				avatar
+			}).then((res) => {
+				if (res.data.message === "Successfully posted new comment!") {
+					console.log(res.data);
+					this.setState({
+						comment: ""
+					}, () => {
+						this._panel.hide();
+						alert("You've successfully messaged commented on this picture!")
+					})
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+		} else if (avatar !== null && comment.length === 0) {
+			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
+				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+				avatar
+			}).then((res) => {
+				if (res.data.message === "Successfully posted new comment!") {
+					console.log(res.data);
+					this.setState({
+						comment: ""
+					}, () => {
+						this._panel.hide();
+						alert("You've successfully messaged commented on this picture!")
+					})
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+		} else if (comment.length > 0 && avatar === null) {
+			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
+				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+				comment
+			}).then((res) => {
+				if (res.data.message === "Successfully posted new comment!") {
+					console.log(res.data);
+					this.setState({
+						comment: ""
+					}, () => {
+						this._panel.hide();
+						alert("You've successfully messaged commented on this picture!")
+					})
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+		}
 	}
 	componentDidMount() {
 		axios.post("http://recovery-social-media.ngrok.io/gather/profile/pic/comments", {
@@ -94,17 +134,10 @@ constructor(props) {
 				}, () => {
 					for (var i = 0; i < this.state.replies.length; i++) {
 						const element = this.state.replies[i];
-						console.log("el :", element);
 						axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
 		  					username: element.poster
 		  				}).then((res) => {
-
-		  					console.log("RES.DATA LOOP:", res.data);
-
 		  					const picture = res.data.user.profilePic;
-		
-							console.log("PICTURE :", picture);
-							
 							// append picture to object
 							element["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
 
@@ -116,6 +149,9 @@ constructor(props) {
 		  					console.log("FAILURE :", err);
 		  				})
 					}
+					this.setState({
+						concatenated: true
+					})
 				});
 			}
 		}).catch((err) => {
@@ -190,9 +226,7 @@ constructor(props) {
 			
 			for (var i = 0; i < values.length; i++) {
 				sum += values[i];
-				console.log("VALUE[I] :", values[i])
 			}
-			console.log("total...:", sum);
 			return sum.toString();
 		}
 	}
@@ -280,8 +314,11 @@ constructor(props) {
 			);
 		}
 	}
+	calculateComments = () => {
+		return this.state.replies.length;
+	}
 	render() {
-		console.log(this.state);
+		console.log(this.props);
 		return (
 			<Fragment>
 			{this.renderLikesOrNot()}
@@ -289,7 +326,12 @@ constructor(props) {
 		          <Left>
 		            <NativeButton onPress={() => {
 		             	// redirect
-		             	this.props.navigation.navigate("public-wall");
+		             	if (this.props.route.params.sendFromIndividual === true) {
+							this.props.navigation.navigate("profile-individual");
+		             	} else {
+		             		this.props.navigation.navigate("public-wall");
+		             	}
+		             	
 		            }} transparent>
 		              <Image style={{ width: 35, height: 35, marginBottom: 10 }} source={require("../../../../assets/icons/back-again.png")}/>
 		            </NativeButton>
@@ -312,7 +354,7 @@ constructor(props) {
 		            <NativeButton onPress={() => {
 		            	this._panel.show();
 		            }} style={{ paddingTop: 30 }} active badge vertical>
-		              <Badge style={styles.badge}><NativeText>5</NativeText></Badge>
+		              <Badge style={styles.badge}><NativeText>{this.calculateComments()}</NativeText></Badge>
 		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/comment.png")} />
 		              <NativeText>Comments</NativeText>
 		            </NativeButton>
@@ -361,9 +403,22 @@ constructor(props) {
 							})
 						}} placeholderTextColor='black' style={styles.textInput} placeholder={'Your your Comment/Message Here...'} />
 						<View style={styles.containerTwoRow}>
-							<TouchableOpacity onPress={() => {
-								this.handleCameraSubmission();
-							}}><Image style={styles.camera} source={require("../../../../assets/icons/ar-camera.png")} /></TouchableOpacity>
+							<PhotoUpload
+								   onPhotoSelect={avatar => {
+								     if (avatar) {
+								       console.log('Image base64 string: ', avatar);
+								        this.setState({
+											avatar
+								        })
+								     }
+								   }} 
+								 >
+								   <Image
+								     style={styles.camera}
+								     resizeMode='cover'
+								     source={require("../../../../assets/icons/upload-two.png")}
+								   />
+								 </PhotoUpload>
 					     	<NativeButton onPress={() => {
 					     		this.handleCommentSubmission();
 					     	}} style={styles.btn}>
@@ -371,8 +426,9 @@ constructor(props) {
 							</NativeButton>
 					    </View>
 					</View>
-		            {this.state.replies ? this.state.replies.map((item, index) => {
+		            {this.state.replies && this.state.concatenated === true ? this.state.replies.map((item, index) => {
 		            	return (
+		            	<Fragment>
 							<View style={styles.container}>
 				              <TouchableOpacity onPress={() => {}}>
 				                <Image style={styles.image} source={{uri: item.picture }}/>
@@ -386,8 +442,12 @@ constructor(props) {
 				                    {item.date}
 				                  </Text>
 				                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
+				               
 				              </View>
+							  
 				            </View>
+				            {item.postedImage ? <Image style={{ flex: 1, height: 350, width: width * 0.80, marginLeft: 50 }} resizeMode="contain" source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.postedImage}` }} /> : null}
+				        </Fragment>
 		            	);
 		            }) : null}
 		            <Button title='Hide' onPress={() => this._panel.hide()} />

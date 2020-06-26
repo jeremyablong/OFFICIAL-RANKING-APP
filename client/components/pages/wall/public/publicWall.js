@@ -140,10 +140,10 @@ constructor(props) {
 					      }}><Image style={styles.specialBtnThree} source={require("../../../../assets/icons/special.png")}/></NativeButton>
 					    </View>
 		              <TouchableOpacity style={styles.buttonContainer}>
-		                <Text>Opcion 1</Text>  
+		                <Text>Option One</Text>  
 		              </TouchableOpacity>              
 		              <TouchableOpacity style={styles.buttonContainer}>
-		                <Text>Opcion 2</Text> 
+		                <Text>Option Two</Text> 
 		              </TouchableOpacity>
 		            </View>
 		        </View>

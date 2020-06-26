@@ -18,7 +18,7 @@ import { Container, Header, Left, Body, Right, Button as NativeButton, Footer, F
 import moment from 'moment';
 import { connect } from "react-redux";
 import axios from "axios";
-import Loading from "../../../../loading.js";
+import Loading from "../../../chat/loader.js";
 import _ from "lodash";
 import Modal from 'react-native-modal';
 import SearchBar from 'react-native-search-bar';
@@ -31,9 +31,9 @@ constructor(props) {
 
   this.state = {
     data: [
-        {id:1,  name: "I'm being scammed...",   image: require("../../../../assets/icons/scam.png")},
-        {id:2,  name: "They're being offensive...",    image: require("../../../../assets/icons/offensive.png")},
-        {id:3,  name: "It's something else...",       image: require("../../../../assets/icons/change.png")}
+        {id:1,  name: "I'm being scammed...", image: require("../../../../assets/icons/scam.png")},
+        {id:2,  name: "They're being offensive...", image: require("../../../../assets/icons/offensive.png")},
+        {id:3,  name: "It's something else...", image: require("../../../../assets/icons/change.png")}
     ],
   	ready: false,
   	messages: [],
@@ -136,7 +136,7 @@ constructor(props) {
 		} else if (this.state.groupActive === true) {
 			return (
 				<View>
-
+					
 				</View>
 			);
 		}
@@ -217,7 +217,7 @@ constructor(props) {
 		        <List>
 				{this.renderModalComponent()}
 
-					{this.state.messages ? <Fragment><Footer>
+					{this.state.messages && this.state.ready ? <Fragment><Footer>
 				          <FooterTab>
 				            {/*<NativeButton>
 				              <NativeText>Apps</NativeText>
