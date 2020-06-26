@@ -116,10 +116,10 @@ constructor(props) {
 									this.handleRedirect(item);
 								}} thumbnail>
 					              <Left>
-					                <Thumbnail square source={{ uri: item.picture }} />
+					                <Thumbnail square source={item.picture ? { uri: item.picture } : require("../../../../assets/icons/anonymous.png")} />
 					              </Left>
 					              <Body>
-					                <Text>{item.reciever}</Text>
+					                <Text>{item.reciever === this.props.username ? item.author : item.reciever}</Text>
 					                <Text note numberOfLines={1}>{item.replies ? item.replies[item.replies.length - 1].message : item.message}</Text>
 					              </Body>
 					              <Right>
@@ -196,7 +196,7 @@ constructor(props) {
 		            <NativeButton onPress={() => {
 		              this.props.navigation.navigate("dashboard");
 		            }} hasText transparent>
-		              <NativeText>Back</NativeText>
+		              <Image style={{ width: 35, height: 35, marginBottom: 10 }} source={require("../../../../assets/icons/construction.png")}/>
 		            </NativeButton>
 		          </Left>
 		          <Body>

@@ -42,6 +42,9 @@ app.use("/get/message/reciever", require("./routes/messages/gather/getReciever.j
 app.use("/get/first/message/private", require("./routes/messages/individual/getFirstMessage.js"));
 app.use("/get/last/message", require("./routes/messages/gather/getLastMsg.js"));
 app.use("/upload/cover/photo", require("./routes/coverPhoto/uploadCoverPhoto.js"));
+app.use("/post/profile/pic/comment", require("./routes/comments/profile/profilePic.js"));
+app.use("/gather/profile/pic/comments", require("./routes/comments/profile/getProfilePicComments.js"));
+app.use("/react/to/profile/picture", require("./routes/profile/reaction/index.js"));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {

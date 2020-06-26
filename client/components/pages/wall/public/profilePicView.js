@@ -20,6 +20,7 @@ import axios from "axios";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import { connect } from "react-redux";
+import Popover from 'react-native-popover-view';
 
 const { width, height } = Dimensions.get("window");
 
@@ -39,7 +40,11 @@ constructor(props) {
     ],
   	user: null,
   	ready: false,
-  	comment: ""
+  	comment: "",
+  	replies: [],
+  	update: false,
+  	alreadyLiked: false,
+  	likes: []
   };
 
   this._panResponder = PanResponder.create({
@@ -56,21 +61,6 @@ constructor(props) {
 	_onRelease = () => {
 	  this.setState({ dragPanel: true });
 	}
-	componentDidMount() {
-		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
-          username: this.props.route.params.user.username
-        }).then((res) => {
-          console.log(res.data);
-          if (res.data.message === "FOUND user!") {
-          	this.setState({
-          		user: res.data.user,
-          		ready: true
-          	})
-          }
-        }).catch((err) => {
-          console.log(err);
-        })
-	}
 	handleCameraSubmission = () => {
 		console.log("handleCameraSubmission - submit.");
 	}
@@ -78,22 +68,223 @@ constructor(props) {
 		console.log("handle submission - comment.");
 		axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
 			comment: this.state.comment,
-			username: this.props.username
+			username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username
 		}).then((res) => {
 			if (res.data.message === "Successfully posted new comment!") {
 				console.log(res.data);
-				// this.setState({
-
-				// })
+				this.setState({
+					comment: ""
+				}, () => {
+					this._panel.hide();
+					alert("You've successfully messaged commented on this picture!")
+				})
 			}
 		}).catch((err) => {
 			console.log(err);
 		})
 	}
+	componentDidMount() {
+		axios.post("http://recovery-social-media.ngrok.io/gather/profile/pic/comments", {
+			username: this.props.username
+		}).then((res) => {
+			if (res.data.message === "Here is your users profile picture comments...") {
+				console.log("special res.data :", res.data);
+				this.setState({
+					replies: res.data.replies
+				}, () => {
+					for (var i = 0; i < this.state.replies.length; i++) {
+						const element = this.state.replies[i];
+						console.log("el :", element);
+						axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+		  					username: element.poster
+		  				}).then((res) => {
+
+		  					console.log("RES.DATA LOOP:", res.data);
+
+		  					const picture = res.data.user.profilePic;
+		
+							console.log("PICTURE :", picture);
+							
+							// append picture to object
+							element["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+							this.setState({
+			  					replies: [...this.state.replies]
+			  				});
+							
+		  				}).catch((err) => {
+		  					console.log("FAILURE :", err);
+		  				})
+					}
+				});
+			}
+		}).catch((err) => {
+			console.log(err);
+		});
+
+		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+          username: this.props.route.params.user.username
+        }).then((res) => {
+          console.log("MAGIC :", res.data);
+          if (res.data.message === "FOUND user!") {
+          	this.setState({
+          		user: res.data.user,
+          		ready: true,
+          		likes: res.data.user.profilePicLikes
+          	})
+          }
+        }).catch((err) => {
+          console.log(err);
+        })
+	}
+	handleEmojiSubmission = (reaction) => {
+		console.log(this.props.route.params.user.username, this.props.username)
+		axios.post("http://recovery-social-media.ngrok.io/react/to/profile/picture", {
+			reaction,
+			username: this.props.route.params.user.username,
+			user: this.props.username
+		}).then((res) => {
+			if (res.data.message === "Successfully created and updated reaction object with appropriate likes in DB!") {
+				console.log(res.data);
+				this.setState({
+              		showPopover: false,
+              		update: true
+              	});
+
+              	setTimeout(() => {
+					alert(res.data.message);
+              	}, 2000)
+				
+			}
+		}).catch((err) => {
+			console.log(err);
+		})
+	}
+	componentDidUpdate(prevProps, prevState) {
+		if (prevState.update !== this.state.update) {
+			this.setState({
+				alreadyLiked: true
+			})
+		}
+	}
+	renderLikesOrNot = () => {
+		if (this.state.likes) {
+			for (var i = 0; i < this.state.likes.length; i++) {
+				let el = this.state.likes[i];
+				if (el.posterUsername === this.props.username) {
+					if (this.state.alreadyLiked === true) {
+						return null;
+					} else {
+						this.setState({
+							alreadyLiked: true
+						})
+					}
+				}
+			}
+		}
+	}
+	calculateLikes = () => {
+		let sum = 0;
+		if (this.state.ready === true) {
+			let values = Object.values(this.state.user.profilePicReactions);
+			
+			for (var i = 0; i < values.length; i++) {
+				sum += values[i];
+				console.log("VALUE[I] :", values[i])
+			}
+			console.log("total...:", sum);
+			return sum.toString();
+		}
+	}
+	renderPopover = () => {
+		if (this.state.alreadyLiked === false) {
+			return (
+				<Popover 
+	              onRequestClose={() => {
+	              	console.log("attempt to close...");
+	              	this.setState({
+	              		showPopover: false
+	              	})
+	              }}
+	              isVisible={this.state.showPopover}
+			      from={(
+			        <NativeButton style={{  paddingTop: 20  }} badge vertical onPress={() => {
+			        	this.setState({
+			        		showPopover: true
+			        	})
+			        }}>
+			        <Badge style={styles.badgeLike}><NativeText>{this.calculateLikes()}</NativeText></Badge>
+		            
+		            <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/like.png")} />
+			        </NativeButton>
+			      )}>
+				      <View style={{ height: "100%", width: 300, backgroundColor: "white", flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10, paddingBottom: 10 }}>
+				      	<TouchableOpacity onPress={() => {
+							console.log("clicked...");
+							this.setState({
+								showPopover: false
+							})									
+						}}><Image source={require("../../../../assets/icons/trash.png")} style={{ width: 20, height: 20, position: "absolute", marginTop: -10, marginLeft: -30 }}/></TouchableOpacity>
+						<TouchableOpacity onPress={() => {
+							console.log("clicked...");
+							this.handleEmojiSubmission("laugh");									
+						}}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😆</Text></TouchableOpacity>
+						<TouchableOpacity onPress={() => {
+							console.log("clicked...");
+							this.handleEmojiSubmission("heartFace");
+						}}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😍</Text></TouchableOpacity>
+						<TouchableOpacity onPress={() => {
+							console.log("clicked...");
+							this.handleEmojiSubmission("frustrated");
+						}}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😤</Text></TouchableOpacity>
+						<TouchableOpacity onPress={() => {
+							console.log("clicked...");
+							this.handleEmojiSubmission("heart");
+						}}><Text style={{ height: 50, width: 50, fontSize: 40 }}>❤️</Text></TouchableOpacity>
+						<TouchableOpacity onPress={() => {
+							console.log("clicked...");
+							this.handleEmojiSubmission("angry");
+						}}><Text style={{ height: 50, width: 50, fontSize: 40 }}>🤬</Text></TouchableOpacity>
+						<TouchableOpacity onPress={() => {
+							console.log("clicked...");
+							this.handleEmojiSubmission("sad");
+						}}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😢</Text></TouchableOpacity>
+			      </View>
+				</Popover>
+			);
+		} else {
+			return (
+				<Popover 
+	              onRequestClose={() => {
+	              	console.log("attempt to close...");
+	              	this.setState({
+	              		showPopover: false
+	              	})
+	              }}
+	              isVisible={this.state.showPopover}
+			      from={(
+			        <NativeButton style={{  paddingTop: 20  }} badge vertical onPress={() => {
+			        	this.setState({
+			        		showPopover: true
+			        	})
+			        }}>
+			        <Badge style={styles.badgeLike}><NativeText>{this.calculateLikes()}</NativeText></Badge>
+		            
+		            <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/like.png")} />
+			        </NativeButton>
+			      )}>
+				     <View style={{ height: "100%", width: 300, backgroundColor: "white", flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10, paddingBottom: 10 }}>
+				      	<NativeText style={{ padding: 10, fontWeight: "bold", fontColor: "darkred", fontSize: 20 }}>You have already like/reacted to this post...</NativeText>
+			     	 </View>
+				</Popover>
+			);
+		}
+	}
 	render() {
 		console.log(this.state);
 		return (
 			<Fragment>
+			{this.renderLikesOrNot()}
 				<Header>
 		          <Left>
 		            <NativeButton onPress={() => {
@@ -117,13 +308,7 @@ constructor(props) {
 		       <Image resizeMode={'cover'} style={{ width: width * 0.90, marginLeft: 20,  height: 400 }} source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.route.params.user.profilePic}` }} />
 		       <Footer>
 		          <FooterTab>
-		            <NativeButton style={{  paddingTop: 20  }} badge vertical>
-		              <Badge style={styles.badgeLike}><NativeText>2</NativeText></Badge>
-		              {/*<Icon name="apps" />*/}
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/like.png")} />
-		              <NativeText>Like</NativeText>
-		            </NativeButton>
-		            
+					{this.renderPopover()} 
 		            <NativeButton onPress={() => {
 		            	this._panel.show();
 		            }} style={{ paddingTop: 30 }} active badge vertical>
@@ -186,20 +371,21 @@ constructor(props) {
 							</NativeButton>
 					    </View>
 					</View>
-		            {this.state.data ? this.state.data.map((Notification, index) => {
+		            {this.state.replies ? this.state.replies.map((item, index) => {
 		            	return (
 							<View style={styles.container}>
 				              <TouchableOpacity onPress={() => {}}>
-				                <Image style={styles.image} source={{uri: Notification.image}}/>
+				                <Image style={styles.image} source={{uri: item.picture }}/>
 				              </TouchableOpacity>
 				              <View style={styles.content}>
 				                <View style={styles.contentHeader}>
-				                  <Text  style={styles.name}>{Notification.name}</Text>
-				                  <Text style={styles.time}>
-				                    9:58 am
-				                  </Text>
+				                  <Text  style={styles.name}>{item.poster}</Text>
+				                  
 				                </View>
-				                <Text rkType='primary3 mediumLine'>{Notification.comment}</Text>
+				                <Text style={styles.time}>
+				                    {item.date}
+				                  </Text>
+				                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
 				              </View>
 				            </View>
 		            	);

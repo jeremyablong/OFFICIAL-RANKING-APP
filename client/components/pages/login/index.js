@@ -50,6 +50,8 @@ constructor(props) {
 	          if (res.data.message === "User FOUND!") {
 				this.props.authenticated(res.data.user);
 				this.props.navigation.navigate("dashboard");
+	          } else if (res.data.message === "Password/email did match our records...") {
+	          	alert(res.data.message);
 	          }
 	        }).catch((err) => {
 	          console.log(err);
@@ -69,6 +71,8 @@ constructor(props) {
 	          if (res.data.message === "User FOUND!") {
 	          	this.props.authenticated(res.data.user);
 	          	this.props.navigation.navigate("dashboard");
+	          } else if (res.data.message === "Password/email did match our records...") {
+	          	alert(res.data.message);
 	          }
 	        }).catch((err) => {
 	          console.log(err);

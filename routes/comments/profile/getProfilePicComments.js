@@ -5,6 +5,7 @@ const cors = require("cors");
 const app = express();
 const config = require("config");
 const mongo = require("mongodb");
+const moment = require("moment");
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
@@ -15,12 +16,21 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			console.log("req.body", req.body);
 
-			collection.findOne({ username }).then((user) => {
-				console.log(user);
+			let replies = [];
+
+			collection.findOne({ username }, { profilePictureReplies: true }).then((user) => {
 				if (user) {
+					console.log("user found... :", user);
+					if (user.profilePictureReplies) {
+						for (var i = 0; i < user.profilePictureReplies.length; i++) {
+							replies.push(user.profilePictureReplies[i]);
+						}
+					}
+
 					res.json({
-						message: "FOUND user!",
-						user
+						message: "Here is your users profile picture comments...",
+						user,
+						replies: replies.reverse()
 					})
 				} else {
 					res.json({
@@ -29,10 +39,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				}
 			}).catch((err) => {
 				console.log("ERRRRRRR :", err);
-				res.json({
-					message: "User profile doesn't exist or an error occurred...",
-					user: {}
-				})
 			})
 	});
 });

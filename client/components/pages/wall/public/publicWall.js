@@ -185,9 +185,9 @@ constructor(props) {
 		          </Body>
 		          <Right>
 		            <NativeButton onPress={() => {
-		            	// something
+		            	this.props.navigation.navigate("chat-users");
 		            }} hasText transparent>
-		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../../assets/icons/chat.png")}/>
+		              <NativeText>Help?</NativeText>
 		            </NativeButton>
 		          </Right>
 		        </Header>

@@ -6,6 +6,7 @@ const app = express();
 const config = require("config");
 const mongo = require("mongodb");
 const moment = require("moment");
+const { v4: uuidv4 } = require('uuid');
 
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
@@ -14,13 +15,11 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			const generatedID = uuidv4();
 
-			const bufferImage = new Buffer(avatar.replace(/^data:image\/\w+;base64,/, ""),'base64');
-
 			const collection = db.collection("users");
 
 			console.log("req.body", req.body);
 
-			collection.findOneAndUpdate({ username }, { $push: { "profilePic.replies": {
+			collection.findOneAndUpdate({ username }, { $push: { "profilePictureReplies": {
 				comment,
 				poster: username,
 				date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),

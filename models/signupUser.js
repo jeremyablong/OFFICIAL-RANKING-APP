@@ -30,6 +30,9 @@ const UserSchema = new mongoose.Schema({
 	},
 	profilePic: {
 		type: String
+	},
+	profilePicReactions: {
+		type: Object
 	}
 });
 

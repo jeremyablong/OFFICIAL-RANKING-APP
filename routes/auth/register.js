@@ -53,7 +53,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				hometown: hometown.trim(),
 				username: username.trim(),
 				profilePic: generatedID,
-	            id: uuidv4()
+	            id: uuidv4(),
+				profilePicReactions: {
+					laugh: 0,
+					heartFace: 0,
+					frustrated: 0,
+					heart: 0,
+					angry: 0,
+					sad: 0
+				}
 			});
 
 			const collection = db.collection("users");
@@ -133,7 +141,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				hometown: hometown.trim(),
 				username: username.trim(),
 				profilePic: generatedID,
-				id: uuidv4()
+				id: uuidv4(),
+				profilePicReactions: {
+					laugh: 0,
+					heartFace: 0,
+					frustrated: 0,
+					heart: 0,
+					angry: 0,
+					sad: 0
+				}
 			});
 
 			console.log("username :", username, "email", email);

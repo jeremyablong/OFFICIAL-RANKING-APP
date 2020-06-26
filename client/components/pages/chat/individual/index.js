@@ -16,7 +16,7 @@ import {
   Keyboard
 } from 'react-native';
 import Modal from 'react-native-modal';
-import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText } from 'native-base';
+import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, Badge } from 'native-base';
 import axios from "axios";
 import io from "socket.io-client";
 import { connect } from "react-redux";
@@ -331,7 +331,7 @@ class MessageIndividual extends Component {
   }
   render() {
   	const { user } = this.state;
-  	console.log(this.state);
+  	console.log("THIS.PROPS :", this.props);
     return (
 
       <View style={{ flex: 1 }}>
@@ -344,7 +344,7 @@ class MessageIndividual extends Component {
             </NativeButton>
           </Left>
           <Body>
-            <Title>{user !== null ? user.username : "--"}</Title>
+           {user !== null ? <Title>{user.username === this.props.username ? this.props.route.params.user.reciever : this.props.route.params.user.author}</Title> : null}
           </Body>
           <Right>
             <NativeButton onPress={() => {
