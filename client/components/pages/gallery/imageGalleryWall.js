@@ -23,9 +23,14 @@ import SlidingUpPanel from 'rn-sliding-up-panel';
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import PhotoUpload from 'react-native-photo-upload';
 import { connect } from "react-redux";
-
+import Modal from 'react-native-modal';
+import { Rating, AirbnbRating } from 'react-native-ratings';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 const { width, height } = Dimensions.get("window");
+
+let row = [];
+let prevOpenedRow;
 
 class ImageGalleryWall extends React.Component {
 constructor(props) {
@@ -38,7 +43,18 @@ constructor(props) {
   	replies: [],
   	avatar: null,
   	comment: "",
-  	id: ""
+  	id: "",
+  	reviewModalVisible: false,
+  	rating: 0,
+  	reviewed: false,
+  	elatable: 0, 
+  	entertaining: 0, 
+  	offensive: 0, 
+  	relevant: 0, 
+  	happy: 0, 
+  	overall: 0,
+  	dragPanel: false,
+  	selected: null
   };
   this._panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: this._onGrant,
@@ -165,67 +181,271 @@ constructor(props) {
 	}
 	handleCommentSubmission = () => {
 
-		const { avatar, comment } = this.state;
+		this.setState({
+			dragPanel: false
+		}, () => {
+			const { avatar, comment } = this.state;
 
-		console.log("handle submission - comment.");
-		if (avatar !== null && comment.length > 0) {
-			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
-				comment,
-				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
-				avatar,
-				id: this.state.id
-			}).then((res) => {
-				if (res.data.message === "Successfully posted new comment!") {
-					console.log(res.data);
-					this.setState({
-						comment: ""
-					}, () => {
-						this._panel.hide();
-						alert("You've successfully messaged commented on this picture!")
-					})
-				}
-			}).catch((err) => {
-				console.log(err);
-			})
-		} else if (avatar !== null && comment.length === 0) {
-			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
-				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
-				avatar,
-				id: this.state.id
-			}).then((res) => {
-				if (res.data.message === "Successfully posted new comment!") {
-					console.log(res.data);
-					this.setState({
-						comment: ""
-					}, () => {
-						this._panel.hide();
-						alert("You've successfully messaged commented on this picture!")
-					})
-				}
-			}).catch((err) => {
-				console.log(err);
-			})
-		} else if (comment.length > 0 && avatar === null) {
-			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
-				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
-				comment, 
-				id: this.state.id
-			}).then((res) => {
-				if (res.data.message === "Successfully posted new comment!") {
-					console.log(res.data);
-					this.setState({
-						comment: ""
-					}, () => {
-						this._panel.hide();
-						alert("You've successfully messaged commented on this picture!")
-					})
-				}
-			}).catch((err) => {
-				console.log(err);
-			})
+			console.log("handle submission - comment.");
+			if (avatar !== null && comment.length > 0) {
+				axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
+					comment,
+					username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+					avatar,
+					id: this.state.id
+				}).then((res) => {
+					if (res.data.message === "Successfully posted new comment!") {
+						console.log(res.data);
+						this.setState({
+							comment: ""
+						}, () => {
+							this._panel.hide();
+							alert("You've successfully messaged commented on this picture!")
+						})
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
+			} else if (avatar !== null && comment.length === 0) {
+				axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
+					username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+					avatar,
+					id: this.state.id
+				}).then((res) => {
+					if (res.data.message === "Successfully posted new comment!") {
+						console.log(res.data);
+						this.setState({
+							comment: ""
+						}, () => {
+							this._panel.hide();
+							alert("You've successfully messaged commented on this picture!")
+						})
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
+			} else if (comment.length > 0 && avatar === null) {
+				axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
+					username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+					comment, 
+					id: this.state.id
+				}).then((res) => {
+					if (res.data.message === "Successfully posted new comment!") {
+						console.log(res.data);
+						this.setState({
+							comment: ""
+						}, () => {
+							this._panel.hide();
+							alert("You've successfully messaged commented on this picture!")
+						})
+					}
+				}).catch((err) => {
+					console.log(err);
+				})
+			}
+		})
+	}
+	handleRatingSubmission = () => {
+		const { relatable, entertaining, offensive, relevant, happy, overall } = this.state;
+
+		this.setState({
+			dragPanel: false,
+			rating: relatable + entertaining + offensive + relevant + happy + overall,
+    		reviewModalVisible: false
+    	})
+	}
+	handleReviews = () => {
+		if (this.state.reviewModalVisible) {
+			return (
+				<Modal style={{ height, width: width * 0.90, backgroundColor: "white" }} isVisible={true}>
+		          <ScrollView style={{ flex: 1 }}>
+		          	<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>This post was <Text style={{ color: "blue" }}>relatable</Text>...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6} 
+					  size={20}  
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		relatable: value
+					  	})
+					  }} 
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10,
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>This post was <Text style={{ color: "blue" }}>entertaining</Text>...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		entertaining: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>This post was NOT <Text style={{ color: "blue" }}>offensive</Text>...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		offensive: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>This post was <Text style={{ color: "blue" }}>relevant</Text>...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		relevant: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>I'm <Text style={{ color: "blue" }}>happy</Text> I saw this post...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		happy: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>I <Text style={{ color: "blue" }}>liked</Text> this post overall...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		overall: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+		            <NativeButton onPress={() => {
+			        	this.setState({
+			        		reviewModalVisible: false
+			        	})
+			        }} style={styles.viewPicturesBtn}>
+						<NativeText style={{ color: "white" }}>Close Modal</NativeText>
+			        </NativeButton>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: -30, 
+					    marginBottom: 10
+					  }}
+					/>
+			        <NativeButton onPress={() => {
+			        	this.handleRatingSubmission();
+			        }} style={styles.viewPicturesBtnBlue}>
+						<NativeText style={{ color: "white" }}>Submit Rating - Profile Post</NativeText>
+			        </NativeButton>
+		          </ScrollView>
+		        </Modal>
+			);
 		}
 	}
+	likeCommentRespond = () => {
+		// this.state.selected === item
+		console.log('liked...', this.state.selected);
+		axios.post("http://recovery-social-media.ngrok.io/like/subcomment/respond", {
+			username: this.props.username,
+			id: this.state.selected.id
+		}).then((res) => {
+			console.log(res.data);
+		}).catch((err) => {
+			console.log(err);
+		})
+	}
+	replyToCommentRespond = () => {
+		// this.state.selected === item
+		console.log("respond... ", item);
+	}
+	RightActions = () => {
+		return (
+			<Fragment>
+				<TouchableOpacity onPress={() => {
+					this.setState({
+						dragPanel: false
+					}, () => {
+						this.likeCommentRespond();
+					})
+				}}>
+					<Image style={{ width: 40, height: 40, marginTop: 20, marginRight: 30 }} source={require("../../../assets/icons/like.png")} />
+				</TouchableOpacity>
+				<TouchableOpacity>
+					<Image style={{ width: 40, height: 40, marginTop: 20, marginRight: 30 }} source={require("../../../assets/icons/reply-auto.png")} />
+				</TouchableOpacity>
+			</Fragment>
+		);
+	}
+	closeRow = (index) => {
+	    if (prevOpenedRow && prevOpenedRow !== row[index]) {
+			prevOpenedRow.close();
+	    }
+	    prevOpenedRow = row[index];
+	}
 	render() {
+		
 		console.log("This state... :", this.state);
 		return (
 			<Fragment>
@@ -272,6 +492,7 @@ constructor(props) {
 		          </FooterTab>
 		        </Footer>
 			</View>
+			{this.handleReviews()}
 				<SlidingUpPanel allowDragging={this.state.dragPanel} ref={c => this._panel = c}>
 		          <ScrollView {...this._panResponder.panHandlers} style={styles.containerModal}>
 					<View style={{ marginTop: 50 }}>
@@ -306,10 +527,50 @@ constructor(props) {
 								<NativeText style={{ color: "white" }}>Submit New Comment</NativeText>
 							</NativeButton>
 					    </View>
+					    <Footer style={{ marginTop: 10 }}>
+				          <FooterTab>
+				            <NativeButton onPress={() => {
+				            	console.log("pressed.")
+					            this.setState({
+					            	dragPanel: false,
+					            	reviewModalVisible: true
+					            }, () => {
+					            	this._panel.hide();
+					            })		
+					        }}>
+				              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/review.png")} />
+				              <NativeText style={{ color: "black" }}>Review Post</NativeText>
+				            </NativeButton>
+				            <NativeButton onPress={() => {
+					            	{/*this.props.navigation.navigate("dashboard");*/}
+					            }}>
+				               <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/share.png")} />
+				                <NativeText style={{ color: "black" }}>Share Post</NativeText>
+				            </NativeButton>
+				            {/*<NativeButton onPress={() => {
+					            	this.props.navigation.navigate("chat-users");
+					            }}>
+					          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
+				              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/mail-three.png")} />
+				            </NativeButton>*/}
+				            {/*<NativeButton onPress={() => {
+					            	this.props.navigation.navigate("public-wall");
+					            }}>
+				              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
+				            </NativeButton>*/}
+				          </FooterTab>
+				        </Footer>
 					</View>
 		            {this.state.replies ? this.state.replies.map((item, index) => {
 		            	return (
 		            	<Fragment>
+		            	<Swipeable ref={ref => row[index] = ref} onSwipeableRightOpen={() => {
+		            		this.closeRow(index);
+		            		// set to state so accessible in functions to respond to comment
+		            		this.setState({
+		            			selected: item
+		            		})
+		            	}} renderRightActions={this.RightActions}>
 							<View style={styles.container}>
 				              <TouchableOpacity onPress={() => {
 				              	console.log("picture clicked...");
@@ -325,11 +586,12 @@ constructor(props) {
 				                    {item.date}
 				                  </Text>
 				                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
-				               
+				               	
 				              </View>
 							  
 				            </View>
 				            {item.postedImage ? <Image style={{ flex: 1, height: 350, width: width * 0.80, marginLeft: 50 }} resizeMode="contain" source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.postedImage}` }} /> : null}
+				        </Swipeable>
 				        </Fragment>
 		            	);
 		            })
@@ -342,6 +604,22 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
+  viewPicturesBtnBlue: {
+	backgroundColor: "darkblue", 
+  	marginTop: 20, 
+  	alignItems: "center", 
+  	justifyContent: "center", 
+  	alignContent: "center",
+  	marginBottom: 50
+  },
+  viewPicturesBtn: {
+  	backgroundColor: "black", 
+  	marginTop: 20, 
+  	alignItems: "center", 
+  	justifyContent: "center", 
+  	alignContent: "center",
+  	marginBottom: 50
+  },
   viewPicturesBtn: {
   	backgroundColor: "black", 
   	marginTop: 20, 

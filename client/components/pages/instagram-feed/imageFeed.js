@@ -133,7 +133,7 @@ class InstagramFeedPage extends Component {
             <View style={styles.popup}>
               <View style={styles.popupContent}>
                 <ScrollView contentContainerStyle={styles.modalInfo}>
-                  <Image style={{width:200, height:200}} source={{uri: this.state.selected !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.selected.picture}` : ""}}/>
+                  <Image style={{width:200, height:200, marginTop: 20}} source={{uri: this.state.selected !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.selected.picture}` : ""}}/>
                 </ScrollView>
               </View>
               <View style={styles.popupButtons}>
@@ -200,7 +200,8 @@ const styles = StyleSheet.create({
   },
   btnClose:{
     height:50,
-    width: width * 0.80,
+    width: width * 0.80, 
+    marginBottom: 20,
     backgroundColor:'black',
     padding:20,
     justifyContent: "center",

@@ -352,6 +352,14 @@ const styles = StyleSheet.create({
     marginTop:40,
   },
 	box: {
+		shadowColor: 'black',
+	    shadowOffset: {
+	      width: 0,
+	      height: 6,
+	    },
+	    shadowOpacity: 0.77,
+	    shadowRadius: 7.49,
+	    elevation: 22,
 		width: 70, 
 		height: 70, 
 		borderRadius: 60 / 2, 

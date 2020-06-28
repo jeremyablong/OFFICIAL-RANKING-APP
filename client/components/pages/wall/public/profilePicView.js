@@ -24,6 +24,8 @@ import { connect } from "react-redux";
 import Popover from 'react-native-popover-view';
 import PhotoUpload from 'react-native-photo-upload';
 import LoadingWall from "../loading.js";
+import Modal from 'react-native-modal';
+import { Rating, AirbnbRating } from 'react-native-ratings';
 
 const { width, height } = Dimensions.get("window");
 
@@ -51,7 +53,16 @@ constructor(props) {
   	avatar: null,
   	concatenated: false,
   	reactions: null,
-  	loaded: false
+  	loaded: false,
+  	modalIsVisible: false,
+  	rating: 0,
+  	reviewed: false,
+  	elatable: 0, 
+  	entertaining: 0, 
+  	offensive: 0, 
+  	relevant: 0, 
+  	happy: 0, 
+  	overall: 0
   };
 
   this._panResponder = PanResponder.create({
@@ -343,8 +354,168 @@ constructor(props) {
 	calculateComments = () => {
 		return this.state.replies.length;
 	}
+	handleRatingSubmission = () => {
+		const { relatable, entertaining, offensive, relevant, happy, overall } = this.state;
+
+		this.setState({
+			rating: relatable + entertaining + offensive + relevant + happy + overall,
+    		modalIsVisible: false
+    	})
+	}
+	handleReviewRedirect = () => {
+		if (this.state.modalIsVisible) {
+			return (
+				<Modal style={{ height, width: width * 0.90, backgroundColor: "white" }} isVisible={true}>
+		          <ScrollView style={{ flex: 1 }}>
+		          	<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>This post was <Text style={{ color: "blue" }}>relatable</Text>...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6} 
+					  size={20}  
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		relatable: value
+					  	})
+					  }} 
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10,
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>This post was <Text style={{ color: "blue" }}>entertaining</Text>...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		entertaining: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>This post was NOT <Text style={{ color: "blue" }}>offensive</Text>...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		offensive: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>This post was <Text style={{ color: "blue" }}>relevant</Text>...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		relevant: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>I'm <Text style={{ color: "blue" }}>happy</Text> I saw this post...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		happy: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+					<Text style={{ color: "Darkred", fontSize: 25, textAlign: "center" }}>I <Text style={{ color: "blue" }}>liked</Text> this post overall...</Text>
+		            <AirbnbRating
+					  count={11}
+					  reviews={["Terrible", "Bad", "Meh", "OK", "Good", "Hmm...", "Very Good", "Wow", "Amazing", "Unbelievable", "Perfection"]}
+					  defaultRating={6}
+					  size={20} 
+					  onFinishRating={(value) => {
+					  	this.setState({
+					  		overall: value
+					  	})
+					  }}
+					/>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: 10, 
+					    marginBottom: 10
+					  }}
+					/>
+		            <NativeButton onPress={() => {
+			        	this.setState({
+			        		modalIsVisible: false
+			        	})
+			        }} style={styles.viewPicturesBtn}>
+						<NativeText style={{ color: "white" }}>Close Modal</NativeText>
+			        </NativeButton>
+					<View
+					  style={{
+					    borderBottomColor: 'black',
+					    borderBottomWidth: 2,
+					    marginTop: -30, 
+					    marginBottom: 40
+					  }}
+					/>
+			        <NativeButton onPress={() => {
+			        	this.handleRatingSubmission();
+			        }} style={styles.viewPicturesBtnBlue}>
+						<NativeText style={{ color: "white" }}>Submit Rating - Profile Post</NativeText>
+			        </NativeButton>
+		          </ScrollView>
+		        </Modal>
+			);
+		}
+	}
 	render() {
+		console.log(this.state);
 		if (this.state.loaded === true) {
+
 			return (
 				<Fragment>
 				{this.renderLikesOrNot()}
@@ -384,9 +555,12 @@ constructor(props) {
 			              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/comment.png")} />
 			              <NativeText>Comments</NativeText>
 			            </NativeButton>
-			            <NativeButton vertical>
-			            <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/innovation.png")} />
-			              <NativeText>Share</NativeText>
+			            <NativeButton onPress={() => {
+			            	this.setState({
+			            		modalIsVisible: true
+			            	})
+			            }} vertical>
+			            <Image style={{ width: 50, height: 50, top: 7 }} source={require("../../../../assets/icons/review.png")} />
 			            </NativeButton>
 			          </FooterTab>
 			        </Footer>
@@ -396,7 +570,7 @@ constructor(props) {
 						<NativeText style={{ color: "white" }}>View Other Profile Pictures</NativeText>
 			        </NativeButton>
 			    </ScrollView>
-
+				{this.handleReviewRedirect()}
 			       <View style={{ bottom: 0, width: width, position: "absolute" }}>
 						<Footer>
 				          <FooterTab>
@@ -524,12 +698,21 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
+  viewPicturesBtnBlue: {
+	backgroundColor: "darkblue", 
+  	marginTop: 20, 
+  	alignItems: "center", 
+  	justifyContent: "center", 
+  	alignContent: "center",
+  	marginBottom: 50
+  },
   viewPicturesBtn: {
   	backgroundColor: "black", 
   	marginTop: 20, 
   	alignItems: "center", 
   	justifyContent: "center", 
-  	alignContent: "center"
+  	alignContent: "center",
+  	marginBottom: 50
   },
   camera: {
 	width: 35, 

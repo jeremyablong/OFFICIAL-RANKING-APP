@@ -12,7 +12,8 @@ import {
   ImageBackground, 
   Dimensions, 
   ScrollView, 
-  FlatList
+  FlatList, 
+  Animated
 } from 'react-native';
 import { Container, Header, Left, Body, Right, Button as NativeButton, Footer, FooterTab, Title, Text as NativeText, Thumbnail, List, ListItem, Content, Badge } from 'native-base';
 import moment from 'moment';
@@ -22,8 +23,11 @@ import Loading from "../../../chat/loader.js";
 import _ from "lodash";
 import Modal from 'react-native-modal';
 import SearchBar from 'react-native-search-bar';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { RectButton } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
+
 
 export class ListOfMessages extends React.Component {
 constructor(props) {
@@ -41,7 +45,8 @@ constructor(props) {
   	groupActive: false,
   	id: "",
   	modalIsVisible: false,
-  	searchValue: ""
+  	searchValue: "",
+  	swiped: false
   };
 }
 	handleRedirect = (user) => {
@@ -103,6 +108,25 @@ constructor(props) {
 
 	  	
 	}
+	deleteThread = (item) => {
+		console.log("clicked trash...", item);
+	}
+    RightActions = (item) => { 
+    	console.log("swiped...");
+		return (
+			<ListItem onPress={() => {
+				{/*console.log("k, running function...");*/}
+				this.handleRedirect(item);
+			}}>
+               	<NativeButton onPress={() => {
+               		this.deleteThread(item);
+               	}} style={styles.trashBtn}>
+					<Image source={require("../../../../assets/icons/del.png")} style={{ width: 40, height: 40 }} />
+               	</NativeButton> 
+
+        </ListItem>
+		) 
+	}
 	renderList = () => {
 		if (this.state.inboxActive === true) {
 			return (
@@ -111,6 +135,7 @@ constructor(props) {
 			        renderItem={({ item }) => {
 			        	console.log("itemmmmmm listOfMessages: ", item);
 						return (
+						<Swipeable renderRightActions={this.RightActions}>
 							<ListItem onPress={() => {
 									{/*console.log("k, running function...");*/}
 									this.handleRedirect(item);
@@ -128,6 +153,7 @@ constructor(props) {
 					                </NativeButton>
 					              </Right>
 					            </ListItem>
+					    </Swipeable>
 						);
 			        }} 
 			        keyExtractor={item => item.id}
@@ -306,7 +332,12 @@ const styles = StyleSheet.create({
     borderWidth:2,
     borderColor:"#ebf0f7"
   },
-
+  trashBtn: {
+  	backgroundColor: "transparent", 
+  	justifyContent: "center", 
+  	alignItems: "center", 
+  	alignContent: "center"
+  },
   card:{
     shadowColor: 'black',
     shadowOffset: {

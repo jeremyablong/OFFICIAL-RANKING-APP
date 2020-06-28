@@ -25,14 +25,15 @@ constructor(props) {
   this.state = {
 	stories: [
 		{ name: "Jeremy Blong", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 0 },
-		{ name: "Roger Smith", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00450ae7-e66d-4f9f-9f20-504b89542749", id: 1 },
-		{ name: "Donald Trump", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/03b62d4c-d1a0-480b-bd4e-37efa0a4f1c6", id: 2 },
-		{ name: "Bernie Sanders", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 3 },
-		{ name: "Rodreguez Smith", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 4 },
-		{ name: "Sarah Halter", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00450ae7-e66d-4f9f-9f20-504b89542749", id: 5 },
-		{ name: "Jessica Smith", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 6 },
-		{ name: "Johnny Doe", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00450ae7-e66d-4f9f-9f20-504b89542749", id: 7 },
-		{ name: "Jeremy Blong", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 8 },
+		{ name: "Jeremy Blong", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 1 },
+		{ name: "Roger Smith", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00450ae7-e66d-4f9f-9f20-504b89542749", id: 2 },
+		{ name: "Donald Trump", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/03b62d4c-d1a0-480b-bd4e-37efa0a4f1c6", id: 3 },
+		{ name: "Bernie Sanders", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 4 },
+		{ name: "Rodreguez Smith", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 5 },
+		{ name: "Sarah Halter", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00450ae7-e66d-4f9f-9f20-504b89542749", id: 6 },
+		{ name: "Jessica Smith", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 7 },
+		{ name: "Johnny Doe", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00450ae7-e66d-4f9f-9f20-504b89542749", id: 8 },
+		{ name: "Jeremy Blong", picture: "https://s3.us-west-1.wasabisys.com/recovery-social-media-dating/00c556fb-4b85-4c24-b7d1-34fba4d313cd", id: 9 },
 	]
   };
 }
@@ -51,7 +52,7 @@ constructor(props) {
 								<TouchableOpacity style={styles.card} onPress={() => {
 									this.clickEventListener(item)
 								}}>
-								<ImageBackground style={{ height: 250 }} source={{ uri: item.picture }}>
+								<ImageBackground imageStyle={{ borderRadius: 35 }} style={{ height: 250 }} source={{ uri: item.picture }}>
 				                <View style={styles.cardHeader}>
 				                  <Image style={styles.icon} source={{uri:"https://img.icons8.com/flat_round/64/000000/hearts.png"}}/>
 				                </View>
@@ -92,19 +93,21 @@ const styles = StyleSheet.create({
   },
   /******** card **************/
   card:{
-    shadowColor: '#00000021',
+    shadowColor: 'black',
     shadowOffset: {
       width: 0,
       height: 6,
     },
-    shadowOpacity: 0.37,
+    shadowOpacity: 0.67,
     shadowRadius: 7.49,
-    elevation: 12,
+    elevation: 22,
 
     marginVertical: 5,
-    backgroundColor:"white",
     flexBasis: '46%',
     marginHorizontal: 5,
+    paddingRight: 10,
+    paddingTop: 15, 
+    paddingBottom: 15
   },
   cardFooter: {
     paddingVertical: 17,

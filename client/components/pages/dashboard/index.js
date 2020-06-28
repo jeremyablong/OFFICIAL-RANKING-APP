@@ -60,6 +60,7 @@ constructor(props) {
 				console.log(err);
 			})
 		}
+
 	}
 	handleCancel = () => {
 		console.log("handle cancel...");
@@ -69,6 +70,8 @@ constructor(props) {
 				this.setState({
 					people: res.data,
 					searching: false
+				}, () => {
+					Keyboard.dismiss();
 				})
 			}
 		}).catch((err) => {

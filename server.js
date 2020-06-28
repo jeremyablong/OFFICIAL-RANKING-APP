@@ -49,6 +49,11 @@ app.use("/post/new/profile/picture/page", require("./routes/profile/pictures/upl
 app.use("/organize/single/user/data", require("./routes/singleUser/organizeSingleUser.js"));
 app.use("/gather/profile/pictures/gallery", require("./routes/profile/pictures/gatherAllPictureGallery.js"));
 app.use("/gather/profile/pictures/gallery/slide", require("./routes/profile/pictures/findByIndex.js"));
+app.use("/like/subcomment/respond", require("./routes/profile/pictures/galleryLikeComment.js"));
+
+
+
+
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {
     if (err) {

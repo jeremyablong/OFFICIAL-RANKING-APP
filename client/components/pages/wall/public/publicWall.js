@@ -140,7 +140,7 @@ constructor(props) {
 							// do something
 					      }}><Image style={styles.specialBtnTwo} source={require("../../../../assets/icons/more.png")}/></NativeButton>
 					      <NativeButton style={{ width: width * 0.10, backgroundColor: "transparent" }} onPress={() => {
-							this.props.navigation.navigate("view-instagram-style-images");
+							this.props.navigation.navigate("view-instagram-style-images", { user: null });
 					      }}><Image style={styles.specialBtnThree} source={require("../../../../assets/icons/content.png")}/></NativeButton>
 					    </View>
 		              <TouchableOpacity style={styles.buttonContainer}>
