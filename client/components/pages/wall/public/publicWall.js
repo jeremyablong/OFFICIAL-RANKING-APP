@@ -33,6 +33,8 @@ constructor(props) {
 	user: null,
 	ready: false
   };
+
+
 } 
 	componentDidMount() {
 		const url = "http://recovery-social-media.ngrok.io/get/user/by/username";
@@ -109,7 +111,7 @@ constructor(props) {
 		if (this.state.ready === true) {
 			return (
 				<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={styles.container}>
-		          {this.state.ready ? <ImageBackground resizeMode= 'cover' source={{ uri: this.state.cover !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.cover}` : `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.coverPhoto}` }} style={styles.header}><TouchableOpacity onPress={() => {
+		          {this.state.ready ? <ImageBackground resizeMode='cover' source={{ uri: this.state.cover !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.cover}` : `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.coverPhoto}` }} style={styles.header}><TouchableOpacity onPress={() => {
 		          	console.log("clicked..");
 		          	this._panel.show()
 		          }}><Image style={{ position: "absolute", top: 10, left: 10, width: 55, height: 55, tintColor: "white" }} source={require("../../../../assets/icons/upload-two.png")}/></TouchableOpacity></ImageBackground> : <Fragment><View style={styles.header}></View></Fragment>}
@@ -121,11 +123,13 @@ constructor(props) {
 					    marginLeft: -4,
 					    borderWidth: 4,
 					    borderColor: "white",
-					    paddingRight: 10 }} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic}` }}/>
+					    paddingRight: 10 }} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}` }}/>
 				  </TouchableOpacity>
 		          <View style={styles.body}>
 		            <View style={styles.bodyContent}>
-		              <Text style={styles.name}>{this.state.user ? this.state.user.fullName : "--"}</Text>
+		              {this.state.user.username === this.props.username ? <TouchableOpacity onPress={() => {
+		              	this.props.navigation.navigate("upload-profile-picture", { publicProfile: true });
+		              }} style={{ right: 15, top: -25, position: "absolute" }}><Image style={{ width: 50, height: 50 }} source={require("../../../../assets/icons/ar-camera.png")}/></TouchableOpacity> : null}
 		              <Text style={styles.info}>{this.state.user ? this.state.user.username : "--"}</Text>
 		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              <View style={styles.customContainer}>
@@ -136,8 +140,8 @@ constructor(props) {
 							// do something
 					      }}><Image style={styles.specialBtnTwo} source={require("../../../../assets/icons/more.png")}/></NativeButton>
 					      <NativeButton style={{ width: width * 0.10, backgroundColor: "transparent" }} onPress={() => {
-							// do something
-					      }}><Image style={styles.specialBtnThree} source={require("../../../../assets/icons/special.png")}/></NativeButton>
+							this.props.navigation.navigate("view-instagram-style-images");
+					      }}><Image style={styles.specialBtnThree} source={require("../../../../assets/icons/content.png")}/></NativeButton>
 					    </View>
 		              <TouchableOpacity style={styles.buttonContainer}>
 		                <Text>Option One</Text>  
@@ -219,10 +223,15 @@ constructor(props) {
 							<NativeButton onPress={this.uploadCoverPhoto}>
 								<NativeText style={{ color: "white" }}>Submit Cover Photo</NativeText>
 							 </NativeButton>
+							 <NativeButton style={{ justifyContent: "center", alignItems: "center", alignContent: "center", backgroundColor: "black", marginTop: 50 }} onPress={() => {
+							 	this._panel.hide();
+							 }}><NativeText style={{ color: "white" }}>Close Screen</NativeText>
+							 </NativeButton>
 						 </View>
-			            <Button title='Hide' onPress={() => this._panel.hide()} />
+			            
 			          </View>
 			        </SlidingUpPanel>
+
 			<View style={{ position: "absolute", bottom: 0, width: width }}>
 				<Footer>
 		          <FooterTab>

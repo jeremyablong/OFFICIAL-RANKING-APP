@@ -10,7 +10,7 @@ const S3 = require('aws-sdk/clients/s3');
 const AWS = require('aws-sdk');
 const wasabiEndpoint = new AWS.Endpoint('s3.us-west-1.wasabisys.com');
 const { v4: uuidv4 } = require('uuid');
-
+const moment = require("moment");
 
 const accessKeyId = 'J4FR4IVQL0CV0DFTMYBJ';
 const secretAccessKey = 'wuUJoRXlWkSpVfPusz5XEf3ijhgvRtbwXc4oFofP';
@@ -52,7 +52,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				birthdate,
 				hometown: hometown.trim(),
 				username: username.trim(),
-				profilePic: generatedID,
+				profilePic: [{
+					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+					picture: generatedID,
+					poster: username.trim(),
+					id: uuidv4()
+				}],
 	            id: uuidv4(),
 				profilePicReactions: {
 					laugh: 0,
@@ -140,7 +145,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				birthdate,
 				hometown: hometown.trim(),
 				username: username.trim(),
-				profilePic: generatedID,
+				profilePic: [{
+					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+					picture: generatedID,
+					poster: username.trim(),
+					id: uuidv4()
+				}],
 				id: uuidv4(),
 				profilePicReactions: {
 					laugh: 0,

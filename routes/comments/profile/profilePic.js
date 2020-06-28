@@ -26,7 +26,7 @@ const s3 = new S3({
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
 
-			const { username, comment } = req.body;
+			const { username, comment, id } = req.body;
 
 			const generatedID = uuidv4();
 
@@ -40,12 +40,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 				const { avatar } = req.body;
 
-				collection.findOneAndUpdate({ username }, { $push: { "profilePictureReplies": {
+				collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
 					comment,
 					poster: username,
 					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 					id: uuidv4(),
-					avatar,
+					// maybe take this out???? below...
+					// avatar,
 					postedImage: generatedID
 				}}}, (err, doc) => {
 					if (err) {
@@ -76,7 +77,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 				const bufferImage = new Buffer(req.body.avatar.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
-				collection.findOneAndUpdate({ username }, { $push: { "profilePictureReplies": {
+				collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
 					poster: username,
 					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 					id: uuidv4(),
@@ -106,7 +107,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					}
 				});
 			} else if (comment && !req.body.avatar) {
-				collection.findOneAndUpdate({ username }, { $push: { "profilePictureReplies": {
+				collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
 					comment,
 					poster: username,
 					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),

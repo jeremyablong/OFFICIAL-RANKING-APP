@@ -49,7 +49,7 @@ class SignupPage extends Component {
         console.log("emails MATCH.");
         axios.post("http://recovery-social-media.ngrok.io/register/user", {
           fullName,
-          email,
+          email: email.toLowerCase(),
           password,
           birthdate, 
           base64, 

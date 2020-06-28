@@ -29,6 +29,9 @@ import MessageIndividual from "./components/pages/chat/individual/index.js";
 import ProfileIndividual from "./components/pages/profile/individual.js";
 import PublicWall from "./components/pages/wall/public/publicWall.js";
 import ProfilePicView from "./components/pages/wall/public/profilePicView.js";
+import ImageGalleryWall from "./components/pages/gallery/imageGalleryWall.js";
+import UploadProfilePicPage from "./components/pages/profile/uploadProfilePicPage.js";
+import InstagramFeedPage from "./components/pages/instagram-feed/imageFeed.js";
 
 const Stack = createStackNavigator();
 
@@ -76,6 +79,9 @@ constructor(props) {
             <Stack.Screen name="profile-individual" component={ProfileIndividual} />
             <Stack.Screen name="public-wall" component={PublicWall} />
             <Stack.Screen name="profile-pic-view" component={ProfilePicView} />
+            <Stack.Screen name="image-gallery" component={ImageGalleryWall} />
+            <Stack.Screen name="upload-profile-picture" component={UploadProfilePicPage} />
+            <Stack.Screen name="view-instagram-style-images" component={InstagramFeedPage} />
           </Stack.Navigator>
         </NavigationContainer>
     );
@@ -124,7 +130,7 @@ const mapStateToProps = (state) => {
   console.log(state);
   return {
     intro: state.intro.intro,
-    authenticated: state.auth.authenticated.fullName
+    authenticated: state.auth.authenticated ? state.auth.authenticated.fullName : "--"
   }
 }
 

@@ -222,7 +222,7 @@ class MessageIndividual extends Component {
 	      	return (
 	      	<Fragment>
 	        	<View style={styles.eachMsg}>
-		          <Image source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic}` }} style={styles.userPic} />
+		          <Image source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}` }} style={styles.userPic} />
 		          <View style={styles.msgBlock}>
 		            <Text style={styles.msgTxt}>{item.message}</Text>
 		          </View>
@@ -238,7 +238,7 @@ class MessageIndividual extends Component {
 		          <View style={styles.rightBlock} >
 		            <Text style={styles.rightTxt}>{item.message}</Text>
 		          </View>
-		          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic}` }} style={styles.userPic} />
+		          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} />
 		        </View>
 		       <Text style={{ textAlign: "right", paddingRight: 10 }}>{item.date}</Text>
 		    </Fragment>
@@ -278,16 +278,23 @@ class MessageIndividual extends Component {
 	  }
   }
   componentDidUpdate(prevProps, prevState) {
-  	if (this.state.sureUpdate === true) {
+  	if (this.state.sureUpdate === true && this.state.last) {
 		if (this.userExists(this.state.last)) {
 			return null;
 			console.log("MATCH")
 		} else {
 			console.log("DOESNT match.");
-			this.setState({
-				replies: [ this.state.last, ...this.state.replies ],
-				sureUpdate: false
-			})
+			if (!this.state.replies) {
+				this.setState({
+					replies: [ this.state.last],
+					sureUpdate: false
+				})
+			} else {
+				this.setState({
+					replies: [ this.state.last, ...this.state.replies ],
+					sureUpdate: false
+				})
+			}
 		}
   	}
   }
@@ -368,7 +375,7 @@ class MessageIndividual extends Component {
 			      	return (
 			      	<Fragment>
 			        	<View style={styles.eachMsg}>
-				          <Image source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic}` }} style={styles.userPic} />
+				          <Image source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}` }} style={styles.userPic} />
 				          <View style={styles.msgBlock}>
 				            <Text style={styles.msgTxt}>{item.message}</Text>
 				          </View>
@@ -384,7 +391,7 @@ class MessageIndividual extends Component {
 				          <View style={styles.rightBlock} >
 				            <Text style={styles.rightTxt}>{item.message}</Text>
 				          </View>
-				          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic}` }} style={styles.userPic} />
+				          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} />
 				        </View>
 				       <Text style={{ textAlign: "right", paddingRight: 10 }}>{item.date}</Text>
 				    </Fragment>
@@ -395,7 +402,7 @@ class MessageIndividual extends Component {
 		          <View style={styles.rightBlock} >
 		            <Text style={styles.rightTxt}>{this.state.first.message}</Text>
 		          </View>
-		          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic}` }} style={styles.userPic} />
+		          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} />
 		        </View></Fragment></ScrollView> : null}
             <View style={this.state.align ? styles.loadedInput : styles.input}>
             <KeyboardAvoidingView style={{ flex: 1 }} 
@@ -636,7 +643,7 @@ const mapStateToProps = state => {
 	console.log("state", state);
 	return {
 		id: state.auth.authenticated.id,
-		profilePic: state.auth.authenticated.profilePic,
+		profilePic: state.auth.authenticated.profilePic ? state.auth.authenticated.profilePic[state.auth.authenticated.profilePic.length - 1] : null,
 		username: state.auth.authenticated.username
 	}
 }

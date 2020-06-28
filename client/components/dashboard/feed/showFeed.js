@@ -14,7 +14,7 @@ import {
   ScrollView, 
   FlatList
 } from 'react-native';
-import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, Footer, FooterTab } from 'native-base';
+import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, Footer, FooterTab, Badge } from 'native-base';
 import StoriesComponent from "..//stories/index.js";
 import axios from "axios";
 import Modal from 'react-native-modal';
@@ -152,11 +152,12 @@ constructor(props) {
 							horizontal
 					        data={this.state.entries}
 					        renderItem={({ item }) => {
+					        	console.log("iiii :", item);
 								return (
 									<View style={styles.box}>
 										<Image 
 										    style={{width: 60, height: 60, borderRadius: 40 / 2, marginLeft: 6, marginRight: 6 }} 
-										    source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic}` }}
+										    source={{ uri: this.props.profilePic ? `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` : "" }}
 										/>
 									</View>
 								);
@@ -167,7 +168,7 @@ constructor(props) {
 					{this.renderModalPost()}
 					<TouchableOpacity>
 				        <View style={styles.rowTwo}>
-				          <Image source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic}` }} style={styles.pic} />
+				          <Image source={{ uri: this.props.profilePic ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` : "" }} style={styles.pic} />
 				          <View style={{ marginLeft: 0 }}>
 				            <View style={styles.nameContainer}>
 				              <NativeButton onPress={() => {
@@ -434,8 +435,14 @@ const styles = StyleSheet.create({
   }
 });
 const mapStateToProps = state => {
-	return {
-		profilePic: state.auth.authenticated.profilePic
+	if (state.auth.authenticated.username) {
+		return {
+			profilePic: state.auth.authenticated.profilePic ? state.auth.authenticated.profilePic[state.auth.authenticated.profilePic.length - 1] : []
+		}
+	} else {
+		return {
+			
+		}
 	}
 }
 export default connect(mapStateToProps, {  })(ShowFeedList);

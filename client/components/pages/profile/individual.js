@@ -12,7 +12,8 @@ import {
   ImageBackground, 
   Dimensions, 
   ScrollView, 
-  FlatList
+  FlatList, 
+  Keyboard
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab } from 'native-base';
 import axios from "axios";
@@ -178,10 +179,13 @@ constructor(props) {
 					    marginLeft: -4,
 					    borderWidth: 4,
 					    borderColor: "white",
-					    paddingRight: 10 }} source={{ uri: user !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${user.profilePic}` : 'https://bootdey.com/img/Content/avatar/avatar6.png' }}/>
+					    paddingRight: 10 }} source={{ uri: user !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${user.profilePic[user.profilePic.length - 1].picture}` : 'https://bootdey.com/img/Content/avatar/avatar6.png' }}/>
 				  </TouchableOpacity>
 		          <View style={styles.body}>
 		            <View style={styles.bodyContent}>
+		            {this.state.user !== null && (this.state.user.username === this.props.username) ? <TouchableOpacity onPress={() => {
+		              	this.props.navigation.navigate("upload-profile-picture", { publicProfile: false });
+		              }} style={{ right: 15, top: -25, position: "absolute" }}><Image style={{ width: 50, height: 50 }} source={require("../../../assets/icons/ar-camera.png")}/></TouchableOpacity> : null}
 		              <Text style={styles.name}>{user !== null ? user.fullName : "--"}</Text>
 		              <Text style={styles.info}>{user !== null ? user.username : "--"}</Text>
 		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
@@ -205,8 +209,11 @@ constructor(props) {
 				   onPhotoSelect={avatar => {
 				     if (avatar) {
 				       console.log('Image base64 string: ', avatar);
+
 				       this.setState({
 				       	avatar
+				       }, () => {
+				       	Keyboard.dismiss();
 				       })
 				     }
 				   }}

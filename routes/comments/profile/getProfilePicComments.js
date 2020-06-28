@@ -10,27 +10,24 @@ const moment = require("moment");
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
 
-			const { username } = req.body;
+			const { username, id } = req.body;
 
 			const collection = db.collection("users");
 
-			console.log("req.body", req.body);
+			// console.log("req.body", req.body);
 
 			let replies = [];
 
-			collection.findOne({ username }, { profilePictureReplies: true }).then((user) => {
+			collection.findOne({ "profilePic.id": id }).then((user) => {
 				if (user) {
 					console.log("user found... :", user);
-					if (user.profilePictureReplies) {
-						for (var i = 0; i < user.profilePictureReplies.length; i++) {
-							replies.push(user.profilePictureReplies[i]);
-						}
-					}
+					
+					const last = user.profilePic[user.profilePic.length - 1].replies;
 
 					res.json({
 						message: "Here is your users profile picture comments...",
 						user,
-						replies: replies.reverse()
+						replies: last.reverse()
 					})
 				} else {
 					res.json({

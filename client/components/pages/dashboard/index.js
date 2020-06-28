@@ -12,7 +12,8 @@ import {
   ImageBackground, 
   Dimensions, 
   ScrollView, 
-  FlatList
+  FlatList, 
+  Keyboard
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import { connect } from "react-redux";
@@ -45,7 +46,7 @@ constructor(props) {
 			axios.post("http://recovery-social-media.ngrok.io/get/specific/user", {
 				searchValue: this.state.searchValue.toLowerCase()
 			}).then((res) => {
-				console.log(res.data);
+				console.log("RRRR :", res.data);
 				if (res.data.message === "FOUND user!") {
 					this.setState({
 						people: [res.data.user]
@@ -113,7 +114,7 @@ constructor(props) {
         </Header>
         <SearchBar 
 		  ref="searchBar"
-		  placeholder="Search by USER-NAME..."
+		  placeholder="Search by user-name..."
 		  onChangeText={(value) => {
 		  	this.setState({
 		  		searchValue: value,
@@ -131,7 +132,7 @@ constructor(props) {
 		        	return (
 						<ListItem thumbnail>
 			              <Left>
-			                <Thumbnail square source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic}` }} />
+			                <Thumbnail square source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} />
 			              </Left>
 			              <Body>
 			                <NativeText>{item.username}</NativeText>
@@ -139,6 +140,7 @@ constructor(props) {
 			              </Body>
 			              <Right>
 			                <NativeButton onPress={() => {
+			                	Keyboard.dismiss();
 								this.props.navigation.navigate("profile-individual", { user: item });
 			                }} transparent>
 			                  <NativeText>View</NativeText>
@@ -348,8 +350,14 @@ const styles = StyleSheet.create({
 })
 const mapStateToProps = state => {
 	console.log(state);
-	return {
-		profilePic: state.auth.authenticated.profilePic
+	if (state.auth.authenticated.username) {
+		return {
+			profilePic: state.auth.authenticated.profilePic ? state.auth.authenticated.profilePic[state.auth.authenticated.profilePic.length - 1] : []
+		}
+	} else {
+		return {
+			
+		}
 	}
 }
  

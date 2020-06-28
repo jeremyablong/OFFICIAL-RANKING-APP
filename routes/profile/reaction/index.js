@@ -14,7 +14,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			
 
 			// deconstruct username + reaction response
-			const { username, reaction, user } = req.body;
+			const { username, reaction, user, id } = req.body;
 
 			const collection = db.collection("users");
 
@@ -22,11 +22,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			const generatedID = uuidv4();
 
-			collection.findOneAndUpdate({ username }, { $inc: { [`profilePicReactions.${reaction}`]: 1 }}, (err, doc) => {
+			collection.findOneAndUpdate({ "profilePic.id": id }, { $inc: { [`profilePic.$.reactions.${reaction}`]: 1 }}, (err, doc) => {
 				if (err) {
 					console.log(err);
 				} else {
-					collection.findOneAndUpdate({ username }, { $push: { profilePicLikes: { 
+					console.log("doc !:", doc);
+					collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.likes": { 
 						posterUsername: user,
 						reaction,
 						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),

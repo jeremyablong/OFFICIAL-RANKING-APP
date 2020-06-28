@@ -77,7 +77,7 @@ constructor(props) {
 						console.log("PICTURE :", picture);
 						
 						// append picture to object
-						message["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+						message["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture[picture.length - 1].picture}`;
 
 						this.setState({
 		  					messages: [...this.state.messages]
@@ -94,7 +94,7 @@ constructor(props) {
 	  				ready: true
 	  			})
 	  		} else {
-	  			console.log("uh oh.");
+	  			alert(res.data.message);
 	  		}
 	  	}).catch((err) => {
 	  		console.log("ERROR :", err);

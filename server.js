@@ -45,7 +45,10 @@ app.use("/upload/cover/photo", require("./routes/coverPhoto/uploadCoverPhoto.js"
 app.use("/post/profile/pic/comment", require("./routes/comments/profile/profilePic.js"));
 app.use("/gather/profile/pic/comments", require("./routes/comments/profile/getProfilePicComments.js"));
 app.use("/react/to/profile/picture", require("./routes/profile/reaction/index.js"));
-
+app.use("/post/new/profile/picture/page", require("./routes/profile/pictures/uploadProfilePictureAgain.js"));
+app.use("/organize/single/user/data", require("./routes/singleUser/organizeSingleUser.js"));
+app.use("/gather/profile/pictures/gallery", require("./routes/profile/pictures/gatherAllPictureGallery.js"));
+app.use("/gather/profile/pictures/gallery/slide", require("./routes/profile/pictures/findByIndex.js"));
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {
     if (err) {
