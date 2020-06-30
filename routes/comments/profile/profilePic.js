@@ -30,6 +30,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			const generatedID = uuidv4();
 
+			const firstID = uuidv4();
+
+			const secondID = uuidv4();
+
+			const thirdID = uuidv4();
+
 			const collection = db.collection("users");
 
 			console.log("req.body", req.body);
@@ -44,7 +50,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					comment,
 					poster: username,
 					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-					id: uuidv4(),
+					id: firstID,
 					// maybe take this out???? below...
 					// avatar,
 					postedImage: generatedID
@@ -67,7 +73,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						  	res.json({
 								message: "Successfully posted new comment!",
 								doc,
-								image: generatedID
+								image: generatedID,
+								newly: {
+									comment,
+									picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
+									poster: username,
+									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+									id: firstID
+								}
 							})
 						});
 						
@@ -80,7 +93,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
 					poster: username,
 					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-					id: uuidv4(),
+					id: secondID,
 					postedImage: generatedID
 				}}}, (err, doc) => {
 					if (err) {
@@ -101,7 +114,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						  	res.json({
 								message: "Successfully posted new comment!",
 								doc,
-								image: generatedID
+								image: generatedID,
+								newly: {
+									poster: username,
+									picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
+									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+									id: secondID,
+									postedImage: generatedID
+								}
 							})
 						});
 					}
@@ -111,7 +131,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					comment,
 					poster: username,
 					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-					id: uuidv4()
+					id: thirdID
 				}}}, (err, doc) => {
 					if (err) {
 						console.log(err);
@@ -119,7 +139,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						console.log(doc);
 						res.json({
 							message: "Successfully posted new comment!",
-							doc
+							doc,
+							newly: {
+								comment,
+								picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
+								poster: username,
+								date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+								id: thirdID
+							}
 						})
 					}
 				});

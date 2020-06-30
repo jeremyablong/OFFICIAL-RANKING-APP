@@ -164,9 +164,10 @@ constructor(props) {
 	              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/home-run.png")} />
 	            </NativeButton>
 	            <NativeButton onPress={() => {
-		            	this.props.navigation.navigate("dashboard");
+		            	this.props.navigation.navigate("notifications");
 		            }}>
-	               <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/sport-team.png")} />
+		            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
+	               <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/notification.png")} />
 	            </NativeButton>
 	            <NativeButton onPress={() => {
 		            	this.props.navigation.navigate("chat-users");

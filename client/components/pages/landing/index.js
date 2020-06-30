@@ -51,7 +51,7 @@ constructor(props) {
             </NativeButton>
           </Right>
         </Header>
-      <ImageBackground source={require("../../../assets/images/group-one.jpg")} style={styles.background}>
+      <ImageBackground source={require("../../../assets/images/woman.jpg")} style={styles.background}>
       <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', padding: 10, marginBottom: 30 }}>
         <Text style={{ marginBottom: 14, fontWeight: "bold", fontSize: 24, color: "white", textAlign: "center" }}>What would you like to do?</Text>
       </View>

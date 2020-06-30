@@ -156,9 +156,9 @@ class SignupPage extends Component {
             </NativeButton>
           </Right>
         </Header>
-      <ImageBackground source={require("../../../assets/images/abstract.jpg")} style={styles.container}>
+      <ImageBackground source={require("../../../assets/images/man-med.jpg")} style={styles.container}>
       <ScrollView style={{ flex: 1, marginTop: 40, marginBottom: 40 }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
-      <Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>First & Last Name</Text>
+      <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>First & Last Name</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={require("../../../assets/icons/name.png")}/>
           <TextInput style={styles.inputs}
@@ -169,7 +169,7 @@ class SignupPage extends Component {
               })}/>
         </View>
         
-        {this.state.showEmail === true ? <React.Fragment><Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Phone Number</Text><View style={styles.inputContainer}>
+        {this.state.showEmail === true ? <React.Fragment><Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Phone Number</Text><View style={styles.inputContainer}>
           <TouchableOpacity onPress={() => {
             this.setState({
               showEmail: !this.state.showEmail,
@@ -185,7 +185,7 @@ class SignupPage extends Component {
                 phoneNumber
               })}/>
         </View>
-        <Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Re-Enter Phone #</Text>
+        <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Re-Enter Phone #</Text>
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={() => {
             this.setState({
@@ -201,7 +201,7 @@ class SignupPage extends Component {
               onChangeText={(phoneNumberReEnter) => this.setState({
                 phoneNumberReEnter
               })}/>
-        </View></React.Fragment> : <React.Fragment><Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Email Address</Text><View style={styles.inputContainer}>
+        </View></React.Fragment> : <React.Fragment><Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Email Address</Text><View style={styles.inputContainer}>
           <TouchableOpacity onPress={() => {
             this.setState({
               showEmail: !this.state.showEmail,
@@ -217,7 +217,7 @@ class SignupPage extends Component {
                 email
               })}/>
         </View>
-        <Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Re-Enter Email</Text>
+        <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Re-Enter Email</Text>
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={() => {
             this.setState({
@@ -234,7 +234,7 @@ class SignupPage extends Component {
                 emailReEnter
               })}/>
         </View></React.Fragment>}
-        <Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Password</Text>
+        <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Password</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={require("../../../assets/icons/login.png")}/>
           <TextInput style={styles.inputs}
@@ -245,7 +245,7 @@ class SignupPage extends Component {
                 password
               })}/>
         </View>
-        <Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Birthdate</Text>
+        <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Birthdate</Text>
         <View style={styles.inputContainer}>
           <DatePicker
           style={{width: 250}}
@@ -275,7 +275,7 @@ class SignupPage extends Component {
             })}}
         />
         </View>
-        <Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10 , paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Username</Text>
+        <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10 , paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Username</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={require("../../../assets/icons/user.png")}/>
           <TextInput style={styles.inputs}
@@ -285,7 +285,7 @@ class SignupPage extends Component {
                 username
               })}/>
         </View>
-        <Text style={{ textAlign: "left", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Hometown</Text>
+        <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Hometown</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={require("../../../assets/icons/real.png")}/>
           <TextInput style={styles.inputs}
@@ -299,7 +299,7 @@ class SignupPage extends Component {
         
        
         <View style={{ marginBottom: 30 }}>
-        <Text style={{ textAlign: "left", fontSize: 24, fontWeight: "bold", marginBottom: 20 , paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Select a profile picture</Text>
+        <Text style={{ textAlign: "left", fontSize: 24, fontWeight: "bold", marginBottom: 20 , paddingLeft: 5, paddingTop: 7, paddingBottom: 5, color: "white"}}>Select a profile picture</Text>
           <PhotoUpload
            onPhotoSelect={avatar => {
              if (avatar) {

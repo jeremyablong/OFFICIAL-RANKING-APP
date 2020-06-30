@@ -26,6 +26,8 @@ import { connect } from "react-redux";
 import Modal from 'react-native-modal';
 import { Rating, AirbnbRating } from 'react-native-ratings';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import Popover from 'react-native-popover-view';
+import LoadingWall from "../wall/loading.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -54,22 +56,36 @@ constructor(props) {
   	happy: 0, 
   	overall: 0,
   	dragPanel: false,
-  	selected: null
+  	selected: null,
+  	index: 0,
+  	showPopover: false,
+  	likes: [],
+  	loading: true,
+  	display: null
   };
-  this._panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: this._onGrant,
-    onPanResponderRelease: this._onRelease,
-    onPanResponderTerminate: this._onRelease,
-  });
-}
-	_onGrant = () => {
-	  this.setState({ dragPanel: false });
-	  return true;
-	}
+  	const touchThreshold = 20;
+	this._panResponder = PanResponder.create({
+		    onStartShouldSetPanResponder : () => false,
+		    onMoveShouldSetPanResponder : (e, gestureState) => {
+		        const {dx, dy} = gestureState;
 
-	_onRelease = () => {
-	  this.setState({ dragPanel: true });
-	}
+		        return (Math.abs(dx) > touchThreshold) || (Math.abs(dy) > touchThreshold);
+    	}
+	});
+  // this._panResponder = PanResponder.create({
+  //   onMoveShouldSetPanResponder: this._onGrant,
+  //   onPanResponderRelease: this._onRelease,
+  //   onPanResponderTerminate: this._onRelease,
+  // });
+}
+	// _onGrant = () => {
+	//   this.setState({ dragPanel: false });
+	//   return true;
+	// }
+
+	// _onRelease = () => {
+	//   this.setState({ dragPanel: true });
+	// }
 	componentDidMount() {
 	  axios.post("http://recovery-social-media.ngrok.io/gather/profile/pictures/gallery", {
 		username: this.props.route.params.user.username,
@@ -108,13 +124,12 @@ constructor(props) {
 	  			}
 	  		})
 	  	}
+	  	this.setState({
+	  		ready: true
+	  	})
 	  }).catch((err) => {
 	  	console.log(err);
 	  });
-
-	  this.setState({
-	  	ready: true
-	  })
 	}	
 	gatherDataForPicture = () => {
 		console.log("ran...");
@@ -149,6 +164,10 @@ constructor(props) {
 				  					console.log("FAILURE :", err);
 				  				})
 			  				}
+
+			  				this.setState({
+			  					loading: false
+			  				})
 			  			}
 			  		})
 		  		} else {
@@ -190,7 +209,7 @@ constructor(props) {
 			if (avatar !== null && comment.length > 0) {
 				axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
 					comment,
-					username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+					username: this.props.username,
 					avatar,
 					id: this.state.id
 				}).then((res) => {
@@ -208,7 +227,7 @@ constructor(props) {
 				})
 			} else if (avatar !== null && comment.length === 0) {
 				axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
-					username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+					username: this.props.username,
 					avatar,
 					id: this.state.id
 				}).then((res) => {
@@ -226,7 +245,7 @@ constructor(props) {
 				})
 			} else if (comment.length > 0 && avatar === null) {
 				axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
-					username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+					username: this.props.username,
 					comment, 
 					id: this.state.id
 				}).then((res) => {
@@ -405,16 +424,53 @@ constructor(props) {
 		}
 	}
 	likeCommentRespond = () => {
-		// this.state.selected === item
+		// this.state.selected === item 
+		let bool = false;
+
+		// bool - returns false if not met...
 		console.log('liked...', this.state.selected);
-		axios.post("http://recovery-social-media.ngrok.io/like/subcomment/respond", {
-			username: this.props.username,
-			id: this.state.selected.id
-		}).then((res) => {
-			console.log(res.data);
-		}).catch((err) => {
-			console.log(err);
-		})
+		if (this.state.selected.likes) {
+			bool = this.state.selected.likes.some((o) => {
+				console.log("0 :", o);
+				if (o["likedBy"] === this.props.username) {
+					return true;
+				} else {
+					return false;
+				}
+			})
+		}
+
+		if (bool === true) {
+			axios.post("http://recovery-social-media.ngrok.io/like/subcomment/respond", {
+				username: this.props.username,
+				id: this.state.selected.id,
+				receiver: this.state.selected,
+				exists: true
+			}).then((res) => {
+				console.log(res.data);
+				if (res.data.message === "Successfully liked this comment!") {
+					row[this.state.index].close();
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+		} else {
+			axios.post("http://recovery-social-media.ngrok.io/like/subcomment/respond", {
+				username: this.props.username,
+				id: this.state.selected.id,
+				receiver: this.state.selected,
+				exists: false
+			}).then((res) => {
+				console.log(res.data);
+				if (res.data.message === "Successfully liked this comment!") {
+					row[this.state.index].close();
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+		}
+
+		console.log(bool);
 	}
 	replyToCommentRespond = () => {
 		// this.state.selected === item
@@ -444,64 +500,36 @@ constructor(props) {
 	    }
 	    prevOpenedRow = row[index];
 	}
-	render() {
+	loadImage = (like) => {
+		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+			username: like.likedBy
+		}).then((res) => {
+			const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+			// append picture to object
+			like["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
 		
-		console.log("This state... :", this.state);
+		}).catch((err) => {
+			console.log("FAILURE :", err);
+		})
 		return (
-			<Fragment>
-			<Header>
-	          <Left>
-	            <NativeButton onPress={() => {
-	              this.props.navigation.navigate("public-wall");
-	            }} hasText transparent>
-	              <NativeText>Back</NativeText>
-	            </NativeButton>
-	          </Left>
-	          <Body>
-	            <Title>Gallery</Title>
-	          </Body>
-	          <Right>
-	            <NativeButton hasText transparent>
-	              <NativeText>help?</NativeText>
-	            </NativeButton>
-	          </Right>
-	        </Header>
-				{this.state.ready ? this.renderContent() : null}
-		    <View style={{ position: "absolute", bottom: 0, width: width }}>
-				<Footer>
-		          <FooterTab>
-		            <NativeButton badge onPress={() => {
-			            	this.props.navigation.navigate("dashboard");
-			            }}>
-			            <Badge style={{ marginBottom: 0 }}><NativeText>51</NativeText></Badge>
-		              	<NativeText>Comments</NativeText>
-		            </NativeButton>
-		            <NativeButton badge onPress={() => {
-			            	this.props.navigation.navigate("dashboard");
-			            }}>
-			            <Badge style={{ marginBottom: 0 }}><NativeText>106</NativeText></Badge>
-		               <NativeText>Likes</NativeText>
-		            </NativeButton>
-		            <NativeButton onPress={() => {
-			            	this.props.navigation.navigate("chat-users");
-			            }}>
-			            
-		              <NativeText>Share</NativeText>
-		            </NativeButton>
-		            
-		          </FooterTab>
-		        </Footer>
-			</View>
-			{this.handleReviews()}
-				<SlidingUpPanel allowDragging={this.state.dragPanel} ref={c => this._panel = c}>
+			<TouchableOpacity onPress={() => {
+		      	console.log("picture clicked...");
+		    }}>
+		        <Image style={styles.image} source={{uri: like.picture }}/>
+	    	</TouchableOpacity>
+		);
+	}
+	renderSlideUpContent = () => {
+		if (this.state.loading === false  && this.state.ready === true) {
+			return (
 		          <ScrollView {...this._panResponder.panHandlers} style={styles.containerModal}>
 					<View style={{ marginTop: 50 }}>
-
+						<Button title='Hide' onPress={() => this._panel.hide()} />
 						<AutoGrowingTextInput onChangeText={(value) => {
 							this.setState({
 								comment: value
 							})
-						}} placeholderTextColor='black' style={styles.textInput} placeholder={'Your your Comment/Message Here...'} />
+						}} placeholderTextColor='black' style={styles.textInput} placeholder={'Enter your Comment/Message Here...'} />
 						<View style={styles.containerTwoRow}>
 							<PhotoUpload
 								   onPhotoSelect={avatar => {
@@ -568,7 +596,8 @@ constructor(props) {
 		            		this.closeRow(index);
 		            		// set to state so accessible in functions to respond to comment
 		            		this.setState({
-		            			selected: item
+		            			selected: item,
+		            			index
 		            		})
 		            	}} renderRightActions={this.RightActions}>
 							<View style={styles.container}>
@@ -586,7 +615,52 @@ constructor(props) {
 				                    {item.date}
 				                  </Text>
 				                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
-				               	
+				               	{item.likes.length > 0 ? <Popover
+							      isVisible={this.state.showPopover}
+							      onRequestClose={() => {
+							      	this.setState({
+							      		showPopover: false
+							      	})
+							      }}
+							      from={(
+							        <TouchableOpacity onPress={() => {
+							        	console.log("B-I-N-G-O: ", item);
+							        	this.setState({
+								      		showPopover: true,
+								      		display: item.likes
+								      	})
+							        }}>
+							          <Text style={{ color: "red" }}>View Reactions</Text>
+							        </TouchableOpacity>
+							      )}>
+							      <NativeButton onPress={() => {
+							      	this.setState({
+							      		showPopover: false,
+							      		display: null
+							      	})
+							      }} style={{ alignItems: "center", justifyContent: "center", backgroundColor: "black", alignContent: "center" }}>
+									<NativeText style={{ color: "white" }}>Close</NativeText>
+							      </NativeButton>
+							      <ScrollView style={{ width: width * 0.90, height: height, backgroundColor: "white" }}>
+							      {this.state.display !== null ? this.state.display.map((like, indexxx) => {
+							      		return (
+											<View key={indexxx} style={styles.container}>
+								              {this.loadImage(like)}
+								              <View style={styles.content}>
+								                <View style={styles.contentHeader}>
+								                  <Text style={{ color: "black" }}>{like.likedBy}</Text>
+								                  
+								                </View>
+								                <Text style={styles.time}>
+								                    {like.date}
+								                  </Text>
+								              </View>
+											  
+								            </View>
+								      	);
+							      }) : console.log("display === null")}
+							      </ScrollView>
+							    </Popover> : null}
 				              </View>
 							  
 				            </View>
@@ -598,6 +672,61 @@ constructor(props) {
 		       		: null }
 		            <Button title='Hide' onPress={() => this._panel.hide()} />
 		          </ScrollView>
+			);
+		} else {
+			return <LoadingWall />;
+		}
+	}
+	render() {
+		console.log("This state... :", this.state);
+		return (
+			<Fragment>
+			<Header>
+	          <Left>
+	            <NativeButton onPress={() => {
+	              this.props.navigation.navigate("profile-pic-view");
+	            }} hasText transparent>
+	              <NativeText>Back</NativeText>
+	            </NativeButton>
+	          </Left>
+	          <Body>
+	            <Title>Gallery</Title>
+	          </Body>
+	          <Right>
+	            <NativeButton hasText transparent>
+	              <NativeText>help?</NativeText>
+	            </NativeButton>
+	          </Right>
+	        </Header>
+				{this.state.ready ? this.renderContent() : null}
+		    <View style={{ position: "absolute", bottom: 0, width: width }}>
+				<Footer>
+		          <FooterTab>
+		            <NativeButton badge onPress={() => {
+			            	this.props.navigation.navigate("dashboard");
+			            }}>
+			            <Badge style={{ marginBottom: 0 }}><NativeText>51</NativeText></Badge>
+		              	<NativeText>Comments</NativeText>
+		            </NativeButton>
+		            <NativeButton badge onPress={() => {
+			            	this.props.navigation.navigate("dashboard");
+			            }}>
+			            <Badge style={{ marginBottom: 0 }}><NativeText>106</NativeText></Badge>
+		               <NativeText>Likes</NativeText>
+		            </NativeButton>
+		            <NativeButton onPress={() => {
+			            	this.props.navigation.navigate("chat-users");
+			            }}>
+			            
+		              <NativeText>Share</NativeText>
+		            </NativeButton>
+		            
+		          </FooterTab>
+		        </Footer>
+			</View>
+			{this.handleReviews()}
+				<SlidingUpPanel allowDragging={this.state.dragPanel} ref={c => this._panel = c}>
+					{this.renderSlideUpContent()}
 		        </SlidingUpPanel>
 			</Fragment>
 		)

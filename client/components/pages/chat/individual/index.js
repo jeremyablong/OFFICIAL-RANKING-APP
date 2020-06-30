@@ -33,6 +33,9 @@ const socket = io('https://recovery-social-media.ngrok.io', {
 	transport: ['websocket']
 });
 
+
+
+
 class MessageIndividual extends Component {
   constructor(props) {
     super(props);

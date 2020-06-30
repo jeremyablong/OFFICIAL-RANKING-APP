@@ -26,8 +26,13 @@ import PhotoUpload from 'react-native-photo-upload';
 import LoadingWall from "../loading.js";
 import Modal from 'react-native-modal';
 import { Rating, AirbnbRating } from 'react-native-ratings';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
+
 
 const { width, height } = Dimensions.get("window");
+
+let row = [];
+let prevOpenedRow;
 
 class ProfilePicView extends Component {
 constructor(props) {
@@ -62,23 +67,40 @@ constructor(props) {
   	offensive: 0, 
   	relevant: 0, 
   	happy: 0, 
-  	overall: 0
+  	overall: 0,
+  	selected: null,
+  	index: 0,
+  	sum: 0,
+  	display: null,
+  	showPopoverTwo: false,
+  	loading: true
   };
 
-  this._panResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: this._onGrant,
-    onPanResponderRelease: this._onRelease,
-    onPanResponderTerminate: this._onRelease,
-  });
-}
-	_onGrant = () => {
-	  this.setState({ dragPanel: false });
-	  return true;
-	}
+  	const touchThreshold = 20;
+	this._panResponder = PanResponder.create({
+		    onStartShouldSetPanResponder : () => false,
+		    onMoveShouldSetPanResponder : (e, gestureState) => {
+		        const {dx, dy} = gestureState;
 
-	_onRelease = () => {
-	  this.setState({ dragPanel: true });
+		        return (Math.abs(dx) > touchThreshold) || (Math.abs(dy) > touchThreshold);
+	    }
+    });
+
+}
+	closeRow = (index) => {
+	    if (prevOpenedRow && prevOpenedRow !== row[index]) {
+			prevOpenedRow.close();
+	    }
+	    prevOpenedRow = row[index];
 	}
+	// _onGrant = () => {
+	//   this.setState({ dragPanel: false });
+	//   return true;
+	// }
+
+	// _onRelease = () => {
+	//   this.setState({ dragPanel: true });
+	// }
 	handleCommentSubmission = () => {
 
 		const { avatar, comment } = this.state;
@@ -89,14 +111,16 @@ constructor(props) {
 		if (avatar !== null && comment.length > 0) {
 			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
 				comment,
-				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+				username: this.props.username,
 				avatar,
 				id: previousID
 			}).then((res) => {
 				if (res.data.message === "Successfully posted new comment!") {
-					console.log(res.data);
+					console.log("MAGIC :", res.data);
+
 					this.setState({
-						comment: ""
+						comment: "",
+						replies: [ res.data.newly, ...this.state.replies ]
 					}, () => {
 						this._panel.hide();
 						alert("You've successfully messaged commented on this picture!")
@@ -107,14 +131,15 @@ constructor(props) {
 			})
 		} else if (avatar !== null && comment.length === 0) {
 			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
-				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+				username: this.props.username,
 				avatar,
 				id: previousID
 			}).then((res) => {
 				if (res.data.message === "Successfully posted new comment!") {
-					console.log(res.data);
+					console.log("MAGIC :", res.data);
 					this.setState({
-						comment: ""
+						comment: "",
+						replies: [ res.data.newly, ...this.state.replies ]
 					}, () => {
 						this._panel.hide();
 						alert("You've successfully messaged commented on this picture!")
@@ -125,14 +150,15 @@ constructor(props) {
 			})
 		} else if (comment.length > 0 && avatar === null) {
 			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
-				username: (this.props.username === this.props.route.params.user.username) ? this.props.username : this.props.route.params.user.username,
+				username: this.props.username,
 				comment, 
 				id: previousID
 			}).then((res) => {
 				if (res.data.message === "Successfully posted new comment!") {
-					console.log(res.data);
+					console.log("MAGIC :", res.data);
 					this.setState({
-						comment: ""
+						comment: "",
+						replies: [ res.data.newly, ...this.state.replies ]
 					}, () => {
 						this._panel.hide();
 						alert("You've successfully messaged commented on this picture!")
@@ -177,7 +203,8 @@ constructor(props) {
 		  				})
 					}
 					this.setState({
-						concatenated: true
+						concatenated: true,
+						loading: false
 					})
 				});
 			}
@@ -217,11 +244,13 @@ constructor(props) {
 				console.log(res.data);
 				this.setState({
               		showPopover: false,
-              		update: true
+              		update: true,
+              		sum: this.state.sum + 1,
+              		alreadyLiked: true
               	});
 
               	setTimeout(() => {
-					alert(res.data.message);
+					alert("You've successfully liked this post!");
               	}, 2000)
 				
 			}
@@ -229,13 +258,7 @@ constructor(props) {
 			console.log(err);
 		})
 	}
-	componentDidUpdate(prevProps, prevState) {
-		if (prevState.update !== this.state.update) {
-			this.setState({
-				alreadyLiked: true
-			})
-		}
-	}
+
 	renderLikesOrNot = () => {
 		if (this.state.likes && !this.state.alreadyLiked) {
 			for (var i = 0; i < this.state.likes.length; i++) {
@@ -254,14 +277,22 @@ constructor(props) {
 		}
 	}
 	calculateLikes = () => {
-		let sum = 0;
+
 		if (this.state.ready === true && this.state.reactions) {
 			let values = Object.values(this.state.reactions);
 			
 			for (var i = 0; i < values.length; i++) {
-				sum += values[i];
+				this.setState({
+					sum: this.state.sum += values[i]
+				});
 			}
-			return sum.toString();
+			this.setState({
+				calculated: true
+			})
+
+			return this.state.sum.toString();
+
+
 		}
 		else {
 			return 0;
@@ -284,7 +315,7 @@ constructor(props) {
 			        		showPopover: true
 			        	})
 			        }}>
-			       <Badge style={styles.badgeLike}><NativeText>{this.calculateLikes()}</NativeText></Badge>
+			       <Badge style={styles.badgeLike}><NativeText>{this.state.calculated === true ? this.state.sum : this.calculateLikes()}</NativeText></Badge>
 		            
 		            <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/like.png")} />
 			        </NativeButton>
@@ -339,17 +370,65 @@ constructor(props) {
 			        		showPopover: true
 			        	})
 			        }}>
-			        <Badge style={styles.badgeLike}><NativeText>{this.calculateLikes()}</NativeText></Badge>
+			        <Badge style={styles.badgeLike}><NativeText>{this.state.calculated === true ? this.state.sum : this.calculateLikes()}</NativeText></Badge>
 		            
 		            <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/like.png")} />
 			        </NativeButton>
 			      )}>
 				     <View style={{ height: "100%", width: 300, backgroundColor: "white", flex: 1, flexDirection: 'row', justifyContent: 'space-between', paddingTop: 10, paddingBottom: 10 }}>
 				      	<NativeText style={{ padding: 10, fontWeight: "bold", color: "darkred", fontSize: 20 }}>You have already like/reacted to this post...</NativeText>
+
 			     	 </View>
+			     	 <TouchableOpacity onPress={() => {
+			     	 	this.unlikePicture();
+			     	 }}><Image style={{ width: 50, height: 50, left: 10, bottom: 10 }} source={require("../../../../assets/icons/undo.png")} /></TouchableOpacity>
 				</Popover>
 			);
 		}
+	}
+	unlikePicture = () => {
+		console.log('liked...', this.props.route.params.user.profilePic[this.props.route.params.user.profilePic.length - 1].poster);
+
+		let bool = false;
+
+		const likes = this.props.route.params.user.profilePic[this.props.route.params.user.profilePic.length - 1].likes;
+
+		if (likes) {
+			bool = likes.some((o) => {
+				console.log("0 :", o);
+				if (o["posterUsername"] === this.props.username) {
+					return true;
+				} else {
+					return false;
+				}
+			})
+		}
+
+		console.log(bool);
+
+		if (bool === true) {
+			axios.post("http://recovery-social-media.ngrok.io/latest/profile/picture/unlike", {
+				username: this.props.username,
+				poster: this.props.route.params.user.profilePic[this.props.route.params.user.profilePic.length - 1].poster,
+				exists: true,
+				id: this.props.route.params.user.profilePic[this.props.route.params.user.profilePic.length - 1].id
+			}).then((res) => {
+				console.log(res.data);
+				if (res.data.message === "Successfully modified data and removed like...") {
+					this.setState({
+	              		showPopover: false,
+	              		sum: this.state.sum - 1,
+	              		alreadyLiked: false
+	              	})
+					setTimeout(() => {
+						alert("You've unliked this post.");
+					}, 1000);
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+		} 
+
 	}
 	calculateComments = () => {
 		return this.state.replies.length;
@@ -512,6 +591,209 @@ constructor(props) {
 			);
 		}
 	}
+	likeCommentRespond = () => {
+		// this.state.selected === item 
+
+		// bool - returns false if not met...
+		console.log('liked...', this.state.selected);
+		const bool = this.state.selected.likes.some((o) => {
+			console.log("0 :", o);
+			if (o["likedBy"] === this.props.username) {
+				return true;
+			} else {
+				return false;
+			}
+		})
+
+		if (bool === true) {
+			axios.post("http://recovery-social-media.ngrok.io/like/subcomment/respond", {
+				username: this.props.username,
+				id: this.state.selected.id,
+				receiver: this.state.selected,
+				exists: true
+			}).then((res) => {
+				console.log(res.data);
+				if (res.data.message === "Successfully liked this comment!") {
+					row[this.state.index].close();
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+		} else {
+			axios.post("http://recovery-social-media.ngrok.io/like/subcomment/respond", {
+				username: this.props.username,
+				id: this.state.selected.id,
+				receiver: this.state.selected,
+				exists: false
+			}).then((res) => {
+				console.log(res.data);
+				if (res.data.message === "Successfully liked this comment!") {
+					row[this.state.index].close();
+				}
+			}).catch((err) => {
+				console.log(err);
+			})
+		}
+
+		console.log(bool);
+	}
+	RightActions = () => {
+		return (
+			<Fragment>
+				<TouchableOpacity onPress={() => {
+					this.likeCommentRespond();
+				}}>
+					<Image style={{ width: 40, height: 40, marginTop: 20, marginRight: 30 }} source={require("../../../../assets/icons/like.png")} />
+				</TouchableOpacity>
+				<TouchableOpacity>
+					<Image style={{ width: 40, height: 40, marginTop: 20, marginRight: 30 }} source={require("../../../../assets/icons/reply-auto.png")} />
+				</TouchableOpacity>
+			</Fragment>
+		);
+	}
+	loadImage = (like) => {
+		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+			username: like.likedBy
+		}).then((res) => {
+			const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+			// append picture to object
+			like["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+		
+		}).catch((err) => {
+			console.log("FAILURE :", err);
+		})
+		return (
+			<TouchableOpacity onPress={() => {
+		      	console.log("picture clicked...");
+		    }}>
+		        <Image style={styles.image} source={{uri: like.picture }}/>
+	    	</TouchableOpacity>
+		);
+	}
+	renderSlideUpContent = () => {
+		if (this.state.ready === true && this.state.loading === false) {
+			return (
+				<ScrollView {...this._panResponder.panHandlers} style={styles.containerModal}>
+				<View style={{ marginTop: 50 }}>
+					<Button title='Hide' onPress={() => this._panel.hide()} />
+					<AutoGrowingTextInput value={this.state.comment} onChangeText={(value) => {
+						this.setState({
+							comment: value
+						})
+					}} placeholderTextColor='black' style={styles.textInput} placeholder={'Your your Comment/Message Here...'} />
+					<View style={styles.containerTwoRow}>
+						<PhotoUpload
+							   onPhotoSelect={avatar => {
+							     if (avatar) {
+							       console.log('Image base64 string: ', avatar);
+							        this.setState({
+										avatar
+							        }, () => {
+							        	Keyboard.dismiss();
+							        })
+							     }
+							   }} 
+							 >
+							   <Image
+							     style={styles.camera}
+							     resizeMode='cover'
+							     source={require("../../../../assets/icons/upload-two.png")}
+							   />
+							 </PhotoUpload>
+				     	<NativeButton onPress={() => {
+				     		this.handleCommentSubmission();
+				     	}} style={styles.btn}>
+							<NativeText style={{ color: "white" }}>Submit New Comment</NativeText>
+						</NativeButton>
+				    </View>
+				</View>
+	            {this.state.replies && this.state.concatenated === true ? this.state.replies.map((item, index) => {
+	            	return (
+	            	<Fragment>
+	            	<Swipeable ref={ref => row[index] = ref} onSwipeableRightOpen={() => {
+	            		this.closeRow(index);
+	            		// set to state so accessible in functions to respond to comment
+	            		this.setState({
+	            			selected: item,
+	            			index
+	            		})
+	            	}} renderRightActions={this.RightActions}>
+						<View style={styles.container}>
+			              <TouchableOpacity onPress={() => {
+
+			              }}>
+			                <Image style={styles.image} source={{uri: item.picture }}/>
+			              </TouchableOpacity>
+			              <View style={styles.content}>
+			                <View style={styles.contentHeader}>
+			                  <Text  style={styles.name}>{item.poster}</Text>
+			                  
+			                </View>
+			                <Text style={styles.time}>
+			                    {item.date}
+			                  </Text>
+			                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
+			               	{item.likes ? <Popover
+						      isVisible={this.state.showPopoverTwo}
+						      onRequestClose={() => {
+						      	this.setState({
+						      		showPopover: false
+						      	})
+						      }}
+						      from={(
+						        <TouchableOpacity onPress={() => {
+						        	console.log("B-I-N-G-O: ", item);
+						        	this.setState({
+							      		showPopoverTwo: true,
+							      		display: item.likes
+							      	})
+						        }}>
+						          <Text style={{ color: "red" }}>View Reactions</Text>
+						        </TouchableOpacity>
+						      )}>
+						      <NativeButton onPress={() => {
+						      	this.setState({
+						      		showPopoverTwo: false,
+						      		display: null
+						      	})
+						      }} style={{ alignItems: "center", justifyContent: "center", backgroundColor: "black", alignContent: "center" }}>
+								<NativeText style={{ color: "white" }}>Close</NativeText>
+						      </NativeButton>
+						      <ScrollView style={{ width: width * 0.90, height: height, backgroundColor: "white" }}>
+						      {this.state.display !== null ? this.state.display.map((like, indexxx) => {
+						      		return (
+										<View key={indexxx} style={styles.container}>
+							              {this.loadImage(like)}
+							              <View style={styles.content}>
+							                <View style={styles.contentHeader}>
+							                  <Text style={{ color: "black" }}>{like.likedBy}</Text>
+							                  
+							                </View>
+							                <Text style={styles.time}>
+							                    {like.date}
+							                  </Text>
+							              </View>
+										  
+							            </View>
+							      	);
+						      }) : console.log("display === null")}
+						      </ScrollView>
+						    </Popover> : null}
+			              </View>
+						  
+			            </View>
+			            {item.postedImage ? <Image style={{ flex: 1, height: 350, width: width * 0.80, marginLeft: 50 }} resizeMode="contain" source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.postedImage}` }} /> : null}
+			        </Swipeable>
+			        </Fragment>
+	            	);
+	            }) : null}
+	            <Button title='Hide' onPress={() => this._panel.hide()} />
+	          </ScrollView>
+			);
+		} else {
+			return <LoadingWall />;
+		}
+	}
 	render() {
 		console.log(this.state);
 		if (this.state.loaded === true) {
@@ -582,14 +864,15 @@ constructor(props) {
 				            <NativeButton onPress={() => {
 					            	this.props.navigation.navigate("dashboard");
 					            }}>
-				               <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/sport-team.png")} />
+					            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
+				               <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
 				            </NativeButton>
 				            <NativeButton onPress={() => {
 					            	this.props.navigation.navigate("chat-users");
 					            }}>
 				              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
 				            </NativeButton>
-				            <NativeButton onPress={() => {
+				            <NativeButton active onPress={() => {
 					            	this.props.navigation.navigate("public-wall");
 					            }}>
 				              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/wall.png")} />
@@ -598,67 +881,8 @@ constructor(props) {
 			        	</Footer>
 					</View>
 				
-					<SlidingUpPanel allowDragging={this.state.dragPanel} ref={c => this._panel = c}>
-			          <ScrollView {...this._panResponder.panHandlers} style={styles.containerModal}>
-						<View style={{ marginTop: 50 }}>
-
-							<AutoGrowingTextInput onChangeText={(value) => {
-								this.setState({
-									comment: value
-								})
-							}} placeholderTextColor='black' style={styles.textInput} placeholder={'Your your Comment/Message Here...'} />
-							<View style={styles.containerTwoRow}>
-								<PhotoUpload
-									   onPhotoSelect={avatar => {
-									     if (avatar) {
-									       console.log('Image base64 string: ', avatar);
-									        this.setState({
-												avatar
-									        }, () => {
-									        	Keyboard.dismiss();
-									        })
-									     }
-									   }} 
-									 >
-									   <Image
-									     style={styles.camera}
-									     resizeMode='cover'
-									     source={require("../../../../assets/icons/upload-two.png")}
-									   />
-									 </PhotoUpload>
-						     	<NativeButton onPress={() => {
-						     		this.handleCommentSubmission();
-						     	}} style={styles.btn}>
-									<NativeText style={{ color: "white" }}>Submit New Comment</NativeText>
-								</NativeButton>
-						    </View>
-						</View>
-			            {this.state.replies && this.state.concatenated === true ? this.state.replies.map((item, index) => {
-			            	return (
-			            	<Fragment>
-								<View style={styles.container}>
-					              <TouchableOpacity onPress={() => {}}>
-					                <Image style={styles.image} source={{uri: item.picture }}/>
-					              </TouchableOpacity>
-					              <View style={styles.content}>
-					                <View style={styles.contentHeader}>
-					                  <Text  style={styles.name}>{item.poster}</Text>
-					                  
-					                </View>
-					                <Text style={styles.time}>
-					                    {item.date}
-					                  </Text>
-					                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
-					               
-					              </View>
-								  
-					            </View>
-					            {item.postedImage ? <Image style={{ flex: 1, height: 350, width: width * 0.80, marginLeft: 50 }} resizeMode="contain" source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.postedImage}` }} /> : null}
-					        </Fragment>
-			            	);
-			            }) : null}
-			            <Button title='Hide' onPress={() => this._panel.hide()} />
-			          </ScrollView>
+					<SlidingUpPanel allowDragging={false} ref={c => this._panel = c}>
+			          {this.renderSlideUpContent()}
 			        </SlidingUpPanel>
 
 				</Fragment>

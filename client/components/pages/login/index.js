@@ -101,9 +101,9 @@ constructor(props) {
             </NativeButton>
           </Right>
         </Header>
-			<ImageBackground style={styles.container} source={require("../../../assets/images/abstract.jpg")}>
+			<ImageBackground style={styles.container} source={require("../../../assets/images/beach.jpg")}>
 			 
-				{this.state.showEmail === true ? <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "black", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Email Address</Text><View style={styles.inputContainer}>
+				{this.state.showEmail === true ? <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Email Address</Text><View style={styles.inputContainer}>
 		          <TouchableOpacity onPress={() => {
 		          	this.setState({
 		          		showEmail: !this.state.showEmail,
@@ -116,7 +116,7 @@ constructor(props) {
 		              onChangeText={(email) => this.setState({
 		                email
 		              })}/>
-		        </View></Fragment> : <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "black", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Phone Number</Text><View style={styles.inputContainer}>
+		        </View></Fragment> : <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Phone Number</Text><View style={styles.inputContainer}>
 		          <TouchableOpacity onPress={() => {
 		          	this.setState({
 		          		showEmail: !this.state.showEmail,
@@ -130,7 +130,7 @@ constructor(props) {
 		                phoneNumber
 		              })}/>
 		        </View></Fragment>}
-		        <Text style={{ textAlign: "center", fontSize: 24, color: "black", fontWeight: "bold", paddingBottom: 10 }}>Password</Text>
+		        <Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10 }}>Password</Text>
 		        <View style={styles.inputContainer}>
 
 		          <Image style={styles.inputIcon} source={require("../../../assets/icons/login.png")}/>
