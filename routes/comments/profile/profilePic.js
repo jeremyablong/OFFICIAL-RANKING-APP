@@ -26,7 +26,7 @@ const s3 = new S3({
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
 
-			const { username, comment, id } = req.body;
+			const { username, comment, id, owner } = req.body;
 
 			const generatedID = uuidv4();
 
@@ -40,7 +40,122 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			console.log("req.body", req.body);
 
-			if (req.body.avatar && comment) {
+			if (username === owner) {
+				console.log("the poster matches the owner...");
+				if (req.body.avatar && comment) {
+
+					const bufferImage = new Buffer(req.body.avatar.replace(/^data:image\/\w+;base64,/, ""),'base64');
+
+					const { avatar } = req.body;
+
+					collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
+						comment,
+						poster: username,
+						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+						id: firstID,
+						// maybe take this out???? below...
+						// avatar,
+						postedImage: generatedID
+					}}}, (err, doc) => {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log(doc);
+							s3.putObject({
+							  Body: bufferImage,
+							  Bucket: "rating-people",
+							  Key: generatedID,
+							  ContentEncoding: 'base64'
+							}
+							, (err, data) => {
+							  if (err) {
+							     console.log(err);
+							  }
+							  console.log(data);
+							  	res.json({
+									message: "Successfully posted new comment!",
+									doc,
+									image: generatedID,
+									newly: {
+										comment,
+										picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
+										poster: username,
+										date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+										id: firstID,
+										postedImage: `https://s3.us-west-1.wasabisys.com/rating-people/${generatedID}`
+									}
+								})
+							});
+							
+						}
+					});
+				} else if (req.body.avatar && !comment) {
+
+					const bufferImage = new Buffer(req.body.avatar.replace(/^data:image\/\w+;base64,/, ""),'base64');
+
+					collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
+						poster: username,
+						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+						id: secondID,
+						postedImage: generatedID
+					}}}, (err, doc) => {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log(doc);
+							s3.putObject({
+							  Body: bufferImage,
+							  Bucket: "rating-people",
+							  Key: generatedID,
+							  ContentEncoding: 'base64'
+							}
+							, (err, data) => {
+							  if (err) {
+							     console.log(err);
+							  }
+							  console.log(data);
+							  	res.json({
+									message: "Successfully posted new comment!",
+									doc,
+									image: generatedID,
+									newly: {
+										poster: username,
+										picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
+										date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+										id: secondID,
+										postedImage: `https://s3.us-west-1.wasabisys.com/rating-people/${generatedID}`
+									}
+								})
+							});
+						}
+					});
+				} else if (comment && !req.body.avatar) {
+					collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
+						comment,
+						poster: username,
+						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+						id: thirdID
+					}}}, (err, doc) => {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log(doc);
+							res.json({
+								message: "Successfully posted new comment!",
+								doc,
+								newly: {
+									comment,
+									picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
+									poster: username,
+									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+									id: thirdID
+								}
+							})
+						}
+					});
+				}
+			} else {
+				if (req.body.avatar && comment) {
 
 				const bufferImage = new Buffer(req.body.avatar.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
@@ -54,6 +169,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					// maybe take this out???? below...
 					// avatar,
 					postedImage: generatedID
+				}, notifications: {
+					user: username,
+					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+					id: uuidv4(),
+					data: "commented on your profile picture",
+					route: "profile-individual"
 				}}}, (err, doc) => {
 					if (err) {
 						console.log(err);
@@ -79,7 +200,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 									picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
 									poster: username,
 									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-									id: firstID
+									id: firstID,
+									postedImage: `https://s3.us-west-1.wasabisys.com/rating-people/${generatedID}`
 								}
 							})
 						});
@@ -88,68 +210,81 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				});
 			} else if (req.body.avatar && !comment) {
 
-				const bufferImage = new Buffer(req.body.avatar.replace(/^data:image\/\w+;base64,/, ""),'base64');
+					const bufferImage = new Buffer(req.body.avatar.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
-				collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
-					poster: username,
-					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-					id: secondID,
-					postedImage: generatedID
-				}}}, (err, doc) => {
-					if (err) {
-						console.log(err);
-					} else {
-						console.log(doc);
-						s3.putObject({
-						  Body: bufferImage,
-						  Bucket: "rating-people",
-						  Key: generatedID,
-						  ContentEncoding: 'base64'
+					collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
+						poster: username,
+						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+						id: secondID,
+						postedImage: generatedID
+					}, notifications: {
+						user: username,
+						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+						id: uuidv4(),
+						data: "commented on your profile picture",
+						route: "profile-individual"
+					}}}, (err, doc) => {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log(doc);
+							s3.putObject({
+							  Body: bufferImage,
+							  Bucket: "rating-people",
+							  Key: generatedID,
+							  ContentEncoding: 'base64'
+							}
+							, (err, data) => {
+							  if (err) {
+							     console.log(err);
+							  }
+							  console.log(data);
+							  	res.json({
+									message: "Successfully posted new comment!",
+									doc,
+									image: generatedID,
+									newly: {
+										poster: username,
+										picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
+										date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+										id: secondID,
+										postedImage: `https://s3.us-west-1.wasabisys.com/rating-people/${generatedID}`
+									}
+								})
+							});
 						}
-						, (err, data) => {
-						  if (err) {
-						     console.log(err);
-						  }
-						  console.log(data);
-						  	res.json({
+					});
+				} else if (comment && !req.body.avatar) {
+					collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
+						comment,
+						poster: username,
+						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+						id: thirdID
+					}, notifications: {
+						user: username,
+						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+						id: uuidv4(),
+						data: "commented on your profile picture",
+						route: "profile-individual"
+					}}}, (err, doc) => {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log(doc);
+							res.json({
 								message: "Successfully posted new comment!",
 								doc,
-								image: generatedID,
 								newly: {
-									poster: username,
+									comment,
 									picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
+									poster: username,
 									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-									id: secondID,
-									postedImage: generatedID
+									id: thirdID
 								}
 							})
-						});
-					}
-				});
-			} else if (comment && !req.body.avatar) {
-				collection.findOneAndUpdate({ "profilePic.id": id }, { $push: { "profilePic.$.replies": {
-					comment,
-					poster: username,
-					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-					id: thirdID
-				}}}, (err, doc) => {
-					if (err) {
-						console.log(err);
-					} else {
-						console.log(doc);
-						res.json({
-							message: "Successfully posted new comment!",
-							doc,
-							newly: {
-								comment,
-								picture: `https://s3.us-west-1.wasabisys.com/rating-people/${doc.value.profilePic[doc.value.profilePic.length - 1].picture}`,
-								poster: username,
-								date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-								id: thirdID
-							}
-						})
-					}
-				});
+						}
+					});
+				}
 			}
 	});
 });

@@ -112,7 +112,7 @@ constructor(props) {
 		console.log("clicked trash...", item);
 	}
     RightActions = (item) => { 
-    	console.log("swiped...");
+    	console.log("swiped...", item);
 		return (
 			<ListItem onPress={() => {
 				{/*console.log("k, running function...");*/}

@@ -55,7 +55,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						user: lowerSender,
 						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 						id: uuidv4(),
-						data: "sent you a new private message!"
+						data: "sent you a new private message!",
+						route: "message-individual"
 					}}}, (err, doc) => {
 						if (err) {
 							console.log(err);

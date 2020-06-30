@@ -13,12 +13,15 @@ import {
   Dimensions, 
   ScrollView, 
   FlatList, 
-  Keyboard
+  Keyboard, 
+  ListView
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import { connect } from "react-redux";
 import { authenticated } from "../../../actions/auth/auth.js";
-
+import axios from "axios";
+import _ from "lodash";
+import LoadingWall from "../wall/loading.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -27,13 +30,117 @@ constructor(props) {
   super(props);
 
   this.state = {
-  	pusher: null
+  	notifications: [],
+  	ready: false,
+  	last: null,
+  	navigate: false
   };
 }
-	componentDidUpdate(prevProps, prevState) {
-		
+	componentDidMount() {
+        return new Promise((resolve, reject) => {
+            axios.post("http://recovery-social-media.ngrok.io/gather/notifications", {
+			  	username: this.props.username
+			  }).then((response) => {
+			  	let count = 0;
+			  	// console.log(res.data);
+		            if (response.data.message === "You have notifications!") {
+						const finale = new Promise((resolve, reject) => {
+							for (let i = 0; i < response.data.notifications.length; i++) {
+								console.log("i", i)
+								let notification = response.data.notifications[i];
+								// console.log("notification.. :", notification);
+								axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+				  					username: notification.user
+				  				}).then((res) => {
+
+				  					console.log("resolution :", res.data);
+				  					const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+									// append picture to object
+									notification["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+									count++
+
+									console.log("this.state.notifications.length :", this.state.notifications.length, count);
+									if (count === this.state.notifications.length) {
+										resolve();
+									}
+									
+				  				}).catch((err) => {
+				  					console.log("FAILURE :", err);
+				  				})
+
+				  				this.setState({
+									notifications: [ notification, ...this.state.notifications ],
+									last: notification
+								})
+
+
+							}
+
+						});
+						
+
+						finale.then(() => {
+						    console.log('All done!');
+						    this.setState({
+								ready: true
+							})
+						});
+				  	}
+			  }).catch((err) => {
+			  	console.log(err);
+			  })
+        });
+
+	}
+	redirectToSpecific = (data) => {
+
+		console.log("Data", data);
+
+		if (data.data === "commented on your profile picture") {
+			axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+	          username: this.props.username
+	        }).then((res) => {
+	          console.log(res.data);
+	          if (res.data.message === "FOUND user!") {
+	          	this.setState({
+	          		user: res.data.user,
+	          		navigate: true
+	          	}, () => {
+					this.props.navigation.navigate(data.route, { user: this.state.user });
+	          	})
+	          }
+	        }).catch((err) => {
+	          console.log(err);
+	        })
+  		} else if (data.data === "sent you a new private message!") {
+			axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+	          username: this.props.username
+	        }).then((res) => {
+	          console.log("RESO : ", res.data);
+	          if (res.data.message === "FOUND user!") {
+	          	this.setState({
+	          		user: res.data.user,
+	          		navigate: true
+	          	}, () => {
+	          		for (var i = 0; i < this.state.user.messages.length; i++) {
+	          			let message = this.state.user.messages[i];
+	          			console.log("message :", message);
+	          			if (message.author === data.user) {
+	          				console.log("We have a MATCH... :", message);
+	          				this.props.navigation.navigate(data.route, { user: message });
+	          			}
+	          		}
+					// this.props.navigation.navigate(data.route, { user: this.state.user });
+	          	})
+	          }
+	        }).catch((err) => {
+	          console.log(err);
+	        })
+  		}
 	}
 	render() {
+		console.log(this.state);
 		return (
 			<Fragment>
 				<Header>
@@ -58,9 +165,31 @@ constructor(props) {
 		          </Right>
 		        </Header>
 				
-				<View>
-					
-				</View>
+				<ScrollView>
+				<List>
+					{this.state.notifications && this.state.ready === true ? this.state.notifications.map((notify, index) => {
+{/*						console.log("notify :", notify);*/}
+						return (
+							<ListItem thumbnail>
+				              <Left>
+				                <Thumbnail square source={{ uri: notify.picture }} />
+				              </Left>
+				              <Body>
+				                <NativeText style={{ fontWeight: "bold" }}>{notify.user}</NativeText>
+				                <NativeText style={{ color: "black" }} note numberOfLines={2}>{notify.data}...</NativeText>
+				              </Body>
+				              <Right>
+				                <NativeButton onPress={() => {
+				                	this.redirectToSpecific(notify);
+				                }} transparent>
+				                  <NativeText>View</NativeText>
+				                </NativeButton>
+				              </Right>
+				            </ListItem>
+			            )
+					}) : <LoadingWall />}
+				</List>
+				</ScrollView>
 	
 		        <View style={styles.footer}>
 					<Footer>
@@ -106,5 +235,10 @@ const styles = StyleSheet.create({
 		height: 35
 	}
 })
+const mapStateToProps = (state) => {
+	return {
+		username: state.auth.authenticated.username
+	}
+}
 
-export default connect(null, { authenticated })(NotificationsPage);
+export default connect(mapStateToProps, { authenticated })(NotificationsPage);

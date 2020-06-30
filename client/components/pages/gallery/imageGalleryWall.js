@@ -615,7 +615,7 @@ constructor(props) {
 				                    {item.date}
 				                  </Text>
 				                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
-				               	{item.likes.length > 0 ? <Popover
+				               	{item.likes ? <Popover
 							      isVisible={this.state.showPopover}
 							      onRequestClose={() => {
 							      	this.setState({

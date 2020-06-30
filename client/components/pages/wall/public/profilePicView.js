@@ -107,13 +107,17 @@ constructor(props) {
 
 		const previousID = this.props.route.params.user.profilePic[this.props.route.params.user.profilePic.length - 1].id;
 
-		console.log("handle submission - comment.");
+		console.log("handle submission - comment.", this.props.route.params.user.profilePic[this.props.route.params.user.profilePic.length - 1]);
+
+		const owner = this.props.route.params.user.profilePic[this.props.route.params.user.profilePic.length - 1].poster;
+
 		if (avatar !== null && comment.length > 0) {
 			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
 				comment,
 				username: this.props.username,
 				avatar,
-				id: previousID
+				id: previousID,
+				owner
 			}).then((res) => {
 				if (res.data.message === "Successfully posted new comment!") {
 					console.log("MAGIC :", res.data);
@@ -133,7 +137,8 @@ constructor(props) {
 			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
 				username: this.props.username,
 				avatar,
-				id: previousID
+				id: previousID,
+				owner
 			}).then((res) => {
 				if (res.data.message === "Successfully posted new comment!") {
 					console.log("MAGIC :", res.data);
@@ -152,7 +157,8 @@ constructor(props) {
 			axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
 				username: this.props.username,
 				comment, 
-				id: previousID
+				id: previousID,
+				owner
 			}).then((res) => {
 				if (res.data.message === "Successfully posted new comment!") {
 					console.log("MAGIC :", res.data);

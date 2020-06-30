@@ -51,7 +51,7 @@ app.use("/gather/profile/pictures/gallery", require("./routes/profile/pictures/g
 app.use("/gather/profile/pictures/gallery/slide", require("./routes/profile/pictures/findByIndex.js"));
 app.use("/like/subcomment/respond", require("./routes/profile/pictures/galleryLikeComment.js"));
 app.use("/latest/profile/picture/unlike", require("./routes/profile/pictures/latestProfilePicRemoveLike.js"));
-
+app.use("/gather/notifications", require("./routes/notifications/gatherNotifications.js"));
 
 
 app.get('*', cors(), function(_, res) {
