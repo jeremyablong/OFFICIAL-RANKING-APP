@@ -36,11 +36,6 @@ constructor(props) {
     <>
         <Header>
           <Left>
-            {/*<NativeButton onPress={() => {
-              this.props.navigation.navigate("signup-page-five");
-            }} hasText transparent>
-              <NativeText>Back</NativeText>
-            </NativeButton>*/}
           </Left>
           <Body>
             <Title>Homepage</Title>
@@ -75,15 +70,6 @@ constructor(props) {
              }}>
             <Text style={styles.loginText}>SIGN-UP</Text>
           </TouchableHighlight>
-           {/*<TouchableHighlight style={[styles.buttonContainerTwo, styles.loginButtonTwo]} onPress={() => {
-            this.setState({
-              
-            }, () => {
-              this.handleSubmission();
-            })
-           }}>
-            <Text style={styles.loginText}>EVERYONE</Text>
-          </TouchableHighlight>*/}
         </View>
       </ImageBackground>
     </>

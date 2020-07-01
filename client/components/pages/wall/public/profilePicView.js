@@ -14,7 +14,8 @@ import {
   ScrollView, 
   FlatList, 
   PanResponder, 
-  Keyboard
+  Keyboard, 
+  Animated
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import axios from "axios";
@@ -85,7 +86,7 @@ constructor(props) {
 		        return (Math.abs(dx) > touchThreshold) || (Math.abs(dy) > touchThreshold);
 	    }
     });
-
+	this._animatedValue = new Animated.Value(0)
 }
 	closeRow = (index) => {
 	    if (prevOpenedRow && prevOpenedRow !== row[index]) {
@@ -887,7 +888,7 @@ constructor(props) {
 			        	</Footer>
 					</View>
 				
-					<SlidingUpPanel allowDragging={false} ref={c => this._panel = c}>
+					<SlidingUpPanel animatedValue={this._animatedValue} allowDragging={false} ref={c => this._panel = c}>
 			          {this.renderSlideUpContent()}
 			        </SlidingUpPanel>
 

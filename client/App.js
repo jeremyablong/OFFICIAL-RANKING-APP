@@ -33,6 +33,7 @@ import ImageGalleryWall from "./components/pages/gallery/imageGalleryWall.js";
 import UploadProfilePicPage from "./components/pages/profile/uploadProfilePicPage.js";
 import InstagramFeedPage from "./components/pages/instagram-feed/imageFeed.js";
 import NotificationsPage from "./components/pages/notifications/notificationsPage.js";
+import FriendListMain from "./components/pages/friends/friendList.js";
 
 const Stack = createStackNavigator();
 
@@ -84,6 +85,7 @@ constructor(props) {
             <Stack.Screen name="upload-profile-picture" component={UploadProfilePicPage} />
             <Stack.Screen name="view-instagram-style-images" component={InstagramFeedPage} />
             <Stack.Screen name="notifications" component={NotificationsPage} />
+            <Stack.Screen name="friends-list" component={FriendListMain} />
           </Stack.Navigator>
         </NavigationContainer>
     );

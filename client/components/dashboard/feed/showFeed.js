@@ -12,7 +12,8 @@ import {
   ImageBackground, 
   Dimensions, 
   ScrollView, 
-  FlatList
+  FlatList, 
+  SafeAreaView
 } from 'react-native';
 import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, Footer, FooterTab, Badge } from 'native-base';
 import StoriesComponent from "..//stories/index.js";
@@ -146,6 +147,7 @@ constructor(props) {
 	render() {
 		return (
 			<Fragment>
+			<View style={{ flex: 1, backgroundColor: 'white' }}>
 				<ScrollView style={{ borderBottomColor: 'black', borderBottomWidth: 2 }}>
 					<ScrollView horizontal={true}> 
 						<FlatList  
@@ -180,21 +182,21 @@ constructor(props) {
 				          </View>
 				        </View>
 				        <Footer>
-					          <FooterTab>
-					            <NativeButton>
-					              <NativeText>Upload Photo</NativeText>
-					            </NativeButton>
-					            <NativeButton onPress={() => {
-					            	this._panel.show()
-					            }}>
-					              <Image style={{ width: 50, height: 50 }} source={require("../../../assets/icons/live.png")} />
-					            </NativeButton>
-					            <NativeButton>
-					              <NativeText>Open A Room</NativeText>
-					            </NativeButton>
-					            
-					          </FooterTab>
-					        </Footer>
+				          <FooterTab>
+				            <NativeButton>
+				              <NativeText>Upload Photo</NativeText>
+				            </NativeButton>
+				            <NativeButton onPress={() => {
+				            	this._panel.show()
+				            }}>
+				              <Image style={{ width: 50, height: 50 }} source={require("../../../assets/icons/live.png")} />
+				            </NativeButton>
+				            <NativeButton>
+				              <NativeText>Open A Room</NativeText>
+				            </NativeButton>
+				            
+				          </FooterTab>
+				        </Footer>
 				      </TouchableOpacity>
 				      <StoriesComponent />
 				</ScrollView>
@@ -228,6 +230,7 @@ constructor(props) {
 	            <Button title='Hide' onPress={() => this._panel.hide()} />
 	          </View>
 	        </SlidingUpPanel>
+	        </View>
 			</Fragment>
 		)
 	}

@@ -26,7 +26,7 @@ const s3 = new S3({
 mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTopology: true }, cors(), (err, db) => {
 	router.post("/", (req, res) => {
 
-			const { username, comment, id, owner } = req.body;
+			const { username, comment, id, owner, index } = req.body;
 
 			const generatedID = uuidv4();
 
@@ -174,7 +174,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 					id: uuidv4(),
 					data: "commented on your profile picture",
-					route: "profile-individual"
+					route: "image-gallery",
+					index
 				}}}, (err, doc) => {
 					if (err) {
 						console.log(err);
@@ -222,7 +223,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 						id: uuidv4(),
 						data: "commented on your profile picture",
-						route: "profile-individual"
+						route: "image-gallery",
+						index
 					}}}, (err, doc) => {
 						if (err) {
 							console.log(err);
@@ -265,7 +267,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 						id: uuidv4(),
 						data: "commented on your profile picture",
-						route: "profile-individual"
+						route: "image-gallery",
+						index
 					}}}, (err, doc) => {
 						if (err) {
 							console.log(err);

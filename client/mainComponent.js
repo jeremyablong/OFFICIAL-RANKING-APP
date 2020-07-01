@@ -7,7 +7,6 @@ import Loading from "./loading.js";
 import { View, Text, Dimensions, StyleSheet, Button as Buttonnn, TouchableHighlight, ImageBackground, TouchableOpacity, LinearGradient } from "react-native";
 
 
-
 const { width, height } = Dimensions.get('window')
 
 class MainComponent extends Component {

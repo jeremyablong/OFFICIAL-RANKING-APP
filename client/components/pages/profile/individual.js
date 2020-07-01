@@ -23,8 +23,11 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { connect } from "react-redux";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import PhotoUpload from 'react-native-photo-upload';
+import FriendsListSubComponent from "../../friends/friendList.js";
 
 const { width, height } = Dimensions.get("window");
+
+const URL = "http://recovery-social-media.ngrok.io";
 
 class ProfileIndividual extends React.Component {
 constructor(props) {
@@ -38,7 +41,7 @@ constructor(props) {
   };
 }
 	componentDidMount() {
-	  	axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+	  	axios.post(`${URL}/get/user/by/username`, {
 	  		username: this.props.route.params.user.username
 	  	}).then((res) => {
 	  		console.log(res.data);
@@ -187,6 +190,7 @@ constructor(props) {
 		              	this.props.navigation.navigate("upload-profile-picture", { publicProfile: false });
 		              }} style={{ right: 15, top: -25, position: "absolute" }}><Image style={{ width: 50, height: 50 }} source={require("../../../assets/icons/ar-camera.png")}/></TouchableOpacity> : null}
 		              <Text style={styles.name}>{user !== null ? user.fullName : "--"}</Text>
+		              <Text style={styles.ranking}><Text style={{ color: "black" }}>Social Ranking:</Text> 671</Text>
 		              <Text style={styles.info}>{user !== null ? user.username : "--"}</Text>
 		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              
@@ -201,6 +205,7 @@ constructor(props) {
 		                <Text>Opcion 2</Text> 
 		              </TouchableOpacity>*/}
 		            </View>
+		            <FriendsListSubComponent navigation={this.props.navigation} />
 		        </View>
 		      </ScrollView>
       		<SlidingUpPanel ref={c => this._panel = c}>
@@ -242,6 +247,22 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
+  touchable: {
+  	width: width * 0.33333, 
+  	paddingRight: 6, 
+  	paddingLeft: 6, 
+  	marginBottom: 5, 
+  	marginTop: 20, 
+  	shadowColor: "#000",
+	shadowOffset: {
+		width: 0,
+		height: 6,
+	},
+	shadowOpacity: 0.29,
+	shadowRadius: 9.30,
+
+	elevation: 15
+  },
   slide: {
     flex: 1,
     backgroundColor: 'white',
@@ -275,14 +296,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding:30,
   },
-  name:{
-    fontSize:28,
-    color: "#696969",
-    fontWeight: "600"
-  },
   info:{
     fontSize:16,
     color: "#00BFFF",
+    marginTop:10
+  },
+  infoTwo:{
+    fontSize:16,
+    color: "black",
     marginTop:10
   },
   description:{
@@ -301,6 +322,12 @@ const styles = StyleSheet.create({
     width:250,
     borderRadius:30,
     backgroundColor: "#00BFFF",
+  },
+  ranking: {
+    fontSize:30,
+    color:"darkred",
+    fontWeight:'600',
+    textDecorationLine: "underline"
   },
   buttonContainerTwo: {
     marginTop:10,

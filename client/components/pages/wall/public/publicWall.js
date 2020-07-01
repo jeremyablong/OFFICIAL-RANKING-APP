@@ -14,14 +14,18 @@ import {
   ScrollView, 
   FlatList
 } from 'react-native';
-import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
+import { Container, Header, Thumbnail, Left, Body, Right, Card, CardItem, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import { connect } from "react-redux";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import PhotoUpload from 'react-native-photo-upload';
 import axios from "axios";
 import LoadingWall from "../loading.js";
+import FriendsListSubComponent from "../../../friends/friendList.js";
+import PostToWallSubComponent from "../../../wall/postToWall.js";
 
 const { width, height } = Dimensions.get("window");
+
+const URL = "http://recovery-social-media.ngrok.io";
 
 class PublicWall extends React.Component {
 constructor(props) {
@@ -37,12 +41,11 @@ constructor(props) {
 
 } 
 	componentDidMount() {
-		const url = "http://recovery-social-media.ngrok.io/get/user/by/username";
 		
-		axios.post(url, {
+		axios.post(`${URL}/get/user/by/username`, {
           username: this.props.username
         }).then((res) => {
-          console.log(res.data);
+          console.log("UUU :", res.data);
           if (res.data.message === "FOUND user!") {
           	this.setState({
           		user: res.data.user,
@@ -51,7 +54,7 @@ constructor(props) {
           }
         }).catch((err) => {
           console.log(err);
-        })
+        });        
 	}
 	uploadCoverPhoto = () => { 
 		
@@ -129,7 +132,9 @@ constructor(props) {
 		            <View style={styles.bodyContent}>
 		              {this.state.user.username === this.props.username ? <TouchableOpacity onPress={() => {
 		              	this.props.navigation.navigate("upload-profile-picture", { publicProfile: true });
-		              }} style={{ right: 15, top: -25, position: "absolute" }}><Image style={{ width: 50, height: 50 }} source={require("../../../../assets/icons/ar-camera.png")}/></TouchableOpacity> : null}
+		              }} style={{ right: 15, top: 5, position: "absolute" }}><Image style={{ width: 50, height: 50 }} source={require("../../../../assets/icons/ar-camera.png")}/></TouchableOpacity> : null}
+		              <Text style={styles.name}>{this.state.user !== null ? this.state.user.fullName : "--"}</Text>
+		              <Text style={styles.ranking}><Text style={{ color: "black" }}>Social Ranking:</Text> 834</Text>
 		              <Text style={styles.info}>{this.state.user ? this.state.user.username : "--"}</Text>
 		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              <View style={styles.customContainer}>
@@ -143,13 +148,10 @@ constructor(props) {
 							this.props.navigation.navigate("view-instagram-style-images", { user: null });
 					      }}><Image style={styles.specialBtnThree} source={require("../../../../assets/icons/content.png")}/></NativeButton>
 					    </View>
-		              <TouchableOpacity style={styles.buttonContainer}>
-		                <Text>Option One</Text>  
-		              </TouchableOpacity>              
-		              <TouchableOpacity style={styles.buttonContainer}>
-		                <Text>Option Two</Text> 
-		              </TouchableOpacity>
 		            </View>
+		            <FriendsListSubComponent navigation={this.props.navigation} />
+
+		            <PostToWallSubComponent />
 		        </View>
 		      </ScrollView>
 			);
@@ -189,14 +191,15 @@ constructor(props) {
 		          </Body>
 		          <Right>
 		            <NativeButton onPress={() => {
-		            	this.props.navigation.navigate("chat-users");
+		            	{/*this.props.navigation.navigate("chat-users");*/}
+		            	this._panelTwo.show();
 		            }} hasText transparent>
 		              <NativeText>Help?</NativeText>
 		            </NativeButton>
 		          </Right>
 		        </Header>
 		        {this.renderContent()}
-		      <SlidingUpPanel ref={c => this._panel = c}>
+		      		<SlidingUpPanel ref={c => this._panel = c}>
 			          <View style={styles.slide}>
 			            <PhotoUpload
 						   onPhotoSelect={avatar => {
@@ -231,7 +234,7 @@ constructor(props) {
 			            
 			          </View>
 			        </SlidingUpPanel>
-
+			
 			<View style={{ position: "absolute", bottom: 0, width: width }}>
 				<Footer>
 		          <FooterTab>
@@ -271,6 +274,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  container: {
+	
   },
   customContainer: {
   	marginTop: 30,
@@ -312,26 +318,23 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:22,
-    color:"#FFFFFF",
+    color:"black",
     fontWeight:'600',
+    marginTop: 20
+  },
+  ranking: {
+    fontSize:30,
+    color:"darkred",
+    fontWeight:'600',
+    textDecorationLine: "underline"
   },
   body:{
-    marginTop:40,
+    marginTop: 20,
   },
   bodyContent: {
     flex: 1,
     alignItems: 'center',
     padding:30,
-  },
-  name:{
-    fontSize:28,
-    color: "#696969",
-    fontWeight: "600"
-  },
-  info:{
-    fontSize:16,
-    color: "#00BFFF",
-    marginTop:10
   },
   description:{
     fontSize:16,
@@ -349,7 +352,7 @@ const styles = StyleSheet.create({
     width:250,
     borderRadius:30,
     backgroundColor: "#00BFFF",
-  },
+  }
 });
 const mapStateToProps = state => {
 	return {

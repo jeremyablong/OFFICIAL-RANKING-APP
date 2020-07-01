@@ -83,13 +83,13 @@ class MessageIndividual extends Component {
 		  					let message = messages[x];
 		  					this.setState({
 			  					ready: true,
-								user: res.data.user
+								  user: res.data.user
 			  				})
 		  				}
 	  				} else {
 	  					this.setState({
 		  					ready: true,
-							user: res.data.user
+							  user: res.data.user
 		  				})
 	  				}
 
@@ -97,7 +97,7 @@ class MessageIndividual extends Component {
 	  		} else {
 	  			this.setState({
   					ready: true,
-					user: res.data.user
+					  user: res.data.user
   				})
 	  		}
 		  	axios.post("http://recovery-social-media.ngrok.io/get/individual/messages", {
@@ -354,7 +354,7 @@ class MessageIndividual extends Component {
             </NativeButton>
           </Left>
           <Body>
-           {user !== null ? <Title>{user.username === this.props.username ? this.props.route.params.user.reciever : this.props.route.params.user.author}</Title> : null}
+           {user !== null ? <Title>{user.username === this.props.username ? this.props.route.params.user.author : this.props.route.params.user.author}</Title> : null}
           </Body>
           <Right>
             <NativeButton onPress={() => {

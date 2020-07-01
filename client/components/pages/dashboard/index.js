@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -22,6 +22,8 @@ import Carousel from 'react-native-snap-carousel';
 import axios from "axios";
 import SearchBar from 'react-native-search-bar';
 import ShowFeedList from "../../dashboard/feed/showFeed.js";
+import NavigationDrawer from "../../navigation/drawer.js";
+import SideMenu from 'react-native-side-menu';
 
 
 const { width, height } = Dimensions.get("window");
@@ -69,7 +71,8 @@ constructor(props) {
 			if (res.data) {
 				this.setState({
 					people: res.data,
-					searching: false
+					searching: false,
+					isOpen: false
 				}, () => {
 					Keyboard.dismiss();
 				})
@@ -92,8 +95,10 @@ constructor(props) {
 	}
 	render() {
 		console.log(this.state);
+		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		return (
 		<Fragment>
+		<SideMenu isOpen={this.state.isOpen} menu={menu}>
 		<Header>
           <Left>
             <NativeButton onPress={() => {
@@ -108,27 +113,33 @@ constructor(props) {
           </Body>
           <Right>
             <NativeButton onPress={() => {
-            	console.log("clicked chat...");
-            	this.props.navigation.navigate("chat-users");
+            	console.log("clicked user interface...");
+                 {/*this.props.navigation.navigate("chat-users");*/}
+			    this.setState({
+			    	isOpen: true
+			    })
             }} hasText transparent>
-              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/chat.png")}/>
+              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
             </NativeButton>
           </Right>
         </Header>
-        <SearchBar 
-		  ref="searchBar"
-		  placeholder="Search by user-name..."
-		  onChangeText={(value) => {
-		  	this.setState({
-		  		searchValue: value,
-		  		searching: true
-		  	})
-		  }} 
-		  onSearchButtonPress={this.handleSearch}
-		  onCancelButtonPress={this.handleCancel}
-		/>
+		<View style={{ backgroundColor: "white", paddingTop: 20 }}>   
+	        <SearchBar  
+			  ref="searchBar"
+			  placeholder="Search by user-name..."
+			  onChangeText={(value) => {
+			  	this.setState({
+			  		searchValue: value,
+			  		searching: true
+			  	})
+			  }} 
+			  onSearchButtonPress={this.handleSearch}
+			  onCancelButtonPress={this.handleCancel}
+			/>
+		</View>
+	
 		{this.state.searching === true ? <Fragment>
-			{this.state.people ? <FlatList
+			{this.state.people ? <View style={{ backgroundColor: "white" }}><FlatList
 		        data={this.state.people}
 		        renderItem={({ item }) => {
 		        	console.log("itemmmmmm :", item);
@@ -153,9 +164,9 @@ constructor(props) {
 		        	);
 		        }}
 		        keyExtractor={item => item.id}
-		      /> : <NativeButton><NativeText>Load page...</NativeText></NativeButton>}
+		      /></View> : <NativeButton><NativeText>Load page...</NativeText></NativeButton>}
 			</Fragment> : <ShowFeedList />}
-
+	
 			<Footer>
 	          <FooterTab>
 	            <NativeButton active onPress={() => {
@@ -182,6 +193,8 @@ constructor(props) {
 	            </NativeButton>
 	          </FooterTab>
 	        </Footer>
+
+	        </SideMenu>
 		</Fragment>
 		)
 	}

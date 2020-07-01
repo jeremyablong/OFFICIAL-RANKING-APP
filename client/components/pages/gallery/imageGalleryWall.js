@@ -15,7 +15,8 @@ import {
   ScrollView, 
   FlatList, 
   PanResponder, 
-  Keyboard
+  Keyboard,
+  Animated
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import axios from "axios";
@@ -72,6 +73,8 @@ constructor(props) {
 		        return (Math.abs(dx) > touchThreshold) || (Math.abs(dy) > touchThreshold);
     	}
 	});
+
+	this._animatedValue = new Animated.Value(0)
   // this._panResponder = PanResponder.create({
   //   onMoveShouldSetPanResponder: this._onGrant,
   //   onPanResponderRelease: this._onRelease,
@@ -130,6 +133,11 @@ constructor(props) {
 	  }).catch((err) => {
 	  	console.log(err);
 	  });
+
+
+	  if (this.props.route.params.index) {
+	  	this._panel.show();
+	  }
 	}	
 	gatherDataForPicture = () => {
 		console.log("ran...");
@@ -183,7 +191,7 @@ constructor(props) {
 	}
 	renderContent = () => {
 		return (
-			<GallerySwiper onPageSelected={(index) => {
+			<GallerySwiper initialPage={this.props.route.params.index ? this.props.route.params.index : 0} onPageSelected={(index) => {
 				console.log("index", index);
 				this.setState({
 					indexed: index
@@ -203,7 +211,7 @@ constructor(props) {
 		this.setState({
 			dragPanel: false
 		}, () => {
-			const { avatar, comment } = this.state;
+			const { avatar, comment, indexed } = this.state;
 
 			console.log("handle submission - comment.");
 			if (avatar !== null && comment.length > 0) {
@@ -211,7 +219,8 @@ constructor(props) {
 					comment,
 					username: this.props.username,
 					avatar,
-					id: this.state.id
+					id: this.state.id,
+					index: indexed
 				}).then((res) => {
 					if (res.data.message === "Successfully posted new comment!") {
 						console.log(res.data);
@@ -229,7 +238,8 @@ constructor(props) {
 				axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
 					username: this.props.username,
 					avatar,
-					id: this.state.id
+					id: this.state.id,
+					index: indexed
 				}).then((res) => {
 					if (res.data.message === "Successfully posted new comment!") {
 						console.log(res.data);
@@ -247,7 +257,8 @@ constructor(props) {
 				axios.post("http://recovery-social-media.ngrok.io/post/profile/pic/comment", {
 					username: this.props.username,
 					comment, 
-					id: this.state.id
+					id: this.state.id,
+					index: indexed
 				}).then((res) => {
 					if (res.data.message === "Successfully posted new comment!") {
 						console.log(res.data);
@@ -684,7 +695,11 @@ constructor(props) {
 			<Header>
 	          <Left>
 	            <NativeButton onPress={() => {
-	              this.props.navigation.navigate("profile-pic-view");
+	              if (this.props.route.params.index) {
+	              	this.props.navigation.navigate("notifications");
+	              } else {
+	              	this.props.navigation.navigate("profile-pic-view");
+	              }
 	            }} hasText transparent>
 	              <NativeText>Back</NativeText>
 	            </NativeButton>
@@ -725,7 +740,7 @@ constructor(props) {
 		        </Footer>
 			</View>
 			{this.handleReviews()}
-				<SlidingUpPanel allowDragging={this.state.dragPanel} ref={c => this._panel = c}>
+				<SlidingUpPanel animatedValue={this._animatedValue} allowDragging={this.state.dragPanel} ref={c => this._panel = c}>
 					{this.renderSlideUpContent()}
 		        </SlidingUpPanel>
 			</Fragment>

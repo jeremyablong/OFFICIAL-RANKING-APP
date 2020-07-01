@@ -76,7 +76,7 @@ constructor(props) {
 
 
 							}
-
+							
 						});
 						
 
@@ -91,6 +91,7 @@ constructor(props) {
 			  	console.log(err);
 			  })
         });
+		
 
 	}
 	redirectToSpecific = (data) => {
@@ -107,7 +108,7 @@ constructor(props) {
 	          		user: res.data.user,
 	          		navigate: true
 	          	}, () => {
-					this.props.navigation.navigate(data.route, { user: this.state.user });
+					this.props.navigation.navigate(data.route, { user: this.state.user, index: data.index });
 	          	})
 	          }
 	        }).catch((err) => {
@@ -182,12 +183,12 @@ constructor(props) {
 				                <NativeButton onPress={() => {
 				                	this.redirectToSpecific(notify);
 				                }} transparent>
-				                  <NativeText>View</NativeText>
+				                  <Image style={{ width: 50, height: 50 }} source={require("../../../assets/icons/more-two.png")} />
 				                </NativeButton>
 				              </Right>
 				            </ListItem>
 			            )
-					}) : <LoadingWall />}
+					}) : <View><Text style={{ textAlign: "center", fontSize: 20, marginTop: 20 }}>You don't have any notifications at this time...</Text><LoadingWall /></View>}
 				</List>
 				</ScrollView>
 	
