@@ -154,7 +154,6 @@ constructor(props) {
 							horizontal
 					        data={this.state.entries}
 					        renderItem={({ item }) => {
-					        	console.log("iiii :", item);
 								return (
 									<View style={styles.box}>
 										<Image 

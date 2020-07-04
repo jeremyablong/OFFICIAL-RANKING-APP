@@ -1,4 +1,4 @@
-import { GEO_LOCATION } from "../../actions/types.js";
+import { GEO_LOCATION, LOCATION_BACKGROUND } from "../../actions/types.js";
 
 
 export default (state = {}, action) => {
@@ -7,6 +7,11 @@ export default (state = {}, action) => {
 			return {
 				...state,
 				location: action.payload
+			}
+		case LOCATION_BACKGROUND:
+			return {
+				...state,
+				background: action.payload
 			}
 		default: 
 			return state;

@@ -22,6 +22,8 @@ import { authenticated } from "../../../actions/auth/auth.js";
 import axios from "axios";
 import _ from "lodash";
 import LoadingWall from "../wall/loading.js";
+import NavigationDrawer from "../../navigation/drawer.js";
+import SideMenu from 'react-native-side-menu';
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,7 +35,8 @@ constructor(props) {
   	notifications: [],
   	ready: false,
   	last: null,
-  	navigate: false
+  	navigate: false,
+  	isOpen: false
   };
 }
 	componentDidMount() {
@@ -141,37 +144,41 @@ constructor(props) {
   		}
 	}
 	render() {
+		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		console.log(this.state);
 		return (
 			<Fragment>
+			<SideMenu isOpen={this.state.isOpen} menu={menu}>
 				<Header>
 		          <Left>
-		            <NativeButton onPress={() => {
-		              this.props.authenticated({});
-		              this.props.navigation.navigate("login");
-		            }} hasText transparent>
-		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/logout.png")}/>
-		            </NativeButton>
-		          </Left>
-		          <Body>
-		            <Title>Notifications</Title>
-		          </Body>
-		          <Right>
 		            <NativeButton onPress={() => {
 		            	console.log("clicked chat...");
 		            	this.props.navigation.navigate("chat-users");
 		            }} hasText transparent>
 		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/chat.png")}/>
 		            </NativeButton>
+		          </Left>
+		          <Body>
+		            <Title>Notifications</Title>
+		          </Body>
+		          <Right>
+		          	<NativeButton onPress={() => {
+		            	console.log("clicked user interface...");
+					    this.setState({
+					    	isOpen: true
+					    })
+		            }} hasText transparent>
+		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
+		            </NativeButton>
 		          </Right>
 		        </Header>
 				
-				<ScrollView>
+				<ScrollView style={{ backgroundColor: "white" }}>
 				<List>
 					{this.state.notifications && this.state.ready === true ? this.state.notifications.map((notify, index) => {
 {/*						console.log("notify :", notify);*/}
 						return (
-							<ListItem thumbnail>
+							<ListItem key={index} thumbnail>
 				              <Left>
 				                <Thumbnail square source={{ uri: notify.picture }} />
 				              </Left>
@@ -220,6 +227,7 @@ constructor(props) {
 			          </FooterTab>
 			        </Footer>
 		        </View>
+		        </SideMenu>
 			</Fragment>
 		)
 	}

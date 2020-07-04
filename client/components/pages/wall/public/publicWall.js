@@ -22,6 +22,8 @@ import axios from "axios";
 import LoadingWall from "../loading.js";
 import FriendsListSubComponent from "../../../friends/friendList.js";
 import PostToWallSubComponent from "../../../wall/postToWall.js";
+import NavigationDrawer from "../../../navigation/drawer.js";
+import SideMenu from 'react-native-side-menu';
 
 const { width, height } = Dimensions.get("window");
 
@@ -35,7 +37,8 @@ constructor(props) {
 	avatar: null,
 	cover: null,
 	user: null,
-	ready: false
+	ready: false,
+	isOpen: false
   };
 
 
@@ -157,7 +160,7 @@ constructor(props) {
 			);
 		} else {
 			return (
-				<Fragment>
+				<View style={{ backgroundColor: "white", height: height }}>
 					<TouchableOpacity style={{ justifyContent: "center", alignItems: "center" }}>
 						<NativeButton onPress={() => {
 							this.handleRerender(); 
@@ -169,14 +172,16 @@ constructor(props) {
 					<View> 
 						<LoadingWall /> 
 					</View>
-				</Fragment>
+				</View>
 			);
 		}
 	}
 	render() {
+		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		console.log(this.state);
 		return (
 			<Fragment>
+			<SideMenu isOpen={this.state.isOpen} menu={menu}>
 				<Header>
 		          <Left>
 		            <NativeButton onPress={() => {
@@ -191,10 +196,13 @@ constructor(props) {
 		          </Body>
 		          <Right>
 		            <NativeButton onPress={() => {
-		            	{/*this.props.navigation.navigate("chat-users");*/}
-		            	this._panelTwo.show();
+		            	console.log("clicked user interface...");
+		                 {/*this.props.navigation.navigate("chat-users");*/}
+					    this.setState({
+					    	isOpen: true
+					    })
 		            }} hasText transparent>
-		              <NativeText>Help?</NativeText>
+		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../../assets/icons/user-interface.png")}/>
 		            </NativeButton>
 		          </Right>
 		        </Header>
@@ -263,6 +271,7 @@ constructor(props) {
 		          </FooterTab>
 		        </Footer>
 			</View>
+			</SideMenu>
 			</Fragment>
 		)
 	}
@@ -276,7 +285,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   container: {
-	
+	backgroundColor: "white"
   },
   customContainer: {
   	marginTop: 30,

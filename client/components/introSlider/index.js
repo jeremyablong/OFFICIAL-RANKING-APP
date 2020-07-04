@@ -54,6 +54,7 @@ constructor(props) {
 	    // navigation or simply by controlling state
 	    this.setState({ showRealApp: true });
 	    this.props.registerIntroSeen(true);
+      this.props.navigation.navigate("homepage");
       // this.props.authenticated({});
     }
 	render() {

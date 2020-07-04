@@ -24,6 +24,9 @@ import { connect } from "react-redux";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import PhotoUpload from 'react-native-photo-upload';
 import FriendsListSubComponent from "../../friends/friendList.js";
+import NavigationDrawer from "../../navigation/drawer.js";
+import SideMenu from 'react-native-side-menu';
+
 
 const { width, height } = Dimensions.get("window");
 
@@ -37,7 +40,8 @@ constructor(props) {
   	user: null,
   	modalIsVisible: false,
   	message: "",
-  	cover: null
+  	cover: null,
+  	isOpen: false
   };
 }
 	componentDidMount() {
@@ -146,11 +150,12 @@ constructor(props) {
 		this.props.navigation.navigate("profile-pic-view", { user: this.state.user, sendFromIndividual: true });
 	}
 	render() {
-		// const userProps = this.props.route.params.user;
+		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		console.log(this.state);
 		const { user } = this.state;
 		return (
 			<Fragment>
+			<SideMenu isOpen={this.state.isOpen} menu={menu}>
 				<Header>
 		          <Left>
 		            <NativeButton onPress={() => {
@@ -164,13 +169,23 @@ constructor(props) {
 		          </Body>
 		          <Right>
 		            <NativeButton onPress={() => {
+		            	console.log("clicked user interface...");
+		                 {/*this.props.navigation.navigate("chat-users");*/}
+					    this.setState({
+					    	isOpen: true
+					    })
+		            }} hasText transparent>
+		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
+		            </NativeButton>
+		            {/*<NativeButton onPress={() => {
 		            	console.log("clicked chat...");
 		            	this.props.navigation.navigate("chat-users");
 		            }} hasText transparent>
 		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/chat.png")}/>
-		            </NativeButton>
+		            </NativeButton>*/}
 		          </Right>
 		        </Header>
+		    
 		        <ScrollView style={styles.container}>
 				  {this.renderModalConstant()}
 				  {this.renderSlideUpContent()}
@@ -208,6 +223,7 @@ constructor(props) {
 		            <FriendsListSubComponent navigation={this.props.navigation} />
 		        </View>
 		      </ScrollView>
+		    </SideMenu>
       		<SlidingUpPanel ref={c => this._panel = c}>
 	          <View style={styles.slide}>
 	            <PhotoUpload
@@ -262,6 +278,9 @@ const styles = StyleSheet.create({
 	shadowRadius: 9.30,
 
 	elevation: 15
+  },
+  container: {
+  	backgroundColor: "white"
   },
   slide: {
     flex: 1,

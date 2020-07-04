@@ -21,16 +21,16 @@ constructor(props) {
 
   this.state = {
     data: [
-        {id:1, title: "Option 1", image:"https://img.icons8.com/color/70/000000/cottage.png"},
-        {id:1, title: "Option 2", image:"https://img.icons8.com/color/70/000000/administrator-male.png"},
-        {id:2, title: "Option 3", image:"https://img.icons8.com/color/70/000000/filled-like.png"} ,
-        {id:3, title: "Option 4", image:"https://img.icons8.com/color/70/000000/facebook-like.png"} ,
-        {id:4, title: "Option 5", image:"https://img.icons8.com/color/70/000000/shutdown.png"} ,
-        {id:5, title: "Option 6", image:"https://img.icons8.com/color/70/000000/traffic-jam.png"} ,
-        {id:6, title: "Option 7", image:"https://img.icons8.com/dusk/70/000000/visual-game-boy.png"} ,
-        {id:8, title: "Option 8", image:"https://img.icons8.com/flat_round/70/000000/cow.png"} ,
-        {id:9, title: "Option 9", image:"https://img.icons8.com/color/70/000000/coworking.png"} ,
-        {id:9, title: "Option 10",image:"https://img.icons8.com/nolan/70/000000/job.png"} ,
+        {id: 1, route: "rank-nearby-users", title: "Rank People In Your Proximity", image: require("../../assets/icons/review.png") },
+        { id: 2, route: "social-ranking-stats", title: "View Social Ranking Statistics", image: require("../../assets/icons/first.png") } ,
+        {id: 3, route: "dashboard", title: "Social Ranking Repair", image: require("../../assets/icons/repair.png") } ,
+        {id: 4, route: "dashboard", title: "Edit Profile", image: require("../../assets/icons/user.png") },
+        {id: 5, route: "dashboard", title: "Privacy Shortcuts", image: require("../../assets/icons/privacy.png") } ,
+        {id: 6, route: "dashboard", title: "Dating", image: require("../../assets/icons/online-dating.png") } ,
+        {id: 7, route: "dashboard", title: "View Friends", image: require("../../assets/icons/sport-team.png") } ,
+        {id:8, title: "Sign-Out", image: require("../../assets/icons/logout.png") } ,
+        // {id:9, title: "Option 9", image:"https://img.icons8.com/color/70/000000/coworking.png"} ,
+        // {id:9, title: "Option 10",image:"https://img.icons8.com/nolan/70/000000/job.png"} ,
     ]	
   };
 }
@@ -49,8 +49,11 @@ constructor(props) {
 			          renderItem={({item}) => {
 			            return (
 			              <View>
-			                <TouchableOpacity style={styles.card} onPress={() => {this.clickEventListener(item)}}>
-			                  <Image style={styles.cardImage} source={{uri:item.image}}/>
+			                <TouchableOpacity style={styles.card} onPress={() => {
+			                	console.log("navigation clicked...");
+			                	this.props.navigation.navigate(item.route);
+			                }}>
+			                  <Image style={styles.cardImage} source={item.image}/>
 			                </TouchableOpacity>
 
 			                <View style={styles.cardHeader}>

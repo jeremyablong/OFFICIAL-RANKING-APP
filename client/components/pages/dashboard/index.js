@@ -24,7 +24,7 @@ import SearchBar from 'react-native-search-bar';
 import ShowFeedList from "../../dashboard/feed/showFeed.js";
 import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
-
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,7 +36,8 @@ constructor(props) {
   	searching: false,
   	searchValue: "",
   	people: [],
-  	specific: null
+  	specific: null,
+  	isOpen: false
   };
 }
 	uploadImage = () => {
@@ -86,7 +87,8 @@ constructor(props) {
 			console.log(res.data);
 			if (res.data) {
 				this.setState({
-					people: res.data
+					people: res.data,
+					isOpen: false
 				})
 			}
 		}).catch((err) => {
@@ -102,8 +104,7 @@ constructor(props) {
 		<Header>
           <Left>
             <NativeButton onPress={() => {
-              this.props.authenticated({});
-              this.props.navigation.navigate("login");
+              this.RBSheet.open();
             }} hasText transparent>
               <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/logout.png")}/>
             </NativeButton>
@@ -124,13 +125,21 @@ constructor(props) {
           </Right>
         </Header>
 		<View style={{ backgroundColor: "white", paddingTop: 20 }}>   
+        <View style={{ alignItems: "center", alignContent: "center", justifyContent: "center" }}>
+          <NativeButton style={{ width: width * 0.95, backgroundColor: "#AF0C0C", alignItems: "center", alignContent: "center", justifyContent: "center" }} onPress={() => {
+                 this.props.navigation.navigate("rank-nearby-users");
+            }} hasText>
+            <NativeText style={{ color: "white" }}>Rate Users Nearby In Your Proximity </NativeText>
+          </NativeButton>
+        </View>
 	        <SearchBar  
 			  ref="searchBar"
 			  placeholder="Search by user-name..."
 			  onChangeText={(value) => {
 			  	this.setState({
 			  		searchValue: value,
-			  		searching: true
+			  		searching: true,
+			  		isOpen: false
 			  	})
 			  }} 
 			  onSearchButtonPress={this.handleSearch}
@@ -138,21 +147,21 @@ constructor(props) {
 			/>
 		</View>
 	
-		{this.state.searching === true ? <Fragment>
-			{this.state.people ? <View style={{ backgroundColor: "white" }}><FlatList
+		{this.state.searching === true ? <View style={{ flex: 1, backgroundColor: "white" }}><Fragment>
+			{this.state.people ? <FlatList
 		        data={this.state.people}
 		        renderItem={({ item }) => {
 		        	console.log("itemmmmmm :", item);
 		        	return (
 						<ListItem thumbnail>
-			              <Left>
+			              <Left style={{ }}>
 			                <Thumbnail square source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} />
 			              </Left>
 			              <Body>
 			                <NativeText>{item.username}</NativeText>
 			                {/*<NativeText note numberOfLines={1}>{}</NativeText>*/}
 			              </Body>
-			              <Right>
+			              <Right style={{ top: -1 }}>
 			                <NativeButton onPress={() => {
 			                	Keyboard.dismiss();
 								this.props.navigation.navigate("profile-individual", { user: item });
@@ -161,11 +170,11 @@ constructor(props) {
 			                </NativeButton>
 			              </Right>
 			            </ListItem>
-		        	);
+		        	); 
 		        }}
 		        keyExtractor={item => item.id}
-		      /></View> : <NativeButton><NativeText>Load page...</NativeText></NativeButton>}
-			</Fragment> : <ShowFeedList />}
+		      /> : <View style={{ backgroundColor: "white", height: height, width: width }}><NativeButton><NativeText>Load page...</NativeText></NativeButton></View>}
+			</Fragment></View> : <ShowFeedList />}
 	
 			<Footer>
 	          <FooterTab>
@@ -193,7 +202,49 @@ constructor(props) {
 	            </NativeButton>
 	          </FooterTab>
 	        </Footer>
+          <RBSheet
+              ref={ref => {
+                this.RBSheet = ref;
+              }}
+              height={300}
+              openDuration={250}
+              customStyles={{
+                container: {
+                  justifyContent: "center",
+                  alignItems: "center"
+                }
+              }}
+            >
+              <View>
+          <TouchableOpacity style={styles.card} onPress={() => {
+            this.props.authenticated({});
+            this.RBSheet.close();
+            this.props.navigation.navigate("homepage"); 
+          }}>
+                  <View style={styles.cardContent}>
+                    <TouchableOpacity style={styles.followButtonRed} onPress={() => {
+              this.props.authenticated({});
+              this.RBSheet.close();
+              this.props.navigation.navigate("homepage");
+                    }}>
+                      <Text style={{ fontSize: 15, color: "white" }}>Sign-out</Text>  
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.card} onPress={() => {
 
+                }}>
+
+                  <View style={styles.cardContent}> 
+                    <TouchableOpacity style={styles.followButton} onPress={() => {
+              this.RBSheet.close();
+                    }}>
+                      <Text style={styles.followButtonText}>Cancel</Text>  
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </RBSheet>
 	        </SideMenu>
 		</Fragment>
 		)
@@ -363,7 +414,67 @@ const styles = StyleSheet.create({
 		marginRight: 6,
 		marginTop: 10,
 		marginBottom: 5
-	}
+	},
+  cardContent: {
+    marginLeft:20,
+    marginTop:10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: "center",
+    width: width * 0.80
+  },
+
+  card:{
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
+    shadowOpacity: 0.37,
+    shadowRadius: 7.49,
+    elevation: 12,
+
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop:20,
+    backgroundColor:"white",
+    padding: 10,
+    flexDirection:'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: "center",
+    borderRadius:30,
+  },
+  followButton: {
+    height:45,
+    width:100,
+    padding:10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius:30,
+    backgroundColor: "white",
+    borderWidth:3,
+    borderColor:"black",
+    width: width * 0.60
+  },
+   followButtonRed: {
+    height:45,
+    width:100,
+    padding:10,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius:30,
+    backgroundColor: "darkred",
+    borderWidth:3,
+    borderColor:"orange",
+    width: width * 0.60
+  },
+  followButtonText:{
+    color: "darkred",
+    fontSize:15,
+  }
 })
 const mapStateToProps = state => {
 	console.log(state);

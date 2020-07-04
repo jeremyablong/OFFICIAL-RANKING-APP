@@ -16,6 +16,9 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import axios from "axios";
+import RNLocation from 'react-native-location';
+import BackgroundGeolocation from "react-native-background-geolocation";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { connect } from "react-redux";
@@ -34,6 +37,10 @@ import UploadProfilePicPage from "./components/pages/profile/uploadProfilePicPag
 import InstagramFeedPage from "./components/pages/instagram-feed/imageFeed.js";
 import NotificationsPage from "./components/pages/notifications/notificationsPage.js";
 import FriendListMain from "./components/pages/friends/friendList.js";
+import DisplayNearbyUsers from "./components/pages/ranking/nearbyUsers/displayNearbyUsers.js";
+import SocialRankingStatsPage from "./components/pages/socialRankingStats/stats.js";
+
+import { locationBackground, latLngLocation } from "./actions/location/getLocation.js";
 
 const Stack = createStackNavigator();
 
@@ -64,6 +71,95 @@ constructor(props) {
       }
       return "homepage";
   }
+  componentDidMount() {
+    ////
+    // 1.  Wire up event-listeners
+    //
+    console.log("this.props.username", this.props.username);
+
+    // This handler fires whenever bgGeo receives a location update.
+    BackgroundGeolocation.onLocation(this.onLocation, this.onError);
+ 
+    // This handler fires when movement states changes (stationary->moving; moving->stationary)
+    BackgroundGeolocation.onMotionChange(this.onMotionChange);
+ 
+    // This event fires when a change in motion activity is detected
+    BackgroundGeolocation.onActivityChange(this.onActivityChange);
+ 
+    // This event fires when the user toggles location-services authorization
+    BackgroundGeolocation.onProviderChange(this.onProviderChange);
+ 
+    ////
+    // 2.  Execute #ready method (required)
+    //
+    BackgroundGeolocation.ready({
+      // Geolocation Config
+      desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
+      distanceFilter: 10,
+      // Activity Recognition
+      stopTimeout: 1,
+      // Application config
+      debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
+      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
+      stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
+      startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
+      // HTTP / SQLite config
+      url: 'http://recovery-social-media.ngrok.io',
+      batchSync: false,       // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
+      autoSync: true         // <-- [Default: true] Set true to sync each location to server as it arrives.
+      // headers: {              // <-- Optional HTTP headers
+      //   "X-FOO": "bar"
+      // },
+      // params: {               // <-- Optional HTTP params
+      //   "auth_token": "maybe_your_server_authenticates_via_token_YES?"
+      // }
+    }, (state) => {
+      console.log("- BackgroundGeolocation is configured and ready: ", state);
+      // should be (!state.enabled)
+      if (state.enabled) {
+        ////
+        // 3. Start tracking!
+        //
+        BackgroundGeolocation.start(() => {
+          console.log("- Start success");
+        });
+      }
+    });
+  }
+  onLocation = (location) => {
+    console.log('[location] -', location);
+      if (this.props.username) {
+        axios.post("http://recovery-social-media.ngrok.io/post/location/moving/geolocation", {
+          username: this.props.username,
+          location
+        }).then((res) => {
+          console.log("Resolution data : ", res.data);
+        }).catch((err) => {
+          console.log(err);
+        })
+        this.props.locationBackground(location);
+      }
+  }
+  onError = (error) => {
+    console.warn('[location] ERROR -', error);
+  }
+  onActivityChange = (event) => {
+    console.log('[activitychange] -', event);  // eg: 'on_foot', 'still', 'in_vehicle'
+    
+    if (event.activity === "on_foot" && event.confidence >= 50) {
+      console.log("We are moving!");
+    } else if (event.activity === "in_vehicle" && event.confidence >= 50) {
+      console.log("we are in a vehicle moving...");
+    } else if (event.activity === "still" && event.confidence >= 50) {
+      console.log("No movement detected.")
+    }
+  }
+  onProviderChange = (provider) => {
+    console.log('[providerchange] -', provider.enabled, provider.status);
+  }
+  onMotionChange = (event) => {
+    console.log('[motionchange] -', event.isMoving, event.location);
+  }
 
   render () {
     return (
@@ -86,6 +182,8 @@ constructor(props) {
             <Stack.Screen name="view-instagram-style-images" component={InstagramFeedPage} />
             <Stack.Screen name="notifications" component={NotificationsPage} />
             <Stack.Screen name="friends-list" component={FriendListMain} />
+            <Stack.Screen name="rank-nearby-users" component={DisplayNearbyUsers} />
+            <Stack.Screen name="social-ranking-stats" component={SocialRankingStatsPage} />
           </Stack.Navigator>
         </NavigationContainer>
     );
@@ -134,8 +232,9 @@ const mapStateToProps = (state) => {
   console.log(state);
   return {
     intro: state.intro.intro,
-    authenticated: state.auth.authenticated ? state.auth.authenticated.fullName : "--"
+    authenticated: state.auth.authenticated ? state.auth.authenticated.fullName : "--",
+    username: state.auth.authenticated.username
   }
 }
 
-export default connect(mapStateToProps, {   })(App);
+export default connect(mapStateToProps, { locationBackground, latLngLocation })(App);

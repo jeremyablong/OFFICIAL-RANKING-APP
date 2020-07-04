@@ -43,7 +43,7 @@ constructor(props) {
 	render() {
 		return (
 			<Fragment>
-				<ScrollView horizontal={true}>
+				<ScrollView style={{ backgroundColor: "black" }} horizontal={true}>
 					<FlatList  
 						horizontal
 				        data={this.state.stories}
@@ -93,12 +93,12 @@ const styles = StyleSheet.create({
   },
   /******** card **************/
   card:{
-    shadowColor: 'black',
+    shadowColor: 'white',
     shadowOffset: {
       width: 0,
       height: 6,
     },
-    shadowOpacity: 0.67,
+    shadowOpacity: 0.87,
     shadowRadius: 7.49,
     elevation: 22,
 
