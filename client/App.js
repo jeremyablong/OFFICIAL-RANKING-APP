@@ -39,10 +39,14 @@ import NotificationsPage from "./components/pages/notifications/notificationsPag
 import FriendListMain from "./components/pages/friends/friendList.js";
 import DisplayNearbyUsers from "./components/pages/ranking/nearbyUsers/displayNearbyUsers.js";
 import SocialRankingStatsPage from "./components/pages/socialRankingStats/stats.js";
+import IndividualStory from "./components/pages/stories/individualStory.js";
+import PostToWallPage from "./components/pages/wall/post/postToWall.js";
 
 import { locationBackground, latLngLocation } from "./actions/location/getLocation.js";
 
 const Stack = createStackNavigator();
+
+// red color scheme - #e31b39
 
 class App extends Component {
 constructor(props) {
@@ -184,6 +188,8 @@ constructor(props) {
             <Stack.Screen name="friends-list" component={FriendListMain} />
             <Stack.Screen name="rank-nearby-users" component={DisplayNearbyUsers} />
             <Stack.Screen name="social-ranking-stats" component={SocialRankingStatsPage} />
+            <Stack.Screen name="story-individual" component={IndividualStory} />
+            <Stack.Screen name="post-to-wall-page" component={PostToWallPage} />
           </Stack.Navigator>
         </NavigationContainer>
     );

@@ -110,7 +110,8 @@ constructor(props) {
 					       paddingVertical: 30,
 					       width: 150,
 					       height: 150,
-					       borderRadius: 75
+					       borderRadius: 75,
+					       tintColor: "#e31b39"
 					     }}
 					     resizeMode='cover'
 					     source={require("../../../assets/icons/user.png")}
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
 	alignItems: "center", 
 	justifyContent: "center", 
 	alignContent: "center", 
-	backgroundColor: "black"
+	backgroundColor: "#e31b39"
   },
   inputs:{
     height:45,

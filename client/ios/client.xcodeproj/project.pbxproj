@@ -32,6 +32,10 @@
 		5ECB16EEF24E4A3EBC09F054 /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D5B3CB6063414C24B88DE2F8 /* Roboto.ttf */; };
 		6F3BD21DE59A4E4BA4BDB2BF /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 74B2C787493045AE8ECEBC08 /* FontAwesome5_Brands.ttf */; };
 		746AF95B90124EA99B879A11 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D097D9D5C19A4567A32E8C22 /* FontAwesome5_Solid.ttf */; };
+		90728BE124B0177C0028C32D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 90728BE024B0177C0028C32D /* GoogleService-Info.plist */; };
+		90728BE224B0177C0028C32D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 90728BE024B0177C0028C32D /* GoogleService-Info.plist */; };
+		90728BE324B0177C0028C32D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 90728BE024B0177C0028C32D /* GoogleService-Info.plist */; };
+		90728BE424B0177C0028C32D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 90728BE024B0177C0028C32D /* GoogleService-Info.plist */; };
 		909CA5CC36D24343BA7D83BC /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C555F2F46A59475CAAB7A807 /* Entypo.ttf */; };
 		9DF882BF4B924F9389D65251 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EE73EFB80F84BEF92034019 /* MaterialIcons.ttf */; };
 		B863CE95B9AE5ADC529F3799 /* libPods-client-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D81C51EE7B9E06D8FD59EC6 /* libPods-client-tvOS.a */; };
@@ -92,6 +96,7 @@
 		7A59D7E9D296406FB0206E18 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		7EE73EFB80F84BEF92034019 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		8C0C73608CF64C4695E9517E /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		90728BE024B0177C0028C32D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		929AFEA674DF2209E80B75A9 /* Pods-client.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-client.debug.xcconfig"; path = "Target Support Files/Pods-client/Pods-client.debug.xcconfig"; sourceTree = "<group>"; };
 		A88A1930033B4578B04A71DA /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		AB9737E0F1026BE8AAAFF225 /* Pods-client-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-client-tvOS.release.xcconfig"; path = "Target Support Files/Pods-client-tvOS/Pods-client-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -170,6 +175,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				90728BE024B0177C0028C32D /* GoogleService-Info.plist */,
 			);
 			name = client;
 			sourceTree = "<group>";
@@ -398,6 +404,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90728BE224B0177C0028C32D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +431,7 @@
 				16D423C6950645A4AFD50326 /* Roboto_medium.ttf in Resources */,
 				5ECB16EEF24E4A3EBC09F054 /* Roboto.ttf in Resources */,
 				412A6E5C7EA3450CA52DB611 /* rubicon-icon-font.ttf in Resources */,
+				90728BE124B0177C0028C32D /* GoogleService-Info.plist in Resources */,
 				4BE1AADA3874446DB048AFEC /* SimpleLineIcons.ttf in Resources */,
 				3393F84C5DAC409FA583077F /* Zocial.ttf in Resources */,
 			);
@@ -434,6 +442,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */,
+				90728BE324B0177C0028C32D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,6 +450,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				90728BE424B0177C0028C32D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -507,12 +517,16 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionFaceModel/GoogleMVFaceDetectorResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionTextModel/GoogleMVTextDetectorResources.bundle",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker/QBImagePicker.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVFaceDetectorResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TOCropViewControllerBundle.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -573,12 +587,16 @@
 				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionFaceModel/GoogleMVFaceDetectorResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseMLVisionTextModel/GoogleMVTextDetectorResources.bundle",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/RNImageCropPicker/QBImagePicker.bundle",
+				"${PODS_CONFIGURATION_BUILD_DIR}/TOCropViewController/TOCropViewControllerBundle.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVFaceDetectorResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMVTextDetectorResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/QBImagePicker.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/TOCropViewControllerBundle.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

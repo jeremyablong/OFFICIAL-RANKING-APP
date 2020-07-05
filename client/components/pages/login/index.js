@@ -16,6 +16,7 @@ import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Te
 import axios from "axios";
 import { authenticated } from "../../../actions/auth/auth.js";
 import { connect } from "react-redux";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const { width, height } = Dimensions.get("window");
 
@@ -101,8 +102,8 @@ constructor(props) {
             </NativeButton>
           </Right>
         </Header>
-			<ImageBackground style={styles.container} source={require("../../../assets/images/beach.jpg")}>
-			 
+			<ImageBackground style={styles.container} source={require("../../../assets/images/blur.jpg")}>
+			 	
 				{this.state.showEmail === true ? <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Email Address</Text><View style={styles.inputContainer}>
 		          <TouchableOpacity onPress={() => {
 		          	this.setState({
@@ -116,7 +117,11 @@ constructor(props) {
 		              onChangeText={(email) => this.setState({
 		                email
 		              })}/>
-		        </View></Fragment> : <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Phone Number</Text><View style={styles.inputContainer}>
+		        </View><TouchableOpacity onPress={() => {
+		          this.setState({
+		            showEmail: false
+		          })
+		        }}><Text style={{ textAlign: "left", fontSize: 15, color: "white", fontWeight: "bold", textDecorationLine: "underline", paddingBottom: 5, paddingLeft: 5, marginTop: -7, paddingBottom: 5 }}><Image style={{ width: 20, height: 20, tintColor: "white" }} source={require("../../../assets/icons/select.png")}/>Use phone number instead</Text></TouchableOpacity></Fragment> : <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Phone Number</Text><View style={styles.inputContainer}>
 		          <TouchableOpacity onPress={() => {
 		          	this.setState({
 		          		showEmail: !this.state.showEmail,
@@ -130,6 +135,11 @@ constructor(props) {
 		                phoneNumber
 		              })}/>
 		        </View></Fragment>}
+		        {this.state.showEmail === false ? <TouchableOpacity onPress={() => {
+		          this.setState({
+		            showEmail: true
+		          })
+		        }}><Text style={{ textAlign: "left", fontSize: 15, color: "white", fontWeight: "bold", textDecorationLine: "underline", paddingBottom: 5, paddingLeft: 5, marginTop: -7, paddingBottom: 5 }}><Image style={{ width: 20, height: 20, tintColor: "white" }} source={require("../../../assets/icons/select.png")}/>Use email instead</Text></TouchableOpacity> : null}
 		        <Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10 }}>Password</Text>
 		        <View style={styles.inputContainer}>
 

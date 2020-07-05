@@ -51,7 +51,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				password: password.trim(),
 				birthdate,
 				hometown: hometown.trim(),
-				username: username.trim(),
+				username: username.toLowerCase().trim(),
 				profilePic: [{
 					date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 					picture: generatedID,

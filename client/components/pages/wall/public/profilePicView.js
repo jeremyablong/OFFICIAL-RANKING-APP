@@ -930,7 +930,7 @@ constructor(props) {
 }
 const styles = StyleSheet.create({
   viewPicturesBtnBlue: {
-	backgroundColor: "darkblue", 
+	backgroundColor: "#e31b39", 
   	marginTop: 20, 
   	alignItems: "center", 
   	justifyContent: "center", 
@@ -938,7 +938,7 @@ const styles = StyleSheet.create({
   	marginBottom: 50
   },
   viewPicturesBtn: {
-  	backgroundColor: "black", 
+  	backgroundColor: "#e31b39", 
   	marginTop: 20, 
   	alignItems: "center", 
   	justifyContent: "center", 
@@ -956,7 +956,8 @@ const styles = StyleSheet.create({
 	alignItems: "center", 
 	justifyContent: "center", 
 	width: width * 0.80,
-	marginRight: 10
+	marginRight: 10,
+	backgroundColor: "#e31b39"
   },
   containerTwoRow: {
     flex: 1,

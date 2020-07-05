@@ -33,42 +33,82 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			const lowerSender = sender.toLowerCase();
 			const lowerReciever = reciever.toLowerCase();
 
-			collection.findOneAndUpdate({ username: lowerSender }, { $push: { messages: {
-				id: generatedID,
-				message,
-				date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-				author: sender,
-				reciever: reciever,
-				sender: true
-			}}}, (err, doc) => {
-				if (err) {
-					console.log(err);
-				} else {
-					collection.findOneAndUpdate({ username: lowerReciever }, { $push: { messages: {
-						id: generatedID,
-						message,
-						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-						author: sender, 
-						reciever: reciever, 
-						sender: false
-					}, notifications: {
-						user: lowerSender,
-						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-						id: uuidv4(),
-						data: "sent you a new private message!",
-						route: "message-individual"
-					}}}, (err, doc) => {
-						if (err) {
-							console.log(err);
-						} else {
-							res.json({
-								message: "Successfully updated both users!",
-								doc
-							});
-						}
-					})
+			let count = 0;
+
+			collection.find({}).forEach((item) => {
+				if (item.username === lowerSender) {
+					console.log("sender match... :", item);
+					if (item.messages) {
+						item.messages.push({
+							id: generatedID,
+							message,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							author: sender,
+							reciever: reciever,
+							sender: true
+						});
+					} else {
+						item["messages"] = [{
+							id: generatedID,
+							message,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							author: sender,
+							reciever: reciever,
+							sender: true
+						}];
+					}
+					collection.save(item);
+					count++;
+				} else if (item.username === lowerReciever) {
+					console.log("reciever match... :", item);
+					if (item.notifications) {
+						item.notifications.push({
+							user: lowerSender,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							id: uuidv4(),
+							data: "sent you a new private message!",
+							route: "message-individual"
+						});
+					} else {
+						item["notifications"] = [{
+							user: lowerSender,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							id: uuidv4(),
+							data: "sent you a new private message!",
+							route: "message-individual"
+						}]
+					}
+					if (item.messages) {
+						item.messages.push({
+							id: generatedID,
+							message,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							author: sender, 
+							reciever: reciever, 
+							sender: false
+						});
+					} else {
+						item["messages"] = [{
+							id: generatedID,
+							message,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							author: sender, 
+							reciever: reciever, 
+							sender: false
+						}];
+					}
+					collection.save(item);
+					count++;
+				}
+
+				if (count === 2) {
+					res.json({
+						message: "Successfully updated both users!"
+					});
 				}
 			})
+
+			
 	});
 });
 

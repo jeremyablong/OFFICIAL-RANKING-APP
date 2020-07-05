@@ -48,19 +48,19 @@ constructor(props) {
 					<Text style={{ textAlign: "left", fontSize: 30, fontWeight: "bold" }}>Friends</Text>
 					<Text style={{ textAlign: "left", fontSize: 20 }}>452 Friends</Text>
 		                <FlatList
-					        contentContainerStyle={{alignSelf: 'flex-start'}}
-					        numColumns={3}
-					        showsVerticalScrollIndicator={false}
-					        showsHorizontalScrollIndicator={false}
-					        data={this.state.data.slice(0, 6)} 
-					        renderItem={({ item, index }) => {
-					        	let split = item.fullName.split(" ");
-					            console.log("ITEMMMMMMM :", split);
-					            return (
-									<TouchableOpacity style={styles.touchable} onPress={() => {
-										{/*this.clickEventListener(item);*/}
+    					        contentContainerStyle={{ alignSelf: 'flex-start' }}
+    					        numColumns={3}
+    					        showsVerticalScrollIndicator={false}
+    					        showsHorizontalScrollIndicator={false}
+    					        data={this.state.data.slice(0, 6)} 
+    					        renderItem={({ item, index }) => {
+    					        	let split = item.fullName.split(" ");
+    					            console.log("ITEMMMMMMM :", split);
+    					            return (
+    									<TouchableOpacity style={styles.touchable} onPress={() => {
+    										{/*this.clickEventListener(item);*/}
 
-									}}>
+    									}}>
 								    <ImageBackground source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} style={{ height: 100 }}>
 							            <View style={styles.bodyContent}>
 
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   seeMore: {
   	width: width * 0.95, 
   	marginTop: 20,
-  	backgroundColor: "grey", 
+  	backgroundColor: "#e31b39", 
   	alignItems: "center", 
   	justifyContent: "center", 
   	alignContent: "center",

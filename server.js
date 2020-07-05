@@ -34,7 +34,6 @@ app.use("/gather/all/profiles", require("./routes/gatherAllUsers.js"));
 app.use("/get/user/by/username", require("./routes/singleUser/getSingleUser.js"));
 app.use("/get/specific/user", require("./routes/specificUserRoutes/getSpecificUser.js"));
 app.use("/send/private/message", require("./routes/messages/send/sendMessage.js"));
-// app.use("/get/each/user/picture", require("./routes/general/getUsersPhotos.js"));
 app.use("/get/user/by/username/filter", require("./routes/messages/gather/gatherAndSort.js"));
 app.use("/get/individual/messages", require("./routes/messages/individual/findIndividualMsgs.js"));
 app.use("/post/replay/message/thread", require("./routes/messages/send/sendReply.js"));
@@ -53,7 +52,7 @@ app.use("/like/subcomment/respond", require("./routes/profile/pictures/galleryLi
 app.use("/latest/profile/picture/unlike", require("./routes/profile/pictures/latestProfilePicRemoveLike.js"));
 app.use("/gather/notifications", require("./routes/notifications/gatherNotifications.js"));
 app.use("/post/location/moving/geolocation", require("./routes/location/postNewLocation.js"));
-
+app.use("/create/wall/posting", require("./routes/wall/updateWall.js")); 
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {

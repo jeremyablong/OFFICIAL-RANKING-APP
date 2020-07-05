@@ -26,6 +26,7 @@ import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import RBSheet from "react-native-raw-bottom-sheet";
 
+
 const { width, height } = Dimensions.get("window");
 
 class DashboardAfterAuth extends React.Component {
@@ -101,7 +102,7 @@ constructor(props) {
 		return (
 		<Fragment>
 		<SideMenu isOpen={this.state.isOpen} menu={menu}>
-		<Header>
+		    <Header>
           <Left>
             <NativeButton onPress={() => {
               this.RBSheet.open();
@@ -126,13 +127,13 @@ constructor(props) {
         </Header>
 		<View style={{ backgroundColor: "white", paddingTop: 20 }}>   
         <View style={{ alignItems: "center", alignContent: "center", justifyContent: "center" }}>
-          <NativeButton style={{ width: width * 0.95, backgroundColor: "#AF0C0C", alignItems: "center", alignContent: "center", justifyContent: "center" }} onPress={() => {
+          <NativeButton style={{ width: width * 0.95, backgroundColor: "#e31b39", alignItems: "center", alignContent: "center", justifyContent: "center" }} onPress={() => {
                  this.props.navigation.navigate("rank-nearby-users");
             }} hasText>
             <NativeText style={{ color: "white" }}>Rate Users Nearby In Your Proximity </NativeText>
           </NativeButton>
         </View>
-	        <SearchBar  
+	        <SearchBar   
 			  ref="searchBar"
 			  placeholder="Search by user-name..."
 			  onChangeText={(value) => {
@@ -164,9 +165,9 @@ constructor(props) {
 			              <Right style={{ top: -1 }}>
 			                <NativeButton onPress={() => {
 			                	Keyboard.dismiss();
-								this.props.navigation.navigate("profile-individual", { user: item });
+								          this.props.navigation.navigate("profile-individual", { user: item });
 			                }} transparent>
-			                  <NativeText>View</NativeText>
+			                  <NativeText style={{ color: "#e31b39" }}>View</NativeText>
 			                </NativeButton>
 			              </Right>
 			            </ListItem>
@@ -174,8 +175,8 @@ constructor(props) {
 		        }}
 		        keyExtractor={item => item.id}
 		      /> : <View style={{ backgroundColor: "white", height: height, width: width }}><NativeButton><NativeText>Load page...</NativeText></NativeButton></View>}
-			</Fragment></View> : <ShowFeedList />}
-	
+			</Fragment></View> : <ShowFeedList navigation={this.props.navigation} />}
+	     
 			<Footer>
 	          <FooterTab>
 	            <NativeButton active onPress={() => {
@@ -466,7 +467,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:30,
-    backgroundColor: "darkred",
+    backgroundColor: "#e31b39",
     borderWidth:3,
     borderColor:"orange",
     width: width * 0.60

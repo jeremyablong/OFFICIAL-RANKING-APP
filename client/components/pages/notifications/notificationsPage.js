@@ -143,6 +143,11 @@ constructor(props) {
 	        })
   		}
 	}
+	returnNonMessage = () => {
+		return (
+			<View><LoadingWall /></View>
+		);
+	}
 	render() {
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		console.log(this.state);
@@ -195,7 +200,7 @@ constructor(props) {
 				              </Right>
 				            </ListItem>
 			            )
-					}) : <View><Text style={{ textAlign: "center", fontSize: 20, marginTop: 20 }}>You don't have any notifications at this time...</Text><LoadingWall /></View>}
+					}) : this.returnNonMessage()}
 				</List>
 				</ScrollView>
 	

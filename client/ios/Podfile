@@ -98,7 +98,10 @@ target 'client' do
   pod 'react-native-maps', :path => '../node_modules/react-native-maps' 
   pod 'react-native-google-maps', :path => '../node_modules/react-native-maps'
   pod 'GoogleMaps'
-  pod 'Google-Maps-iOS-Utils'
+  pod 'Google-Maps-iOS-Utils' 
+  pod 'Firebase/Analytics'
+
+  pod 'RNTouchThroughView', :path => '../node_modules/react-native-touch-through-view'
 
   target 'clientTests' do
     inherit! :complete

@@ -37,6 +37,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>If you want to upload images from your camera roll...We will need to access those images</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We will need to access your microphone if you plan on posting videos with sound</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need to access your camera to upload pictures to your account</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>

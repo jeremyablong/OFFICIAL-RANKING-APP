@@ -39,11 +39,12 @@ constructor(props) {
 }
 	clickEventListener = () => {
 		console.log("clicked.");
+    this.props.navigation.navigate("story-individual");
 	}
 	render() {
 		return (
 			<Fragment>
-				<ScrollView style={{ backgroundColor: "black" }} horizontal={true}>
+				<ScrollView style={{ backgroundColor: "#e31b39" }} horizontal={true}>
 					<FlatList  
 						horizontal
 				        data={this.state.stories}
@@ -141,9 +142,8 @@ const styles = StyleSheet.create({
   },
   name:{
     fontSize:18,
-    flex:1,
     alignSelf:'center',
-    color:"#008080",
+    color:"white",
     fontWeight:'bold'
   },
   position:{

@@ -116,17 +116,51 @@ class MessageIndividual extends Component {
 		  		id: this.props.route.params.user.id
 		  	}).then((res) => {
 		  		if (res.data.message === "FOUND user!") {
-					if (res.data.messages.replies) {
-						this.setState({
-							first: res.data.messages,
-							replies: res.data.messages.replies.reverse()
-						})
-					} else {
-						this.setState({
-							first: res.data.messages,
-							replies: res.data.messages.replies
-						})
-					}
+  					if (res.data.messages.replies) {
+  						this.setState({
+  							first: res.data.messages,
+  							replies: res.data.messages.replies.reverse()
+  						}, () => {
+                const sender = this.state.first;
+                axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+                  username: this.state.first.author === this.props.username ? this.state.first.reciever : this.state.first.author
+                }).then((res) => {
+
+                  console.log("resolution :", res.data);
+                  const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+                  // append picture to object
+                  sender["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+                  this.setState({
+                    first: sender
+                  })    
+                }).catch((err) => {
+                  console.log("FAILURE :", err);
+                })
+              })
+  					} else {
+  						this.setState({
+  							first: res.data.messages,
+  							replies: res.data.messages.replies
+  						}, () => {
+                const sender = this.state.first;
+                axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+                  username: this.state.first.author === this.props.username ? this.state.first.reciever : this.state.first.author
+                }).then((res) => {
+
+                  console.log("resolution :", res.data);
+                  const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+                  // append picture to object
+                  sender["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+                  this.setState({
+                    first: sender
+                  })    
+                }).catch((err) => {
+                  console.log("FAILURE :", err);
+                })
+              })
+  					}
 		  		}
 		  	}).catch((err) => {
 		  		console.log(err);
@@ -219,36 +253,7 @@ class MessageIndividual extends Component {
   		msg: ""
   	})
   }
-  _renderItem = ({ item }) => {
-    // if (item.sent === false) {
-      	if (item.id === this.props.route.params.user.id && item.author !== this.props.username) {
-	      	return (
-	      	<Fragment>
-	        	<View style={styles.eachMsg}>
-		          <Image source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}` }} style={styles.userPic} />
-		          <View style={styles.msgBlock}>
-		            <Text style={styles.msgTxt}>{item.message}</Text>
-		          </View>
-		        </View>
-		        <Text style={{ textAlign: "left", padding: 10 }}>{item.date}</Text>
-		    </Fragment>
-		      );
-	      } else {
-	    	if (item.id === this.props.route.params.user.id) {
-		      return (
-		      <Fragment>
-		        <View style={styles.rightMsg} >
-		          <View style={styles.rightBlock} >
-		            <Text style={styles.rightTxt}>{item.message}</Text>
-		          </View>
-		          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} />
-		        </View>
-		       <Text style={{ textAlign: "right", paddingRight: 10 }}>{item.date}</Text>
-		    </Fragment>
-		      );
-		    }
-	    }
-  };
+
   renderSockets = () => {
   	socket.on("message", (message) => {
 		if (message.update === true) {
@@ -341,7 +346,7 @@ class MessageIndividual extends Component {
   }
   render() {
   	const { user } = this.state;
-  	console.log("THIS.PROPS :", this.props);
+  	console.log("THIS.state :", this.state);
     return (
 
       <View style={{ flex: 1 }}>
@@ -378,7 +383,7 @@ class MessageIndividual extends Component {
 			      	return (
 			      	<Fragment>
 			        	<View style={styles.eachMsg}>
-				          <Image source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}` }} style={styles.userPic} />
+				          <Image source={{ uri: this.props.route.params.image }} style={styles.userPic} />
 				          <View style={styles.msgBlock}>
 				            <Text style={styles.msgTxt}>{item.message}</Text>
 				          </View>
@@ -401,11 +406,13 @@ class MessageIndividual extends Component {
 				      );
 				    }
 			    }
-            }) : null}<Fragment><View style={styles.rightMsg} >
-		          <View style={styles.rightBlock} >
-		            <Text style={styles.rightTxt}>{this.state.first.message}</Text>
+            }) : null}<Fragment>
+            <View style={this.state.first.author === this.props.username ? styles.rightMsg : styles.eachMsg} >
+            {this.state.first.author !== this.props.username ? <Image source={{uri: this.state.first.picture }} style={styles.userPic} /> : null}
+		          <View style={this.state.first.author === this.props.username ? styles.rightBlock : styles.msgBlock} >
+		            <Text style={this.state.first.author === this.props.username ? styles.rightTxt : styles.msgTxt}>{this.state.first.message}</Text>
 		          </View>
-		          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} />
+		          {this.state.first.author === this.props.username ? <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} /> : null}
 		        </View></Fragment></ScrollView> : null}
             <View style={this.state.align ? styles.loadedInput : styles.input}>
             <KeyboardAvoidingView style={{ flex: 1 }} 
@@ -554,7 +561,7 @@ const styles = StyleSheet.create({
   rightBlock: {
     width: 220,
     borderRadius: 5,
-    backgroundColor: '#147efb',
+    backgroundColor: '#e31b39',
     padding: 10,
     shadowColor: '#3d3d3d',
     shadowRadius: 2,

@@ -114,36 +114,38 @@ constructor(props) {
 						  >
 							{this.state.markers.map((marker, index) => {
 								console.log("MARKER: ", marker);
-								let latitude = marker.location.coords.latitude;
-								let longitude = marker.location.coords.longitude;
-								let activityType = marker.location.activity.type;
-								let confidence = marker.location.activity.confidence;
-								let coordinates = {
-									latitude,
-									longitude
+								if (marker.location) {
+									let latitude = marker.location.coords.latitude;
+									let longitude = marker.location.coords.longitude;
+									let activityType = marker.location.activity.type;
+									let confidence = marker.location.activity.confidence;
+									let coordinates = {
+										latitude,
+										longitude
+									}
+								    return (
+										<Marker  
+										  key={index}
+										  onPress={() => {
+									    	console.log("marker pressed!");
+											this.setState({
+												showSlide: !this.state.showSlide,
+												isOpen: false,
+												marker
+											}, () => {
+												if (this.state.showSlide === true) {
+													this.RBSheet.open();
+												} else {
+													this.RBSheet.close();
+												}
+											})
+									      }}
+									      coordinate={coordinates}
+									      title={marker.fullName}
+									      description={marker.username}
+									    />
+								    );
 								}
-							    return (
-									<Marker  
-									  key={index}
-									  onPress={() => {
-								    	console.log("marker pressed!");
-										this.setState({
-											showSlide: !this.state.showSlide,
-											isOpen: false,
-											marker
-										}, () => {
-											if (this.state.showSlide === true) {
-												this.RBSheet.open();
-											} else {
-												this.RBSheet.close();
-											}
-										})
-								      }}
-								      coordinate={coordinates}
-								      title={marker.fullName}
-								      description={marker.username}
-								    />
-							    );
 							  })}
 						
 						  </MapView>

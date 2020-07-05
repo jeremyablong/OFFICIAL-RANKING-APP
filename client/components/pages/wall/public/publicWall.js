@@ -141,7 +141,7 @@ constructor(props) {
 		              <Text style={styles.info}>{this.state.user ? this.state.user.username : "--"}</Text>
 		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              <View style={styles.customContainer}>
-					      <NativeButton style={{ width: width * 0.45, backgroundColor: "black" }} onPress={() => {
+					      <NativeButton style={{ width: width * 0.45, backgroundColor: "#e31b39" }} onPress={() => {
 							// do something
 					      }}><Image style={styles.specialBtn} source={require("../../../../assets/icons/math.png")}/><NativeText style={{ color: "white" }}>Add Story</NativeText></NativeButton>
 					     <NativeButton style={{ width: width * 0.20, backgroundColor: "transparent" }} onPress={() => {
@@ -165,7 +165,7 @@ constructor(props) {
 						<NativeButton onPress={() => {
 							this.handleRerender(); 
 							console.log("clicked.");
-						}} style={{ width: width * 0.80, justifyContent: "center", alignItems: "center", top: 40 }}>
+						}} style={{ width: width * 0.80, justifyContent: "center", alignItems: "center", top: 40, backgroundColor: "#e31b39" }}>
 							<NativeText style={{ color: "white" }}>Load Page...</NativeText>
 						</NativeButton>
 					</TouchableOpacity>
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   header:{
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#e31b39",
     height:200,
   },
   specialBtn: {

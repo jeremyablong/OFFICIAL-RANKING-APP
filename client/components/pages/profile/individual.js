@@ -26,7 +26,7 @@ import PhotoUpload from 'react-native-photo-upload';
 import FriendsListSubComponent from "../../friends/friendList.js";
 import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
-
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const { width, height } = Dimensions.get("window");
 
@@ -82,35 +82,7 @@ constructor(props) {
 	  		console.log(err);
 	  	})
 	}
-	renderModalConstant = () => {
-		return (
-			<Modal isVisible={this.state.modalIsVisible}>
-	          <ImageBackground source={require("../../../assets/images/painted.jpg")} style={{ flex: 1, height: height, backgroundColor: "white", width: width * 0.90, alignItems: "center", justifyContent: "center" }}>
-	          <KeyboardAwareScrollView style={{ marginTop: 30 }} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
-	          <Image style={{ width: 300, height: 300, marginBottom: 40}} source={require("../../../assets/images/123.jpg")} />
-	          <Text style={{ color: "black", fontWeight: "bold", fontSize: 18, marginBottom: 20 }}>You are messaging {this.state.user !== null ? this.state.user.fullName : "--"}... </Text>
-	            <AutoGrowingTextInput onChangeText={(message) => {
-	            	this.setState({
-	            		message
-	            	})
-	            }} placeholderTextColor="black" style={styles.textInput} placeholder={'Enter Your Message Here...'} />
-	            <TouchableOpacity onPress={() => {
-	              	this.sendMessage();
-	              }} style={styles.buttonContainerTwo}>
-	                <Fragment><Image style={{ width: 30, height: 30 }} source={require("../../../assets/icons/message.png")} /><Text style={{ color: "white" }}>   Send Message...</Text></Fragment>  
-	              </TouchableOpacity>
-	            <TouchableOpacity onPress={() => {
-	              	this.setState({
-	              		modalIsVisible: false
-	              	})
-	              }} style={styles.buttonContainer}>
-	                <Fragment><Image style={{ width: 30, height: 30 }} source={require("../../../assets/icons/close.png")} /><Text>  Close This Modal</Text></Fragment>  
-	              </TouchableOpacity>
-	          </KeyboardAwareScrollView>
-	          </ImageBackground>
-	        </Modal>
-		);
-	}
+
 	uploadCoverPhoto = () => { 
 		
 		const { avatar } = this.state;
@@ -187,7 +159,6 @@ constructor(props) {
 		        </Header>
 		    
 		        <ScrollView style={styles.container}>
-				  {this.renderModalConstant()}
 				  {this.renderSlideUpContent()}
 		          <TouchableOpacity style={styles.avatar} onPress={this.redirectUser}>
 					 <Image style={{ width: 130,
@@ -210,11 +181,9 @@ constructor(props) {
 		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              
 		              {this.props.username !== this.props.route.params.user.username ? <TouchableOpacity onPress={() => {
-		              	this.setState({
-		              		modalIsVisible: true
-		              	})
+		              	this.RBSheet.open();
 		              }} style={styles.buttonContainer}>
-		                <Fragment><Image style={{ width: 30, height: 30 }} source={require("../../../assets/icons/mail-three.png")} /><Text>   Message This User</Text></Fragment>  
+		                <Fragment><Image style={{ width: 30, height: 30, tintColor: "white" }} source={require("../../../assets/icons/mail-three.png")} /><Text style={{ color: "white" }}>   Message This User</Text></Fragment>  
 		              </TouchableOpacity> : null}            
 		            {/*  <TouchableOpacity style={styles.buttonContainer}>
 		                <Text>Opcion 2</Text> 
@@ -224,6 +193,42 @@ constructor(props) {
 		        </View>
 		      </ScrollView>
 		    </SideMenu>
+		    <RBSheet 
+		      showsVerticalScrollIndicator={false}
+	          ref={ref => {
+	            this.RBSheet = ref;
+	          }}
+	          height={400}
+	          openDuration={250}
+	          customStyles={{
+	            container: {
+	              justifyContent: "center",
+	              alignItems: "center"
+	            }
+	          }}
+	        >
+	          <ImageBackground source={require("../../../assets/images/red-lights.jpg")} style={{ flex: 1, height: height, width: width, alignItems: "center", justifyContent: "center" }}>
+		          <KeyboardAwareScrollView style={{ marginTop: 30 }} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
+			          {/*<Image style={{ width: 300, height: 300, marginBottom: 40}} source={require("../../../assets/images/123.jpg")} />*/}
+			          <Text style={styles.customTexttt}>You are messaging <Text style={{ color: "aquamarine" }}>{this.state.user !== null ? this.state.user.fullName : "--"}</Text>... </Text>
+			            <AutoGrowingTextInput onChangeText={(message) => {
+			            	this.setState({
+			            		message
+			            	})
+			            }} placeholderTextColor="black" style={styles.textInput} placeholder={'Enter Your Message Here...'} />
+			            <TouchableOpacity onPress={() => {
+			              	this.sendMessage();
+			              }} style={styles.buttonContainerTwo}>
+			                <Fragment><Image style={{ width: 30, height: 30 }} source={require("../../../assets/icons/message.png")} /><Text style={{ color: "white" }}>   Send Message...</Text></Fragment>  
+			              </TouchableOpacity>
+		           		<TouchableOpacity onPress={() => {
+			              	this.RBSheet.close();
+			            }} style={styles.buttonContainer}>
+			                <Fragment><Image style={{ width: 30, height: 30, tintColor: "white" }} source={require("../../../assets/icons/close.png")} /><Text style={{ color: "white" }}>  Close This Modal</Text></Fragment>  
+		              </TouchableOpacity>
+	          	</KeyboardAwareScrollView>
+	          </ImageBackground>
+	        </RBSheet>
       		<SlidingUpPanel ref={c => this._panel = c}>
 	          <View style={styles.slide}>
 	            <PhotoUpload
@@ -263,6 +268,14 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
+  customTexttt: {
+  	 color: "white", 
+  	 fontWeight: "bold", 
+  	 fontSize: 18, 
+  	 marginBottom: 20, 
+  	 backgroundColor: 'rgba(0, 0, 0, 0.6)', 
+  	 padding: 10 
+  },
   touchable: {
   	width: width * 0.33333, 
   	paddingRight: 6, 
@@ -289,7 +302,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   header:{
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#e31b39",
     height:200,
   },
   avatar: {
@@ -340,11 +353,13 @@ const styles = StyleSheet.create({
     marginBottom:20,
     width:250,
     borderRadius:30,
-    backgroundColor: "#00BFFF",
+    backgroundColor: "#e31b39",
+    borderWidth: 3, 
+    borderColor: "white"
   },
   ranking: {
     fontSize:30,
-    color:"darkred",
+    color:"#e31b39",
     fontWeight:'600',
     textDecorationLine: "underline"
   },
@@ -358,13 +373,16 @@ const styles = StyleSheet.create({
     width:250,
     borderRadius:30,
     backgroundColor: "black",
+    borderWidth: 3, 
+    borderColor: "white"
   },
   textInput: {
   	backgroundColor: "white",
   	padding: 10,
-  	width: 250,
+  	width: 300,
   	borderWidth: 2,
-  	borderColor: "black"
+  	borderColor: "black", 
+  	marginBottom: 70
   }
 });
 const mapStateToProps = state => {

@@ -52,7 +52,7 @@ constructor(props) {
 	handleRedirect = (user) => {
 		console.log("US :", user);
 		// console.log("handle redirect...", user);
-		this.props.navigation.navigate("message-individual", { user });
+		this.props.navigation.navigate("message-individual", { user, image: user.picture });
 	}
 	componentDidMount() {
 		// console.log("USERNAME :", this.props.username);
@@ -72,7 +72,7 @@ constructor(props) {
 		  			
 		  			// make api request to gather photo of feed/message log
 	  				axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
-	  					username: message.reciever
+	  					username: this.props.username === message.author ? message.reciever : message.author
 	  				}).then((res) => {
 
 	  					console.log("RES.DATA :", res.data);

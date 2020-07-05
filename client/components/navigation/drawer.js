@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingHorizontal: 5,
-    backgroundColor:"#f6f6f6",
+    backgroundColor:"#e31b39",
   },
   listContainer:{
     alignItems:'center'
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     fontSize:18,
     flex:1,
     alignSelf:'center',
-    color:"#696969"
+    color:"white"
   },
 });  
 

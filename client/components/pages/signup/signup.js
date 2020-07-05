@@ -156,7 +156,7 @@ class SignupPage extends Component {
             </NativeButton>
           </Right>
         </Header>
-      <ImageBackground source={require("../../../assets/images/man-med.jpg")} style={styles.container}>
+      <ImageBackground source={require("../../../assets/images/blur.jpg")} style={styles.container}>
       <ScrollView style={{ flex: 1, marginTop: 40, marginBottom: 40 }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
       <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>First & Last Name</Text>
         <View style={styles.inputContainer}>
@@ -168,7 +168,16 @@ class SignupPage extends Component {
                 fullName
               })}/>
         </View>
-        
+        {this.state.showEmail === false ? <TouchableOpacity onPress={() => {
+          this.setState({
+            showEmail: true
+          })
+        }}><Text style={{ textAlign: "left", fontSize: 15, color: "white", fontWeight: "bold", textDecorationLine: "underline", paddingBottom: 5, paddingLeft: 5, marginTop: -7, paddingBottom: 5 }}><Image style={{ width: 20, height: 20, tintColor: "white" }} source={require("../../../assets/icons/select.png")}/>Use Phone Number instead</Text></TouchableOpacity> : null}
+        {this.state.showEmail === true ? <TouchableOpacity onPress={() => {
+          this.setState({
+            showEmail: false
+          })
+        }}><Text style={{ textAlign: "left", fontSize: 15, color: "white", fontWeight: "bold", textDecorationLine: "underline", paddingBottom: 5, paddingLeft: 5, marginTop: -7, paddingBottom: 5 }}><Image style={{ width: 20, height: 20, tintColor: "white" }} source={require("../../../assets/icons/select.png")}/>Use Email instead</Text></TouchableOpacity> : null}
         {this.state.showEmail === true ? <React.Fragment><Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Phone Number</Text><View style={styles.inputContainer}>
           <TouchableOpacity onPress={() => {
             this.setState({
@@ -184,7 +193,9 @@ class SignupPage extends Component {
               onChangeText={(phoneNumber) => this.setState({
                 phoneNumber
               })}/>
+          
         </View>
+        
         <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Re-Enter Phone #</Text>
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={() => {
@@ -217,6 +228,7 @@ class SignupPage extends Component {
                 email
               })}/>
         </View>
+        
         <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Re-Enter Email</Text>
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={() => {

@@ -329,20 +329,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
     borderRadius:30,
   },
-
-  name:{
-    fontSize:18,
-    flex:1,
-    alignSelf:'center',
-    color:"black",
-    fontWeight:'bold'
-  },
-  count:{
-    fontSize:14,
-    flex:1,
-    alignSelf:'center',
-    color:"black"
-  },
   followButton: {
     height:45,
     width:100,
