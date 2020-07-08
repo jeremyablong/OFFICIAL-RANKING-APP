@@ -21,7 +21,9 @@ import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import ProgressiveImage from "../../image/image.js";
 import { connect } from "react-redux";
+import axios from "axios";
 
+const URL = "http://recovery-social-media.ngrok.io";
 
 class ConfirmFriendPage extends Component {
 constructor(props) {
@@ -35,6 +37,19 @@ constructor(props) {
 		const passed = this.props.route.params.data;
 
 		console.log("accept request...", passed);
+
+		axios.post(`${URL}/accept/friend/request`, {
+			username: this.props.username,
+			requester: passed.user,
+			requestID: passed.id
+		}).then((res) => {
+			if (res.data.message === "You've accepted this friend request!") {
+				console.log(res.data);
+				alert(res.data.message);
+			}
+		}).catch((err) => {
+			console.log(err);
+		})
 	}
 	declineRequest = () => {
 		const { route, username } = this.props;

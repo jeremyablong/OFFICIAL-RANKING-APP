@@ -69,7 +69,7 @@ constructor(props) {
 			<Fragment>
 			<View style={{ flex: 1 }}>
 				<ScrollView style={{ borderBottomColor: 'black', borderBottomWidth: 2 }}>
-					<ScrollView horizontal={true} style={{ backgroundColor: '#858AE3' }}> 
+					<ScrollView horizontal={true} style={{  }}> 
 						<FlatList  
 							horizontal
 					        data={this.state.entries}
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     width: 270,
   },
 	box: {
-		shadowColor: 'white',
+		shadowColor: 'black',
 	    shadowOffset: {
 	      width: 0,
 	      height: 6,

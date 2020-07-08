@@ -7,7 +7,7 @@ constructor(props) {
 
 	this.thumbnailAnimated = new Animated.Value(0);
 
-    this.imageAnimated = new Animated.Value(0);
+  this.imageAnimated = new Animated.Value(0);
 }
   handleThumbnailLoad = () => {
     Animated.timing(this.thumbnailAnimated, {
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
     top: 0,
   },
   container: {
-    backgroundColor: '#97DFFC',
+    backgroundColor: '#e3e8e5',
   },
 });
 

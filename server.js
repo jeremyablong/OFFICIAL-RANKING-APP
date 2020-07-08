@@ -56,6 +56,8 @@ app.use("/create/wall/posting", require("./routes/wall/updateWall.js"));
 app.use("/gather/wall/posts/all", require("./routes/wall/homeWall/gatherWallPostings.js"));
 app.use("/send/friend/request", require("./routes/friends/send/sendFriendRequest.js"));
 app.use("/remove/notification", require("./routes/notifications/removeNotification.js"));
+app.use("/accept/friend/request", require("./routes/friends/respond/acceptFriendRequest.js"));
+app.use("/reaction/individual/message", require("./routes/messages/reaction/reactToMessage.js"));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {

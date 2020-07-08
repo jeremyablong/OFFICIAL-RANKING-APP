@@ -25,7 +25,8 @@ import uuid from "react-uuid";
 const ENDPOINT = "http://recovery-social-media.ngrok.io";
 import _ from "lodash";
 import LoadingMessage from "../../../chat/loader.js";
-
+import Popover from 'react-native-popover-view';
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const { width, height } = Dimensions.get('window'); 
 
@@ -59,11 +60,13 @@ class MessageIndividual extends Component {
       loading: false,
       refresh: false,
       modalIsVisible: false,
+      showPopover: false,
       data: [
         {id:1,  name: "I'm being scammed...",   image: require("../../../../assets/icons/scam.png")},
         {id:2,  name: "They're being offensive...",    image: require("../../../../assets/icons/offensive.png")},
         {id:3,  name: "It's something else...",       image: require("../../../../assets/icons/change.png")}
-      ]
+      ],
+      message: null
     };
   }
   componentDidMount() {
@@ -307,7 +310,7 @@ class MessageIndividual extends Component {
   	this.setState({ msg: text })
   }
   handleProblemRedirect = () => {
-  	console.log("handle redirect - problem.")
+  	console.log("handle redirect - problem.");
   }
   renderModalComponent = () => {
   	if (this.state.modalIsVisible === true) {
@@ -340,6 +343,21 @@ class MessageIndividual extends Component {
 	        </Modal>
   		);
   	}
+  }
+  handleEmojiSubmission = (reaction) => {
+    console.log("emoji clicked... :", reaction, this.state.message, this.props.route.params.user);
+    axios.post("http://recovery-social-media.ngrok.io/reaction/individual/message", {
+      username: this.props.username,
+      reaction,
+      otherUser: this.props.username === this.props.route.params.user.author ? this.props.route.params.user.reciever : this.props.route.params.user.author,
+      id: this.state.message.id,
+      date: this.state.message.date,
+      message: this.state.message.message
+    }).then((res) => {
+      console.log(res.data);
+    }).catch((err) => {
+      console.log("FAILURE :", err);
+    })
   }
   render() {
   	const { user } = this.state;
@@ -381,9 +399,15 @@ class MessageIndividual extends Component {
 			      	<Fragment>
 			        	<View style={styles.eachMsg}>
 				          <Image source={{ uri: this.props.route.params.image || this.props.route.params.notify.picture }} style={styles.userPic} />
-				          <View style={styles.msgBlock}>
-				            <Text style={styles.msgTxt}>{item.message}</Text>
-				          </View>
+                    <TouchableOpacity onPress={() => {
+                      this.setState({
+                        message: item
+                      }, () => {
+                        this.RBSheet.open();
+                      })
+                    }} style={styles.msgBlock} >
+                          <Text style={styles.msgTxt}>{item.message}</Text>
+                    </TouchableOpacity>
 				        </View>
 				        <Text style={{ textAlign: "left", padding: 10 }}>{item.date}</Text>
 				    </Fragment>
@@ -393,9 +417,15 @@ class MessageIndividual extends Component {
 				      return (
 				      <Fragment>
 				        <View style={styles.rightMsg} >
-				          <View style={styles.rightBlock} >
-				            <Text style={styles.rightTxt}>{item.message}</Text>
-				          </View>
+                  <TouchableOpacity onPress={() => {
+                      this.setState({
+                        message: item
+                      }, () => {
+                        this.RBSheet.open();
+                      })
+                  }} style={styles.rightBlock} >
+                        <Text style={styles.rightTxt}>{item.message}</Text>
+                  </TouchableOpacity>
 				          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} />
 				        </View>
 				       <Text style={{ textAlign: "right", paddingRight: 10 }}>{item.date}</Text>
@@ -406,16 +436,67 @@ class MessageIndividual extends Component {
             }) : null}<Fragment>
             <View style={this.state.first.author === this.props.username ? styles.rightMsg : styles.eachMsg} >
             {this.state.first.author !== this.props.username ? <Image source={{uri: this.state.first.picture }} style={styles.userPic} /> : null}
-		          <View style={this.state.first.author === this.props.username ? styles.rightBlock : styles.msgBlock} >
-		            <Text style={this.state.first.author === this.props.username ? styles.rightTxt : styles.msgTxt}>{this.state.first.message}</Text>
-		          </View>
+            <TouchableOpacity onPress={() => {
+              this.setState({
+                message: this.state.first
+              }, () => {
+                this.RBSheet.open();
+              })
+            }} style={this.state.first.author === this.props.username ? styles.rightBlock : styles.msgBlock} >
+              <Text style={this.state.first.author === this.props.username ? styles.rightTxt : styles.msgTxt}>{this.state.first.message}</Text>
+            </TouchableOpacity>
+          
 		          {this.state.first.author === this.props.username ? <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} /> : null}
-		        </View></Fragment></ScrollView> : null}
+		        </View><Text style={{ alignItems: 'flex-start', alignSelf: 'flex-start', paddingRight: 10, paddingLeft: 10 }}>{this.state.first.date}</Text></Fragment></ScrollView> : null}
             <View style={this.state.align ? styles.loadedInput : styles.input}>
             <KeyboardAvoidingView style={{ flex: 1 }} 
 		      behavior={Platform.OS == "ios" ? "padding" : "height"} 
 		      keyboardVerticalOffset={Platform.select({ ios: 80, android: 500 })}
 		    >
+        <RBSheet
+          ref={ref => {
+            this.RBSheet = ref;
+          }}
+          height={75}
+          openDuration={250}
+          customStyles={{
+            container: {
+              justifyContent: "center",
+              alignItems: "center"
+            }
+          }}
+        >
+           <View style={styles.popoverPop}> 
+              <TouchableOpacity onPress={() => {
+                console.log("clicked...");
+                this.handleEmojiSubmission("laugh");                  
+              }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😆</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                console.log("clicked...");
+                this.handleEmojiSubmission("heartFace");
+              }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😍</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                console.log("clicked...");
+                this.handleEmojiSubmission("frustrated");
+              }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😤</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                console.log("clicked...");
+                this.handleEmojiSubmission("heart");
+              }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>❤️</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                console.log("clicked...");
+                this.handleEmojiSubmission("angry");
+              }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>🤬</Text></TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                console.log("clicked...");
+                this.handleEmojiSubmission("sad");
+              }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😢</Text></TouchableOpacity>
+              <TouchableOpacity style={{ left: -10 }} onPress={() => {
+                console.log("clicked...");
+                this.handleEmojiSubmission("puke");
+              }}><Text style={{ height: 50, width: 50, fontSize: 40 }}> 🤮</Text></TouchableOpacity>
+          </View>
+        </RBSheet>
 		    {this.renderModalComponent()}
 		    <View style={{ flex: 1 }}>
               <TextInput 
@@ -452,6 +533,16 @@ class MessageIndividual extends Component {
 }
 
 const styles = StyleSheet.create({
+  popoverPop: {
+    height: "100%", 
+    width: "100%", 
+    backgroundColor: "white", 
+    flex: 1, 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    paddingTop: 10, 
+    paddingBottom: 10
+  },
   keyboard: {
     flex: 1,
     justifyContent: 'center',
