@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 7,
   },
   popupOverlay: {
-    backgroundColor: "#00000057",
+    backgroundColor: "#4E148C",
     flex: 1,
     marginTop: 20
   },
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
     height:50,
     width: width * 0.80, 
     marginBottom: 20,
-    backgroundColor:'black',
+    backgroundColor:'#858AE3',
     padding:20,
     justifyContent: "center",
     alignItems: "center",

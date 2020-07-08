@@ -25,6 +25,7 @@ import PhotoUpload from 'react-native-photo-upload';
 import { connect } from "react-redux";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import RBSheet from "react-native-raw-bottom-sheet";
+import HomePostsPage from "../../wall/displayPosts/homePostsPage.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -66,9 +67,9 @@ constructor(props) {
 	render() {
 		return (
 			<Fragment>
-			<View style={{ flex: 1, backgroundColor: '#e31b39' }}>
+			<View style={{ flex: 1 }}>
 				<ScrollView style={{ borderBottomColor: 'black', borderBottomWidth: 2 }}>
-					<ScrollView horizontal={true}> 
+					<ScrollView horizontal={true} style={{ backgroundColor: '#858AE3' }}> 
 						<FlatList  
 							horizontal
 					        data={this.state.entries}
@@ -124,7 +125,10 @@ constructor(props) {
 					        </Footer>
 					      </TouchableOpacity>
 					</View>
-				      <StoriesComponent navigation={this.props.navigation} open={true} />
+					{/* stories component - updates component from newsfeed */}
+				    <StoriesComponent navigation={this.props.navigation} open={true} />
+					{/* this component is the wall posts from all users	 */}
+					<HomePostsPage navigation={this.props.navigation} />
 				</ScrollView>
 	        </View>
 			</Fragment>

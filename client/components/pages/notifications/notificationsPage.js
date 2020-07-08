@@ -16,7 +16,7 @@ import {
   Keyboard, 
   ListView
 } from 'react-native';
-import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
+import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Separator, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import { connect } from "react-redux";
 import { authenticated } from "../../../actions/auth/auth.js";
 import axios from "axios";
@@ -24,6 +24,7 @@ import _ from "lodash";
 import LoadingWall from "../wall/loading.js";
 import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
+import RBSheet from "react-native-raw-bottom-sheet";
 
 const { width, height } = Dimensions.get("window");
 
@@ -36,7 +37,8 @@ constructor(props) {
   	ready: false,
   	last: null,
   	navigate: false,
-  	isOpen: false
+  	isOpen: false,
+  	selected: null
   };
 }
 	componentDidMount() {
@@ -132,7 +134,7 @@ constructor(props) {
 	          			console.log("message :", message);
 	          			if (message.author === data.user) {
 	          				console.log("We have a MATCH... :", message);
-	          				this.props.navigation.navigate(data.route, { user: message });
+	          				this.props.navigation.navigate(data.route, { user: message, notify: data });
 	          			}
 	          		}
 					// this.props.navigation.navigate(data.route, { user: this.state.user });
@@ -141,12 +143,45 @@ constructor(props) {
 	        }).catch((err) => {
 	          console.log(err);
 	        })
+  		} else if (data.data === "sent you a friend request!") {
+			this.props.navigation.navigate(data.route, { data });
   		}
 	}
 	returnNonMessage = () => {
 		return (
 			<View><LoadingWall /></View>
 		);
+	}
+	removeNotification = () => {
+
+		const { username } = this.props;
+
+		console.log("selected... :", this.state.selected);
+
+		axios.post("http://recovery-social-media.ngrok.io/remove/notification", {
+          username,
+          notificationID: this.state.selected.id
+        }).then((res) => {
+            if (res.data.message === "Successfully removed notification!") {
+				for (let i = 0; i < this.state.notifications.length; i++) {
+					let notification = this.state.notifications[i];
+					console.log(notification.id, res.data.removed.id);
+					if (notification.id === res.data.removed.id) {
+						console.log("found the correct - removed item === :", notification, i);
+						// may need to be correct... fix reverse
+						this.setState({
+							notifications: this.state.notifications.filter(item => {
+								if (item.id !== notification.id) {
+									return item;
+								}
+							})
+						})
+					}
+				}
+            }
+        }).catch((err) => {
+          console.log(err);
+        })
 	}
 	render() {
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
@@ -183,27 +218,83 @@ constructor(props) {
 					{this.state.notifications && this.state.ready === true ? this.state.notifications.map((notify, index) => {
 {/*						console.log("notify :", notify);*/}
 						return (
-							<ListItem key={index} thumbnail>
-				              <Left>
-				                <Thumbnail square source={{ uri: notify.picture }} />
-				              </Left>
-				              <Body>
-				                <NativeText style={{ fontWeight: "bold" }}>{notify.user}</NativeText>
-				                <NativeText style={{ color: "black" }} note numberOfLines={2}>{notify.data}...</NativeText>
-				              </Body>
-				              <Right>
-				                <NativeButton onPress={() => {
+							
+								<ListItem key={index} style={{ width: width }} thumbnail>
+								<TouchableOpacity key={index} onPress={() => {
 				                	this.redirectToSpecific(notify);
-				                }} transparent>
-				                  <Image style={{ width: 50, height: 50 }} source={require("../../../assets/icons/more-two.png")} />
-				                </NativeButton>
-				              </Right>
-				            </ListItem>
+				                }}>
+					              <Left>
+					                <Thumbnail square source={{ uri: notify.picture }} />
+					              </Left>
+					            </TouchableOpacity>
+					            <TouchableOpacity onPress={() => {
+				                	this.redirectToSpecific(notify);
+				                }}>
+					              <Body style={{ width: width * 0.65 }}>
+					                <NativeText style={{ fontWeight: "bold" }}>{notify.user}</NativeText>
+					                <NativeText style={{ color: "black" }} note numberOfLines={2}>{notify.data}...</NativeText>
+					              </Body>
+					            </TouchableOpacity>
+					            <TouchableOpacity key={index} onPress={() => {
+				                	this.redirectToSpecific(notify);
+				                }}>
+					              <Right>
+					                <NativeButton onPress={() => {
+					                	this.setState({
+					                		selected: notify
+					                	}, () => {
+					                		this.RBSheet.open();
+					                	})
+					                	
+					                }} transparent>
+					                  <Image style={{ width: 30, height: 30 }} source={require("../../../assets/icons/more-two.png")} />
+					                </NativeButton>
+					              </Right>
+					            </TouchableOpacity>
+					            </ListItem>
+					        
 			            )
 					}) : this.returnNonMessage()}
 				</List>
 				</ScrollView>
-	
+				<RBSheet
+		          ref={ref => {
+		            this.RBSheet = ref;
+		          }}
+		          height={175}
+		          openDuration={250}
+		          customStyles={{
+		            container: {
+		              justifyContent: "center",
+		              alignItems: "center"
+		            }
+		          }}
+		        >
+		        <ScrollView>
+		        <List>
+		          <Separator style={styles.seperator} bordered>
+		            <Text style={styles.texttt}>Settings</Text>
+		          </Separator>
+		          <ListItem style={styles.listItem}>
+		            <TouchableOpacity onPress={() => {
+		            	this.removeNotification();
+		            }}><Text>Remove this notification</Text></TouchableOpacity>
+		          </ListItem>
+		          <ListItem style={styles.listItem} last>
+		            <Text>Report issue to notifications team</Text>
+		          </ListItem>
+		          {/*<Separator style={styles.seperator} bordered>
+		            <Text style={styles.texttt}>MIDFIELD</Text>
+		          </Separator>
+		          <ListItem style={styles.listItem}>
+		            <Text>Caroline Aaron</Text>
+		          </ListItem>
+		          <ListItem style={styles.listItem} last>
+		            <Text>Lee Allen</Text>
+		          </ListItem>*/}
+		        </List>
+		        </ScrollView>
+		        </RBSheet>
 		        <View style={styles.footer}>
 					<Footer>
 			          <FooterTab>
@@ -247,6 +338,16 @@ const styles = StyleSheet.create({
 	icon: {
 		width: 35, 
 		height: 35
+	},
+	listItem: {
+		width: width
+	},
+	seperator: {
+		height: 50,
+		backgroundColor: "#858AE3"
+	},
+	texttt: {
+		color: "white"
 	}
 })
 const mapStateToProps = (state) => {

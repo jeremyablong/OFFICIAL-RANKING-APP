@@ -114,13 +114,38 @@ constructor(props) {
 				username: this.props.username
 			}).then((res) => {
 				console.log(res.data);
+				if (res.data.message === "Successfully uploaded images to wall and status update!") {
+					alert(res.data.message);
+				}
 			}).catch((err) => {
 				console.log(err);
-			})
-		} else if (selectedImages.length > 0 && text.length === 0) {
+			});
+		} else if (selectedImages.length > 0 && !text) {
 			console.log("Only images are present...");
+			axios.post("http://recovery-social-media.ngrok.io/create/wall/posting", {
+				images: selectedImages,
+				username: this.props.username
+			}).then((res) => {
+				console.log(res.data);
+				if (res.data.message === "Successfully uploaded images to wall and status update!") {
+					alert(res.data.message);
+				}
+			}).catch((err) => {
+				console.log(err);
+			});
 		} else if (selectedImages.length === 0 && text.length > 0) {
 			console.log("text exists and images do NOT...");
+			axios.post("http://recovery-social-media.ngrok.io/create/wall/posting", {
+				text,
+				username: this.props.username
+			}).then((res) => {
+				console.log(res.data);
+				if (res.data.message === "Successfully uploaded wall posting!") {
+					alert(res.data.message);
+				}
+			}).catch((err) => {
+				console.log(err);
+			});
 		}
 	}
 	renderConstantTwo = () => {

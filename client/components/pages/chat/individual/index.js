@@ -165,13 +165,10 @@ class MessageIndividual extends Component {
 		  	}).catch((err) => {
 		  		console.log(err);
 		  	});
-
   		}
   	}).catch((err) => {
   		console.log(err);
   	});
-	
-
   }
   send = () => {
   	console.log("send message...", this.state.msg);
@@ -346,7 +343,7 @@ class MessageIndividual extends Component {
   }
   render() {
   	const { user } = this.state;
-  	console.log("THIS.state :", this.state);
+  	console.log("THIS.props :", this.props);
     return (
 
       <View style={{ flex: 1 }}>
@@ -383,7 +380,7 @@ class MessageIndividual extends Component {
 			      	return (
 			      	<Fragment>
 			        	<View style={styles.eachMsg}>
-				          <Image source={{ uri: this.props.route.params.image }} style={styles.userPic} />
+				          <Image source={{ uri: this.props.route.params.image || this.props.route.params.notify.picture }} style={styles.userPic} />
 				          <View style={styles.msgBlock}>
 				            <Text style={styles.msgTxt}>{item.message}</Text>
 				          </View>
@@ -490,7 +487,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   loadedInput: {
-	flexDirection: 'row',
+	  flexDirection: 'row',
     alignSelf: 'flex-end',
     padding: 10,
     height: 40,
@@ -551,23 +548,23 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: '#ffffff',
     padding: 10,
-    shadowColor: '#3d3d3d',
+    shadowColor: '#858AE3',
     shadowRadius: 2,
     shadowOpacity: 0.5,
     shadowOffset: {
-      height: 1,
+      height: 10,
     },
   },
   rightBlock: {
     width: 220,
     borderRadius: 5,
-    backgroundColor: '#e31b39',
+    backgroundColor: '#613DC1',
     padding: 10,
-    shadowColor: '#3d3d3d',
+    shadowColor: '#858AE3',
     shadowRadius: 2,
     shadowOpacity: 0.5,
     shadowOffset: {
-      height: 1,
+      height: 7,
     },
   },
   msgTxt: {

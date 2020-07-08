@@ -53,6 +53,9 @@ app.use("/latest/profile/picture/unlike", require("./routes/profile/pictures/lat
 app.use("/gather/notifications", require("./routes/notifications/gatherNotifications.js"));
 app.use("/post/location/moving/geolocation", require("./routes/location/postNewLocation.js"));
 app.use("/create/wall/posting", require("./routes/wall/updateWall.js")); 
+app.use("/gather/wall/posts/all", require("./routes/wall/homeWall/gatherWallPostings.js"));
+app.use("/send/friend/request", require("./routes/friends/send/sendFriendRequest.js"));
+app.use("/remove/notification", require("./routes/notifications/removeNotification.js"));
 
 app.get('*', cors(), function(_, res) {
   res.sendFile(__dirname, './client/build/index.html'), function(err) {

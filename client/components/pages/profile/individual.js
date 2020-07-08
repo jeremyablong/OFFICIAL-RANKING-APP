@@ -41,7 +41,8 @@ constructor(props) {
   	modalIsVisible: false,
   	message: "",
   	cover: null,
-  	isOpen: false
+  	isOpen: false,
+  	alreadyFriends: false
   };
 }
 	componentDidMount() {
@@ -50,13 +51,35 @@ constructor(props) {
 	  	}).then((res) => {
 	  		console.log(res.data);
 	  		if (res.data.message === "FOUND user!") {
+	  			if (res.data.user.friends) {
+
+	  				for (let i = 0; i < res.data.user.friends.length; i++) {
+		  				let friend = res.data.user.friends[i];
+		  				console.log(friend)
+						if (Object.values(friend).indexOf(this.props.username) > -1) {
+		  					console.log("includes...!");
+		  					this.setState({
+		  						user: res.data.user,
+		  						alreadyFriends: true
+		  					})
+			  			} else {
+			  				console.log("Doesn't include...");
+			  			}
+		  			}
+	  			} else {
+	  				console.log("doesnt have any friends.");
+	  				this.setState({
+	  					user: res.data.user,
+	  					alreadyFriends: false
+	  				})
+	  			}
 	  			this.setState({
 		  			user: res.data.user
 		  		})
 	  		}
 	  	}).catch((err) => {
 	  		console.log(err);
-	  	})
+	  	});
 	}
 	sendMessage = () => {
 		const { user, message } = this.state;
@@ -121,6 +144,20 @@ constructor(props) {
 	redirectUser = () => {
 		this.props.navigation.navigate("profile-pic-view", { user: this.state.user, sendFromIndividual: true });
 	}
+	sendFriendRequest = () => {
+		console.log("send friend request...", this.state.user);
+		axios.post("http://recovery-social-media.ngrok.io/send/friend/request", {
+          username: this.props.username,
+          recipient: this.state.user.username
+        }).then((res) => {
+          if (res.data.message === "Successfully sent friend request!") {
+          	console.log(res.data);
+          	alert(res.data.message);
+          }
+        }).catch((err) => {
+          console.log(err);
+        })
+	}
 	render() {
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		console.log(this.state);
@@ -184,7 +221,13 @@ constructor(props) {
 		              	this.RBSheet.open();
 		              }} style={styles.buttonContainer}>
 		                <Fragment><Image style={{ width: 30, height: 30, tintColor: "white" }} source={require("../../../assets/icons/mail-three.png")} /><Text style={{ color: "white" }}>   Message This User</Text></Fragment>  
-		              </TouchableOpacity> : null}            
+		              </TouchableOpacity> : null} 
+		              <View  /> 
+		              {this.props.username !== this.props.route.params.user.username && this.state.alreadyFriends !== true ? <TouchableOpacity onPress={() => {
+		              	this.sendFriendRequest();
+		              }} style={styles.buttonContainerThree}>
+		                <Fragment><Image style={{ width: 30, height: 30 }} source={require("../../../assets/icons/request.png")} /><Text style={{ color: "white" }}>  Send Friend Request</Text></Fragment>  
+		              </TouchableOpacity> : null}          
 		            {/*  <TouchableOpacity style={styles.buttonContainer}>
 		                <Text>Opcion 2</Text> 
 		              </TouchableOpacity>*/}
@@ -207,7 +250,7 @@ constructor(props) {
 	            }
 	          }}
 	        >
-	          <ImageBackground source={require("../../../assets/images/red-lights.jpg")} style={{ flex: 1, height: height, width: width, alignItems: "center", justifyContent: "center" }}>
+	          <ImageBackground source={require("../../../assets/images/modern.jpg")} style={{ flex: 1, height: height, width: width, alignItems: "center", justifyContent: "center" }}>
 		          <KeyboardAwareScrollView style={{ marginTop: 30 }} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
 			          {/*<Image style={{ width: 300, height: 300, marginBottom: 40}} source={require("../../../assets/images/123.jpg")} />*/}
 			          <Text style={styles.customTexttt}>You are messaging <Text style={{ color: "aquamarine" }}>{this.state.user !== null ? this.state.user.fullName : "--"}</Text>... </Text>
@@ -249,14 +292,16 @@ constructor(props) {
 				       paddingVertical: 30,
 				       width: 150,
 				       height: 150,
-				       borderRadius: 75
+				       borderRadius: 75, 
+				       tintColor: "#858AE3"
 				     }}
 				     resizeMode='cover'
 				     source={require("../../../assets/icons/user.png")}
 				   />
 				 </PhotoUpload>
+				 <Text style={{ fontSize: 25 }}>Please select a wall cover photo</Text>
 				 <View style={{ top: -150 }}>
-					<NativeButton onPress={this.uploadCoverPhoto}>
+					<NativeButton style={{ backgroundColor: "#4E148C" }} onPress={this.uploadCoverPhoto}>
 						<NativeText style={{ color: "white" }}>Submit Cover Photo</NativeText>
 					 </NativeButton>
 				 </View>
@@ -295,6 +340,19 @@ const styles = StyleSheet.create({
   container: {
   	backgroundColor: "white"
   },
+  buttonContainerThree: {
+    marginTop:10,
+    height:45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom:20,
+    width:250,
+    borderRadius:30,
+    backgroundColor: "#4E148C",
+    borderWidth: 3, 
+    borderColor: "#97DFFC"
+},
   slide: {
     flex: 1,
     backgroundColor: 'white',
@@ -302,7 +360,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   header:{
-    backgroundColor: "#e31b39",
+    backgroundColor: "#97DFFC",
     height:200,
   },
   avatar: {
@@ -353,9 +411,9 @@ const styles = StyleSheet.create({
     marginBottom:20,
     width:250,
     borderRadius:30,
-    backgroundColor: "#e31b39",
+    backgroundColor: "#858AE3",
     borderWidth: 3, 
-    borderColor: "white"
+    borderColor: "#4E148C"
   },
   ranking: {
     fontSize:30,

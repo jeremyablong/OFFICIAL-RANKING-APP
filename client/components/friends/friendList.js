@@ -57,20 +57,20 @@ constructor(props) {
     					        	let split = item.fullName.split(" ");
     					            console.log("ITEMMMMMMM :", split);
     					            return (
-    									<TouchableOpacity style={styles.touchable} onPress={() => {
-    										{/*this.clickEventListener(item);*/}
+          									<TouchableOpacity style={styles.touchable} onPress={() => {
+          										{/*this.clickEventListener(item);*/}
 
-    									}}>
-								    <ImageBackground source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} style={{ height: 100 }}>
-							            <View style={styles.bodyContent}>
+          									}}>
+      								      <ImageBackground source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} style={{ height: 100 }}>
+      							            <View style={styles.bodyContent}>
 
-							              
-							            </View>
-							        </ImageBackground>
-							        <View style={{ backgroundColor: "white", paddingLeft: 4, paddingRight: 4, minHeight: 45 }}>
-						                <Text style={styles.info}>{split[0].slice(0, 8)}{split[0].length > 8 ? ".." : null} {split[1].slice(0, 8)}{split[1].length > 8 ? ".." : null}</Text>
-						            </View>
-					              </TouchableOpacity>
+      							              
+      							            </View>
+      							        </ImageBackground>
+      							        <View style={{ backgroundColor: "white", paddingLeft: 4, paddingRight: 4, minHeight: 45 }}>
+    						                <Text style={styles.info}>{split[0].slice(0, 8)}{split[0].length > 8 ? ".." : null} {split[1].slice(0, 8)}{split[1].length > 8 ? ".." : null}</Text>
+    						            </View>
+    					              </TouchableOpacity>
 					            );
 					        }}
 					    />
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   seeMore: {
   	width: width * 0.95, 
   	marginTop: 20,
-  	backgroundColor: "#e31b39", 
+  	backgroundColor: "#858AE3", 
   	alignItems: "center", 
   	justifyContent: "center", 
   	alignContent: "center",

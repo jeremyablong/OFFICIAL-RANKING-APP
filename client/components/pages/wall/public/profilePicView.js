@@ -798,7 +798,124 @@ constructor(props) {
 	          </ScrollView>
 			);
 		} else {
-			return <LoadingWall />;
+			return (
+<ScrollView {...this._panResponder.panHandlers} style={styles.containerModal}>
+				<View style={{ marginTop: 50 }}>
+					<Button title='Hide' onPress={() => this._panel.hide()} />
+					<AutoGrowingTextInput value={this.state.comment} onChangeText={(value) => {
+						this.setState({
+							comment: value
+						})
+					}} placeholderTextColor='black' style={styles.textInput} placeholder={'Your your Comment/Message Here...'} />
+					<View style={styles.containerTwoRow}>
+						<PhotoUpload
+							   onPhotoSelect={avatar => {
+							     if (avatar) {
+							       console.log('Image base64 string: ', avatar);
+							        this.setState({
+										avatar
+							        }, () => {
+							        	Keyboard.dismiss();
+							        })
+							     }
+							   }} 
+							 >
+							   <Image
+							     style={styles.camera}
+							     resizeMode='cover'
+							     source={require("../../../../assets/icons/upload-two.png")}
+							   />
+							 </PhotoUpload>
+				     	<NativeButton onPress={() => {
+				     		this.handleCommentSubmission();
+				     	}} style={styles.btn}>
+							<NativeText style={{ color: "white" }}>Submit New Comment</NativeText>
+						</NativeButton>
+				    </View>
+				</View>
+	            {this.state.replies && this.state.concatenated === true ? this.state.replies.map((item, index) => {
+	            	return (
+	            	<Fragment>
+	            	<Swipeable ref={ref => row[index] = ref} onSwipeableRightOpen={() => {
+	            		this.closeRow(index);
+	            		// set to state so accessible in functions to respond to comment
+	            		this.setState({
+	            			selected: item,
+	            			index
+	            		})
+	            	}} renderRightActions={this.RightActions}>
+						<View style={styles.container}>
+			              <TouchableOpacity onPress={() => {
+
+			              }}>
+			                <Image style={styles.image} source={{uri: item.picture }}/>
+			              </TouchableOpacity>
+			              <View style={styles.content}>
+			                <View style={styles.contentHeader}>
+			                  <Text  style={styles.name}>{item.poster}</Text>
+			                  
+			                </View>
+			                <Text style={styles.time}>
+			                    {item.date}
+			                  </Text>
+			                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
+			               	{item.likes ? <Popover
+						      isVisible={this.state.showPopoverTwo}
+						      onRequestClose={() => {
+						      	this.setState({
+						      		showPopover: false
+						      	})
+						      }}
+						      from={(
+						        <TouchableOpacity onPress={() => {
+						        	console.log("B-I-N-G-O: ", item);
+						        	this.setState({
+							      		showPopoverTwo: true,
+							      		display: item.likes
+							      	})
+						        }}>
+						          <Text style={{ color: "red" }}>View Reactions</Text>
+						        </TouchableOpacity>
+						      )}>
+						      <NativeButton onPress={() => {
+						      	this.setState({
+						      		showPopoverTwo: false,
+						      		display: null
+						      	})
+						      }} style={{ alignItems: "center", justifyContent: "center", backgroundColor: "black", alignContent: "center" }}>
+								<NativeText style={{ color: "white" }}>Close</NativeText>
+						      </NativeButton>
+						      <ScrollView style={{ width: width * 0.90, height: height, backgroundColor: "white" }}>
+						      {this.state.display !== null ? this.state.display.map((like, indexxx) => {
+						      		return (
+										<View key={indexxx} style={styles.container}>
+							              {this.loadImage(like)}
+							              <View style={styles.content}>
+							                <View style={styles.contentHeader}>
+							                  <Text style={{ color: "black" }}>{like.likedBy}</Text>
+							                  
+							                </View>
+							                <Text style={styles.time}>
+							                    {like.date}
+							                  </Text>
+							              </View>
+										  
+							            </View>
+							      	);
+						      }) : console.log("display === null")}
+						      </ScrollView>
+						    </Popover> : null}
+			              </View>
+						  
+			            </View>
+			            {item.postedImage ? <Image style={{ flex: 1, height: 350, width: width * 0.80, marginLeft: 50 }} resizeMode="contain" source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.postedImage}` }} /> : null}
+			        </Swipeable>
+			        </Fragment>
+	            	);
+	            }) : null}
+	            <Button title='Hide' onPress={() => this._panel.hide()} />
+	          </ScrollView>
+				)
 		}
 	}
 	render() {
@@ -930,7 +1047,7 @@ constructor(props) {
 }
 const styles = StyleSheet.create({
   viewPicturesBtnBlue: {
-	backgroundColor: "#e31b39", 
+	backgroundColor: "#613DC1", 
   	marginTop: 20, 
   	alignItems: "center", 
   	justifyContent: "center", 
@@ -938,7 +1055,7 @@ const styles = StyleSheet.create({
   	marginBottom: 50
   },
   viewPicturesBtn: {
-  	backgroundColor: "#e31b39", 
+  	backgroundColor: "#613DC1", 
   	marginTop: 20, 
   	alignItems: "center", 
   	justifyContent: "center", 
@@ -957,7 +1074,7 @@ const styles = StyleSheet.create({
 	justifyContent: "center", 
 	width: width * 0.80,
 	marginRight: 10,
-	backgroundColor: "#e31b39"
+	backgroundColor: "#858AE3"
   },
   containerTwoRow: {
     flex: 1,

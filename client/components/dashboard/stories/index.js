@@ -44,7 +44,7 @@ constructor(props) {
 	render() {
 		return (
 			<Fragment>
-				<ScrollView style={{ backgroundColor: "#e31b39" }} horizontal={true}>
+				<ScrollView style={{ backgroundColor: "#858AE3" }} horizontal={true}>
 					<FlatList  
 						horizontal
 				        data={this.state.stories}
@@ -144,7 +144,9 @@ const styles = StyleSheet.create({
     fontSize:18,
     alignSelf:'center',
     color:"white",
-    fontWeight:'bold'
+    fontWeight:'bold',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    padding: 7
   },
   position:{
     fontSize:14,

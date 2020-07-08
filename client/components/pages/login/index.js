@@ -102,8 +102,8 @@ constructor(props) {
             </NativeButton>
           </Right>
         </Header>
-			<ImageBackground style={styles.container} source={require("../../../assets/images/blur.jpg")}>
-			 	
+			<ImageBackground style={styles.container} source={require("../../../assets/images/bloom.jpg")}>
+			 <View style={styles.overlay}>	
 				{this.state.showEmail === true ? <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Email Address</Text><View style={styles.inputContainer}>
 		          <TouchableOpacity onPress={() => {
 		          	this.setState({
@@ -158,6 +158,7 @@ constructor(props) {
 	        }}>
 	          <Text style={styles.signUpText}>Sign in</Text>
 	        </TouchableHighlight>
+	        </View>
 		    </ImageBackground>
 		</React.Fragment>
 		)
@@ -171,6 +172,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#00b5ec',
     width: width, 
     height: height
+  },
+  overlay: {
+  	backgroundColor: 'rgba(0, 0, 0, 0.6)', 
+  	width: width * 0.90, 
+  	height: height * 0.80, 
+  	flex: 1, 
+  	justifyContent: 'center', 
+  	alignItems: 'center'
   },
   inputContainer: {
       backgroundColor: '#FFFFFF',

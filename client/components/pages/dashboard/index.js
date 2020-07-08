@@ -25,6 +25,7 @@ import ShowFeedList from "../../dashboard/feed/showFeed.js";
 import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import RBSheet from "react-native-raw-bottom-sheet";
+import HomePostsPage from "../../wall/displayPosts/homePostsPage.js";
 
 
 const { width, height } = Dimensions.get("window");
@@ -96,7 +97,57 @@ constructor(props) {
 			console.log(err);
 		})
 	}
+  renderContent = () => {
+    if (this.state.searching === true) {
+      if (this.state.people) {
+        return (
+          <FlatList
+            data={this.state.people}
+            renderItem={({ item }) => {
+              console.log("itemmmmmm :", item);
+              return (
+                <ListItem thumbnail>
+                    <Left style={{ }}>
+                      <Thumbnail square source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} />
+                    </Left>
+                    <Body>
+                      <NativeText style={{ color: "#4E148C" }}>{item.username}</NativeText>
+                      {/*<NativeText note numberOfLines={1}>{}</NativeText>*/}
+                    </Body>
+                    <Right style={{ top: -1 }}>
+                      <NativeButton onPress={() => {
+                        Keyboard.dismiss();
+                          this.props.navigation.navigate("profile-individual", { user: item });
+                      }} transparent>
+                        <NativeText style={{ color: "#2C0735" }}>View</NativeText>
+                      </NativeButton>
+                    </Right>
+                  </ListItem>
+              ); 
+            }}
+            keyExtractor={item => item.id}
+          />
+        );
+      } else {
+        return (
+          <View style={{ backgroundColor: "white", height: height, width: width }}><NativeButton><NativeText>Load page...</NativeText></NativeButton></View>
+        );
+      }
+    } else {
+      return (
+        <Fragment>
+          <ShowFeedList navigation={this.props.navigation} />
+
+        </Fragment>
+      );
+    }
+  }
 	render() {
+    window.onscroll = function() {
+      if(window.pageYOffset === 0) {
+        alert('I AM AT THE TOP');
+      }
+    };
 		console.log(this.state);
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		return (
@@ -127,10 +178,10 @@ constructor(props) {
         </Header>
 		<View style={{ backgroundColor: "white", paddingTop: 20 }}>   
         <View style={{ alignItems: "center", alignContent: "center", justifyContent: "center" }}>
-          <NativeButton style={{ width: width * 0.95, backgroundColor: "#e31b39", alignItems: "center", alignContent: "center", justifyContent: "center" }} onPress={() => {
+          <NativeButton style={styles.mainBtn} onPress={() => {
                  this.props.navigation.navigate("rank-nearby-users");
             }} hasText>
-            <NativeText style={{ color: "white" }}>Rate Users Nearby In Your Proximity </NativeText>
+            <NativeText style={{ color: "black" }}>Rate Users Nearby In Your Proximity </NativeText>
           </NativeButton>
         </View>
 	        <SearchBar   
@@ -147,36 +198,14 @@ constructor(props) {
 			  onCancelButtonPress={this.handleCancel}
 			/>
 		</View>
-	
-		{this.state.searching === true ? <View style={{ flex: 1, backgroundColor: "white" }}><Fragment>
-			{this.state.people ? <FlatList
-		        data={this.state.people}
-		        renderItem={({ item }) => {
-		        	console.log("itemmmmmm :", item);
-		        	return (
-						<ListItem thumbnail>
-			              <Left style={{ }}>
-			                <Thumbnail square source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} />
-			              </Left>
-			              <Body>
-			                <NativeText>{item.username}</NativeText>
-			                {/*<NativeText note numberOfLines={1}>{}</NativeText>*/}
-			              </Body>
-			              <Right style={{ top: -1 }}>
-			                <NativeButton onPress={() => {
-			                	Keyboard.dismiss();
-								          this.props.navigation.navigate("profile-individual", { user: item });
-			                }} transparent>
-			                  <NativeText style={{ color: "#e31b39" }}>View</NativeText>
-			                </NativeButton>
-			              </Right>
-			            </ListItem>
-		        	); 
-		        }}
-		        keyExtractor={item => item.id}
-		      /> : <View style={{ backgroundColor: "white", height: height, width: width }}><NativeButton><NativeText>Load page...</NativeText></NativeButton></View>}
-			</Fragment></View> : <ShowFeedList navigation={this.props.navigation} />}
-	     
+	 
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <Fragment>
+        {this.renderContent()}
+      </Fragment>
+    </View>
+		
+
 			<Footer>
 	          <FooterTab>
 	            <NativeButton active onPress={() => {
@@ -224,9 +253,9 @@ constructor(props) {
           }}>
                   <View style={styles.cardContent}>
                     <TouchableOpacity style={styles.followButtonRed} onPress={() => {
-              this.props.authenticated({});
-              this.RBSheet.close();
-              this.props.navigation.navigate("homepage");
+                      this.props.authenticated({});
+                      this.RBSheet.close();
+                      this.props.navigation.navigate("homepage");
                     }}>
                       <Text style={{ fontSize: 15, color: "white" }}>Sign-out</Text>  
                     </TouchableOpacity>
@@ -240,7 +269,7 @@ constructor(props) {
                     <TouchableOpacity style={styles.followButton} onPress={() => {
               this.RBSheet.close();
                     }}>
-                      <Text style={styles.followButtonText}>Cancel</Text>  
+                      <Text style={styles.followButtonTextWhite}>Cancel</Text>  
                     </TouchableOpacity>
                   </View>
                 </TouchableOpacity>
@@ -252,6 +281,15 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
+  mainBtn: {
+    width: width * 0.95, 
+    backgroundColor: "#97DFFC", 
+    alignItems: "center", 
+    borderColor: "black", 
+    borderWidth: 3, 
+    alignContent: "center", 
+    justifyContent: "center"
+  },
   rowTwo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -467,13 +505,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:30,
-    backgroundColor: "#e31b39",
+    backgroundColor: "#4E148C",
     borderWidth:3,
-    borderColor:"orange",
+    borderColor:"#97DFFC",
     width: width * 0.60
   },
   followButtonText:{
-    color: "darkred",
+    color: "white",
+    fontSize:15,
+  },
+  followButtonTextWhite:{
+    color: "black",
     fontSize:15,
   }
 })

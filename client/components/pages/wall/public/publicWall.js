@@ -141,7 +141,7 @@ constructor(props) {
 		              <Text style={styles.info}>{this.state.user ? this.state.user.username : "--"}</Text>
 		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              <View style={styles.customContainer}>
-					      <NativeButton style={{ width: width * 0.45, backgroundColor: "#e31b39" }} onPress={() => {
+					      <NativeButton style={{ width: width * 0.45, backgroundColor: "#4E148C" }} onPress={() => {
 							// do something
 					      }}><Image style={styles.specialBtn} source={require("../../../../assets/icons/math.png")}/><NativeText style={{ color: "white" }}>Add Story</NativeText></NativeButton>
 					     <NativeButton style={{ width: width * 0.20, backgroundColor: "transparent" }} onPress={() => {
@@ -165,8 +165,8 @@ constructor(props) {
 						<NativeButton onPress={() => {
 							this.handleRerender(); 
 							console.log("clicked.");
-						}} style={{ width: width * 0.80, justifyContent: "center", alignItems: "center", top: 40, backgroundColor: "#e31b39" }}>
-							<NativeText style={{ color: "white" }}>Load Page...</NativeText>
+						}} style={styles.load}>
+							<NativeText style={{ color: "black" }}>Load Page...</NativeText>
 						</NativeButton>
 					</TouchableOpacity>
 					<View> 
@@ -212,7 +212,6 @@ constructor(props) {
 			            <PhotoUpload
 						   onPhotoSelect={avatar => {
 						     if (avatar) {
-						       console.log('Image base64 string: ', avatar);
 						       this.setState({
 						       	avatar
 						       })
@@ -220,21 +219,16 @@ constructor(props) {
 						   }}
 						 >
 						   <Image
-						     style={{
-						       paddingVertical: 30,
-						       width: 150,
-						       height: 150,
-						       borderRadius: 75
-						     }}
+						     style={this.state.avatar ? styles.picNoTint : styles.picTint}
 						     resizeMode='cover'
 						     source={require("../../../../assets/icons/user.png")}
 						   />
 						 </PhotoUpload>
 						 <View style={{ top: -150 }}>
-							<NativeButton onPress={this.uploadCoverPhoto}>
+							<NativeButton style={{ backgroundColor: "black" }} onPress={this.uploadCoverPhoto}>
 								<NativeText style={{ color: "white" }}>Submit Cover Photo</NativeText>
 							 </NativeButton>
-							 <NativeButton style={{ justifyContent: "center", alignItems: "center", alignContent: "center", backgroundColor: "black", marginTop: 50 }} onPress={() => {
+							 <NativeButton style={{ justifyContent: "center", alignItems: "center", alignContent: "center", backgroundColor: "#e31b39", marginTop: 50 }} onPress={() => {
 							 	this._panel.hide();
 							 }}><NativeText style={{ color: "white" }}>Close Screen</NativeText>
 							 </NativeButton>
@@ -278,6 +272,28 @@ constructor(props) {
 }
 
 const styles = StyleSheet.create({
+  load: {
+  	width: width * 0.80, 
+  	justifyContent: "center", 
+  	alignItems: "center", 
+  	top: 40, 
+  	borderWidth: 3, 
+  	borderColor: "black", 
+  	backgroundColor: "#97DFFC"
+  },
+  picTint: {
+   paddingVertical: 30,
+   width: 150,
+   height: 150,
+   borderRadius: 75,
+   tintColor: "#e31b39"
+  },
+  picNoTint: {
+   paddingVertical: 30,
+   width: 150,
+   height: 150,
+   borderRadius: 75
+  },
   slide: {
     flex: 1,
     backgroundColor: 'white',
@@ -295,7 +311,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   header:{
-    backgroundColor: "#e31b39",
+    backgroundColor: "#613DC1",
     height:200,
   },
   specialBtn: {

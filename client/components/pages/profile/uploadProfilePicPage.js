@@ -106,13 +106,7 @@ constructor(props) {
 					   }}
 					 >
 					   <Image
-					     style={{
-					       paddingVertical: 30,
-					       width: 150,
-					       height: 150,
-					       borderRadius: 75,
-					       tintColor: "#e31b39"
-					     }}
+					     style={this.state.avatar ? styles.picNoTint : styles.picTint}
 					     resizeMode='cover'
 					     source={require("../../../assets/icons/user.png")}
 					   />
@@ -183,6 +177,19 @@ constructor(props) {
 const resizeMode = 'center';
 
 const styles = StyleSheet.create({
+  picNoTint: {
+	paddingVertical: 30,
+    width: 150,
+    height: 150,
+    borderRadius: 75	
+  },
+  picTint: {
+	paddingVertical: 30,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    tintColor: "#4E148C"
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -214,7 +221,7 @@ const styles = StyleSheet.create({
 	alignItems: "center", 
 	justifyContent: "center", 
 	alignContent: "center", 
-	backgroundColor: "#e31b39"
+	backgroundColor: "#858AE3"
   },
   inputs:{
     height:45,

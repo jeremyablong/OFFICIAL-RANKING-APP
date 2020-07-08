@@ -59,6 +59,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					}
 					collection.save(item);
 					count++;
+					return;
 				} else if (item.username === lowerReciever) {
 					console.log("reciever match... :", item);
 					if (item.notifications) {
@@ -99,6 +100,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					}
 					collection.save(item);
 					count++;
+					return;
 				}
 
 				if (count === 2) {

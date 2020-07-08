@@ -46,7 +46,7 @@ constructor(props) {
             </NativeButton>
           </Right>
         </Header>
-      <ImageBackground source={require("../../../assets/images/red.jpg")} style={styles.background}>
+      <ImageBackground source={require("../../../assets/images/modern.jpg")} style={styles.background}>
       <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', padding: 10, marginBottom: 30 }}>
         <Text style={{ marginBottom: 14, fontWeight: "bold", fontSize: 24, color: "white", textAlign: "center" }}>What would you like to do?</Text>
       </View>
@@ -137,9 +137,9 @@ const styles = StyleSheet.create({
     borderRadius:30,
   },
   loginButtonTwo: {
-    backgroundColor: "#e31b39",
-	shadowColor: "white",
-	shadowOffset: {
+    backgroundColor: "#613DC1",
+	  shadowColor: "white",
+	  shadowOffset: {
 		width: 3,
 		height: 12,
 	},
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
 
 	elevation: 24,
 	borderRadius:10,
-    borderWidth: 1,
-    borderColor: '#fff'
+    borderWidth: 2,
+    borderColor: '#97DFFC'
   },
   loginText: {
     color: 'white',

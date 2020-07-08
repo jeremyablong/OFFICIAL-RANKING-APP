@@ -10,7 +10,8 @@ import {
   Image,
   Alert, 
   ImageBackground, 
-  ScrollView
+  ScrollView, 
+  Dimensions
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText } from 'native-base';
@@ -20,6 +21,9 @@ import { connect } from "react-redux";
 import { latLngLocation } from "../../../actions/location/getLocation.js";
 import { authenticated } from "../../../actions/auth/auth.js";
 import axios from "axios";
+
+const { width, height } = Dimensions.get("window");
+
 
 class SignupPage extends Component {
   constructor(props) {
@@ -156,8 +160,10 @@ class SignupPage extends Component {
             </NativeButton>
           </Right>
         </Header>
-      <ImageBackground source={require("../../../assets/images/blur.jpg")} style={styles.container}>
+      <ImageBackground source={require("../../../assets/images/bloom.jpg")} style={styles.container}>
+      <View style={styles.overlay}>
       <ScrollView style={{ flex: 1, marginTop: 40, marginBottom: 40 }} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+       
       <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>First & Last Name</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={require("../../../assets/icons/name.png")}/>
@@ -327,7 +333,8 @@ class SignupPage extends Component {
                paddingVertical: 30,
                width: 150,
                height: 150,
-               borderRadius: 75
+               borderRadius: 75, 
+               tintColor: "#858AE3"
              }}
              resizeMode='cover'
              source={require("../../../assets/icons/user.png")}
@@ -339,7 +346,9 @@ class SignupPage extends Component {
         }}>
           <Text style={styles.signUpText}>Sign up</Text>
         </TouchableHighlight>
+        
         </ScrollView>
+      </View>
       </ImageBackground>
     </React.Fragment>
     );
@@ -352,6 +361,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#00b5ec',
+  },
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', 
+    width: width * 0.90, 
+    height: height * 0.80, 
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
   },
   inputContainer: {
       backgroundColor: '#FFFFFF',
