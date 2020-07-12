@@ -12,11 +12,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			const { username } = req.body;
 
 			const collection = db.collection("users");
-
-			console.log("req.body", req.body);
-
+			
 			collection.findOne({ username }).then((user) => {
-				console.log(user);
 				if (user) {
 					res.json({
 						message: "FOUND user!",

@@ -44,13 +44,37 @@ constructor(props) {
 	          email,
 	          password
 	        }).then((res) => {
-	          console.log(res.data);
+	          console.log("YYYYYYY :", res.data);
 	          if (res.data.message === "User could NOT be found...") {
+	          	
 	          	alert("Please enter valid credentials...")
 	          }
 	          if (res.data.message === "User FOUND!") {
-				this.props.authenticated(res.data.user);
-				this.props.navigation.navigate("dashboard");
+
+	          	const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+
+	          	const config = {
+          			headers: {
+          				"Content-Type": "application/json",
+          				"user_id": "5f09ef175b54a106df315f75"
+          			}
+          		}
+
+          		// api key - 5f09ef175b54a106df315f75
+
+	   //        	const conversion = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+				// axios.post("http://facexapi.com/compare_faces", {
+				// 	img_1: "https://s3.us-west-1.wasabisys.com/rating-people/08a97ce9-3b09-4fb3-b313-ca2e0bffe380",
+				// 	img_2: "https://s3.us-west-1.wasabisys.com/rating-people/0996eeff-5e4f-452f-a554-6f0da12c9b03"
+				// }, config).then((res) => {
+	   //        		console.log("majestical :", res.data);
+	   //        	}).catch((err) => {
+	   //        		console.log(err);
+	   //        	})
+
+	          	this.props.authenticated(res.data.user);
+	          	this.props.navigation.navigate("dashboard");
+	          
 	          } else if (res.data.message === "Password/email did match our records...") {
 	          	alert(res.data.message);
 	          }
@@ -68,10 +92,37 @@ constructor(props) {
 	          phoneNumber: output,
 	          password
 	        }).then((res) => {
-	          console.log(res.data);
+	          console.log("YYYYY :", res.data);
 	          if (res.data.message === "User FOUND!") {
+
+	          	const config = {
+          			headers: {
+          				"Content-Type": "application/json",
+          				"user_id": "5f09ef175b54a106df315f75"
+          			}
+          		}
+
+	          	const conversion = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+				// axios.post("http://facexapi.com/compare_faces", {
+				// 	img_1: "https://s3.us-west-1.wasabisys.com/rating-people/08a97ce9-3b09-4fb3-b313-ca2e0bffe380",
+				// 	img_2: "https://s3.us-west-1.wasabisys.com/rating-people/0996eeff-5e4f-452f-a554-6f0da12c9b03"
+				// }, config).then((res) => {
+	   //        		console.log("majestical :", res.data);
+	   //        	}).catch((err) => {
+	   //        		console.log(err);
+	   //        	})
+	          	// axios.post("http://recovery-social-media.ngrok.io/add-face").then((res) => {
+	          	// 	console.log("majestical :", res.data);
+	          		// this.props.authenticated(res.data.user);
+	          		// this.props.navigation.navigate("verify-identity");
+	          	// }).catch((err) => {
+	          	// 	console.log(err);
+	          	// })
+
 	          	this.props.authenticated(res.data.user);
 	          	this.props.navigation.navigate("dashboard");
+	          	
 	          } else if (res.data.message === "Password/email did match our records...") {
 	          	alert(res.data.message);
 	          }

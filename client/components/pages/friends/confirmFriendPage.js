@@ -46,6 +46,10 @@ constructor(props) {
 			if (res.data.message === "You've accepted this friend request!") {
 				console.log(res.data);
 				alert(res.data.message);
+
+				setTimeout(() => {
+					this.props.navigation.navigate("notifications");
+				}, 2300)
 			}
 		}).catch((err) => {
 			console.log(err);
@@ -56,7 +60,22 @@ constructor(props) {
 
 		const passed = route.params.data;
 
-		console.log("deny request...", passed, username);
+		axios.post(`${URL}/decline/friend/request`, {
+			username: this.props.username,
+			requester: passed.user,
+			requestID: passed.id
+		}).then((res) => {
+			if (res.data.message === "You've declined this friend request!") {
+				console.log(res.data);
+				alert(res.data.message);
+
+				setTimeout(() => {
+					this.props.navigation.navigate("notifications");
+				}, 2300)
+			}
+		}).catch((err) => {
+			console.log(err);
+		});
 	}
 	render() {
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;

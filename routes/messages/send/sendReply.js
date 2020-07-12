@@ -36,7 +36,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 						author: sender,
 						id: messageID,
-						sender: false
+						sender: false 
 					}}}, (err, doc) => {
 						if (err) {
 							console.log(err);

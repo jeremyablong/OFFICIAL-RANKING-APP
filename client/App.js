@@ -42,7 +42,12 @@ import SocialRankingStatsPage from "./components/pages/socialRankingStats/stats.
 import IndividualStory from "./components/pages/stories/individualStory.js";
 import PostToWallPage from "./components/pages/wall/post/postToWall.js";
 import ConfirmFriendPage from "./components/pages/friends/confirmFriendPage.js";
-
+import LiveStreamPageDisplay from "./components/pages/live_stream/display/index.js";
+import ProfileSettingsPage from "./components/pages/profile_settings/index.js";
+import EditProfileHomepage from "./components/pages/profile/edit/editProfileHomepage.js";
+import NewsHomepage from "./components/pages/news/newsHomepage.js";
+import MarketplaceHomepage from "./components/pages/marketplace/marketplaceHomepage.js";
+import IndividualWallPosting from "./components/pages/wall/individual/index.js";
 
 import { locationBackground, latLngLocation } from "./actions/location/getLocation.js";
 
@@ -197,8 +202,13 @@ constructor(props) {
             <Stack.Screen name="social-ranking-stats" component={SocialRankingStatsPage} />
             <Stack.Screen name="story-individual" component={IndividualStory} />
             <Stack.Screen name="post-to-wall-page" component={PostToWallPage} />
-            <Stack.Screen name="handle-request" component={ConfirmFriendPage} />
-
+            <Stack.Screen name="handle-request" component={ConfirmFriendPage} /> 
+            <Stack.Screen name="live-stream-start" component={LiveStreamPageDisplay} />
+            <Stack.Screen name="profile-settings" component={ProfileSettingsPage} />
+            <Stack.Screen name="edit-profile" component={EditProfileHomepage} />
+            <Stack.Screen name="news-homepage" component={NewsHomepage} />
+            <Stack.Screen name="marketplace-homepage" component={MarketplaceHomepage} />
+            <Stack.Screen name="wall-individual" component={IndividualWallPosting} />
           </Stack.Navigator>
         </NavigationContainer>
     );

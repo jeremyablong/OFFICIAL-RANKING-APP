@@ -16,8 +16,7 @@ import {
 } from 'react-native';
 import axios from "axios";
 import { Button as NativeButton, Text as NativeText } from 'native-base';
-
-
+import { connect } from "react-redux";
 
 const { width, height } = Dimensions.get("window");
 
@@ -28,52 +27,75 @@ constructor(props) {
   super(props);
 
   this.state = {
-  	data: []
+  	friends: []
   };
 }
 	componentDidMount() {
-		axios.get(`${URL}/gather/all/profiles`).then((res) => {
-          	console.log("ppppppp :", res.data);
-          	this.setState({
-          		data: res.data
-          	})
-        }).catch((err) => {
-          console.log(err);
-        });
+      axios.post(`${URL}/get/user/by/username`, {
+        username: this.props.username === this.props.user.username ? this.props.username : this.props.user.username
+      }).then((res) => {
+        console.log("EQUITY :", res.data);
+        for (let i = 0; i < res.data.user.confirmedFriendsList.length; i++) {
+          let friend = res.data.user.confirmedFriendsList[i];
+          console.log("FRIEND.... ----- :", friend);
+
+          axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+            username: friend.acceptedUser
+          }).then((resolution) => {
+            console.log("resolution :", resolution.data);
+            const picture = resolution.data.user.profilePic[resolution.data.user.profilePic.length - 1].picture;
+            // append picture to object
+            friend["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+            friend["fullName"] = resolution.data.user.fullName;
+
+            this.setState({
+              friends: [friend, ...this.state.friends]
+            })
+          }).catch((err) => {
+            console.log("FAILURE :", err);
+          })
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
 	}
+  visitFriend = (friend) => {
+    console.log("visit friend... --- :", friend)
+  }
 	render() {
+    console.log("THIS props :", this.props);
 		return (
 			<Fragment>
 				<View style={{ marginBottom: 100, marginLeft: 10, marginRight: 10 }}>
 					<Text style={{ textAlign: "left", fontSize: 30, fontWeight: "bold" }}>Friends</Text>
 					<Text style={{ textAlign: "left", fontSize: 20 }}>452 Friends</Text>
-		                <FlatList
-    					        contentContainerStyle={{ alignSelf: 'flex-start' }}
-    					        numColumns={3}
-    					        showsVerticalScrollIndicator={false}
-    					        showsHorizontalScrollIndicator={false}
-    					        data={this.state.data.slice(0, 6)} 
-    					        renderItem={({ item, index }) => {
-    					        	let split = item.fullName.split(" ");
-    					            console.log("ITEMMMMMMM :", split);
-    					            return (
-          									<TouchableOpacity style={styles.touchable} onPress={() => {
-          										{/*this.clickEventListener(item);*/}
+            {this.state.friends ? <FlatList
+                  contentContainerStyle={{ alignSelf: 'flex-start' }}
+                  numColumns={3}
+                  showsVerticalScrollIndicator={false}
+                  showsHorizontalScrollIndicator={false}
+                  data={this.state.friends.slice(0, 6)} 
+                  renderItem={({ item, index }) => {
+                    let split = item.fullName.split(" ");
+                    console.log("ITEMMMMMMM :", item);
+                    return (
+                      <TouchableOpacity style={styles.touchable} onPress={() => {
+                        this.visitFriend(item);
+                      }}>
+                      <ImageBackground source={{uri: item.picture }} style={{ height: 100 }}>
+                          <View style={styles.bodyContent}>
 
-          									}}>
-      								      <ImageBackground source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} style={{ height: 100 }}>
-      							            <View style={styles.bodyContent}>
-
-      							              
-      							            </View>
-      							        </ImageBackground>
-      							        <View style={{ backgroundColor: "white", paddingLeft: 4, paddingRight: 4, minHeight: 45 }}>
-    						                <Text style={styles.info}>{split[0].slice(0, 8)}{split[0].length > 8 ? ".." : null} {split[1].slice(0, 8)}{split[1].length > 8 ? ".." : null}</Text>
-    						            </View>
-    					              </TouchableOpacity>
-					            );
-					        }}
-					    />
+                            
+                          </View>
+                      </ImageBackground>
+                      <View style={{ backgroundColor: "white", paddingLeft: 4, paddingRight: 4, minHeight: 45 }}>
+                          <Text style={styles.info}>{split[0].slice(0, 8)}{split[0].length > 8 ? ".." : null} {split[1].slice(0, 8)}{split[1].length > 8 ? ".." : null}</Text>
+                      </View>
+                      </TouchableOpacity>
+                    );
+              }}
+              /> : null}
 					<NativeButton onPress={() => {
 						this.props.navigation.navigate("friends-list");
 					}} style={styles.seeMore}>
@@ -120,6 +142,13 @@ const styles = StyleSheet.create({
   	borderWidth: 4, 
   	borderColor: "black"
   }
-})
+});
 
-export default FriendsListSubComponent;
+const mapStateToProps = state => {
+  return {
+    username: state.auth.authenticated.username
+  }
+}
+
+export default connect(mapStateToProps, {  })(FriendsListSubComponent);
+

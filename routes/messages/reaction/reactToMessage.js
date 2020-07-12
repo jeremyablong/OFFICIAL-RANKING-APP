@@ -32,6 +32,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 							if (id === messageThread.id && message === messageThread.message && date === messageThread.date) {
 								if (messageThread.reactions) {
 									// add one to emoji reaction count if already exists
+									messageThread.reactions = {
+										laugh: 0,
+										heartFace: 0,
+										frustrated: 0,
+										heart: 0,
+										angry: 0,
+										sad: 0,
+										puke: 0
+									}
 									messageThread.reactions[reaction] += 1;
 									// save changes
 									collection.save(user);
@@ -40,7 +49,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 									  case "laugh":
 									    console.log("LAUGH.");
 									    // create reactions object key if not existant
-										messageThread["reactions"] = {
+										messageThread["reactions"] = { 
 											laugh: 1,
 											heartFace: 0,
 											frustrated: 0,
@@ -141,6 +150,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 									if (individiual.id === id && message === individiual.message) {
 										console.log("individiual ONE", individiual);
 										if (individiual.reactions) {
+											individiual.reactions = {
+												laugh: 0,
+												heartFace: 0,
+												frustrated: 0,
+												heart: 0,
+												angry: 0,
+												sad: 0,
+												puke: 0
+											}
 											individiual.reactions[reaction] += 1;
 											// save changes
 											collection.save(user);
@@ -256,6 +274,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 							if (id === messageThread.id && message === messageThread.message && date === messageThread.date) {
 								if (messageThread.reactions) {
 									// add one to emoji reaction count if already exists
+									messageThread.reactions = {
+										laugh: 0,
+										heartFace: 0,
+										frustrated: 0,
+										heart: 0,
+										angry: 0,
+										sad: 0,
+										puke: 0
+									}
 									messageThread.reactions[reaction] += 1;
 									// save changes
 									collection.save(user);
@@ -368,6 +395,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 										if (individiual.id === id && message === individiual.message) {
 											console.log("individiual TWO", individiual);
 											if (individiual.reactions) {
+												individiual.reactions = {
+													laugh: 0,
+													heartFace: 0,
+													frustrated: 0,
+													heart: 0,
+													angry: 0,
+													sad: 0,
+													puke: 0
+												}
 												individiual.reactions[reaction] += 1;
 												// save changes
 												collection.save(user);
@@ -477,6 +513,10 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				}
 			}
 		});
+		res.json({
+			message: "Successfully reacted to message!",
+			emoji: reaction
+		})
 	});
 });
 

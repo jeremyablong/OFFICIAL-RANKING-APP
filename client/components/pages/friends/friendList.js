@@ -19,6 +19,12 @@ import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton
 
 
 class FriendListMain extends Component {
+constructor(props) {
+  super(props);
+
+  this.state = {};
+}
+
 	render() {
 		return (
 			<Fragment>

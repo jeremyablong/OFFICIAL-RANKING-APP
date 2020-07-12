@@ -213,8 +213,7 @@ constructor(props) {
 			          <View style={{ marginLeft: 0 }}>
 			            <View style={styles.nameContainer}>
 			              <NativeButton onPress={() => {
-			            	this._panelll.show();
-			            	this.RBSheet.open();
+			            	this.props.navigation.navigate("post-to-wall-page");
 			            }} transparent><NativeText style={{ color: "grey", fontSize: 15, textAlign: "center", fontWeight: "bold" }}>What's on your mind...?</NativeText></NativeButton>
 			            </View>
 			          </View>
@@ -225,7 +224,7 @@ constructor(props) {
 			              <NativeText>Upload Photo</NativeText>
 			            </NativeButton>
 			            <NativeButton onPress={() => {
-			            	this._panel.show();
+			            	this.props.navigation.navigate("post-to-wall-page");
 			            }}>
 			              <Image style={{ width: 50, height: 50 }} source={require("../../assets/icons/live.png")} />
 			            </NativeButton>
@@ -303,7 +302,7 @@ const styles = StyleSheet.create({
     width: 280,
   },
   wrapper: {
-  	top: -70
+  	top: -80
   },
   container: {
     flex: 1,

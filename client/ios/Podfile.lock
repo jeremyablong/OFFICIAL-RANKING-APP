@@ -1,5 +1,7 @@
 PODS:
   - boost-for-react-native (1.63.0)
+  - BVLinearGradient (2.5.6):
+    - React
   - CocoaAsyncSocket (7.6.4)
   - CocoaLibEvent (1.0.0)
   - CocoaLumberjack (3.5.3):
@@ -221,6 +223,7 @@ PODS:
     - nanopb/encode (= 1.30905.0)
   - nanopb/decode (1.30905.0)
   - nanopb/encode (1.30905.0)
+  - NodeMediaClient (2.7.9)
   - OpenSSL-Universal (1.0.2.19):
     - OpenSSL-Universal/Static (= 1.0.2.19)
   - OpenSSL-Universal/Static (1.0.2.19)
@@ -389,6 +392,8 @@ PODS:
     - React-cxxreact (= 0.62.2)
     - React-jsi (= 0.62.2)
   - React-jsinspector (0.62.2)
+  - react-native-ble-manager (7.3.1):
+    - React
   - react-native-camera/BarcodeDetectorMLKit (3.31.0):
     - Firebase/MLVision
     - Firebase/MLVisionBarcodeModel
@@ -424,6 +429,13 @@ PODS:
   - react-native-maps (0.27.1):
     - React
   - react-native-netinfo (5.9.4):
+    - React
+  - react-native-nodemediaclient (0.2.0):
+    - NodeMediaClient (= 2.7.9)
+    - React
+    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.2.0)
+  - react-native-nodemediaclient/RCTNodeMediaClient (0.2.0):
+    - NodeMediaClient (= 2.7.9)
     - React
   - react-native-safe-area-context (3.0.5):
     - React
@@ -497,6 +509,8 @@ PODS:
     - React
   - RNCMaskedView (0.1.10):
     - React
+  - RNExitApp (1.1.0):
+    - React
   - RNFS (2.16.6):
     - React
   - RNGestureHandler (1.6.1):
@@ -526,6 +540,7 @@ PODS:
     - Yoga (~> 1.14)
 
 DEPENDENCIES:
+  - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
@@ -564,6 +579,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-ble-manager (from `../node_modules/react-native-ble-manager`)
   - react-native-camera/BarcodeDetectorMLKit (from `../node_modules/react-native-camera`)
   - react-native-camera/FaceDetectorMLKit (from `../node_modules/react-native-camera`)
   - react-native-camera/TextDetector (from `../node_modules/react-native-camera`)
@@ -573,6 +589,7 @@ DEPENDENCIES:
   - react-native-location (from `../node_modules/react-native-location`)
   - react-native-maps (from `../node_modules/react-native-maps`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -590,6 +607,7 @@ DEPENDENCIES:
   - RNBackgroundGeolocation (from `../node_modules/react-native-background-geolocation`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - RNExitApp (from `../node_modules/react-native-exit-app`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
@@ -635,6 +653,7 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMSessionFetcher
     - nanopb
+    - NodeMediaClient
     - OpenSSL-Universal
     - PromisesObjC
     - Protobuf
@@ -642,6 +661,8 @@ SPEC REPOS:
     - YogaKit
 
 EXTERNAL SOURCES:
+  BVLinearGradient:
+    :path: "../node_modules/react-native-linear-gradient"
   DoubleConversion:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   FBLazyVector:
@@ -670,6 +691,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-ble-manager:
+    :path: "../node_modules/react-native-ble-manager"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
   react-native-google-maps:
@@ -684,6 +707,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-maps"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-nodemediaclient:
+    :path: "../node_modules/react-native-nodemediaclient"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   React-RCTActionSheet:
@@ -716,6 +741,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/async-storage"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNExitApp:
+    :path: "../node_modules/react-native-exit-app"
   RNFS:
     :path: "../node_modules/react-native-fs"
   RNGestureHandler:
@@ -737,6 +764,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
+  BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
   CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
   CocoaLibEvent: 2fab71b8bd46dd33ddb959f7928ec5909f838e3f
   CocoaLumberjack: 2f44e60eb91c176d471fdba43b9e3eae6a721947
@@ -774,6 +802,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 39530bc0ad980530298e9c4af8549e991fd033b1
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
+  NodeMediaClient: 69e663a8b8d13b38ad556c7234a3ea218044469c
   OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
   Protobuf: 2793fcd0622a00b546c60e7cbbcc493e043e9bb9
@@ -786,6 +815,7 @@ SPEC CHECKSUMS:
   React-jsi: b6dc94a6a12ff98e8877287a0b7620d365201161
   React-jsiexecutor: 1540d1c01bb493ae3124ed83351b1b6a155db7da
   React-jsinspector: 512e560d0e985d0e8c479a54a4e5c147a9c83493
+  react-native-ble-manager: 73a2c5d7ca510866d2bdf67d56bec42bd76c004f
   react-native-camera: 679479bfe0f59103aca704e8dc39b0cedf5e2f65
   react-native-google-maps: 0a989abda71059db2caa98b9dacca7a8f38a47d0
   react-native-image-picker: 668e72d0277dc8c12ae90e835507c1eddd2e4f85
@@ -793,6 +823,7 @@ SPEC CHECKSUMS:
   react-native-location: 9c53c0957756f7d70e8fdc76b1c7ed85867c8d0b
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-netinfo: eed0fb1d6a9424e98ce686f92aad62ff427d4bc9
+  react-native-nodemediaclient: b52eb3bc317ff2fc1a55803c360d030ee5f9fa02
   react-native-safe-area-context: e9a863c2dbbc0d42d2b12209d63fa79dfbc9662c
   React-RCTActionSheet: f41ea8a811aac770e0cc6e0ad6b270c644ea8b7c
   React-RCTAnimation: 49ab98b1c1ff4445148b72a3d61554138565bad0
@@ -809,6 +840,7 @@ SPEC CHECKSUMS:
   RNBackgroundGeolocation: ef0b86ccc91ca9ea3e775585f60fe151601d3d50
   RNCAsyncStorage: db711e29e5e0500d9bd21aa0c2e397efa45302b1
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
+  RNExitApp: 7d81855142a4d11eb75f4f06fdebf5a950d7aef2
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNImageCropPicker: f0557a908758c4a3f83978894ec7227651529b45
@@ -821,6 +853,6 @@ SPEC CHECKSUMS:
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 340a556ef06ca9a6c63079402596d93f4b081700
+PODFILE CHECKSUM: d6167a324470cc7c5099f5f5134e37111067bc0b
 
 COCOAPODS: 1.9.1

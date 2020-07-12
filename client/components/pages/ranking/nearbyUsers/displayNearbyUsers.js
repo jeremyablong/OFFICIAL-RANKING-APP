@@ -154,23 +154,33 @@ constructor(props) {
 			        <View style={{ position: "absolute", bottom: 0, width: width }}>
 					<Footer>
 			          <FooterTab>
-			            <NativeButton badge onPress={() => {
+			            <NativeButton active onPress={() => {
+				            	this.props.navigation.navigate("dashboard");
+				            }}>
+			              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/home-run.png")} />
+			            </NativeButton>
+			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("notifications");
 				            }}>
-			              	<Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
+				            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
+			               <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
 			            </NativeButton>
-			            <NativeButton badge onPress={() => {
+			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("chat-users");
 				            }}>
-			               <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
+				          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
+			              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("public-wall");
 				            }}>
-				            
 			              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/wall.png")} />
 			            </NativeButton>
-			            
+		              <NativeButton onPress={() => {
+		                  this.props.navigation.navigate("profile-settings");
+		                }}>
+		                <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/list.png")} />
+		              </NativeButton>
 			          </FooterTab>
 			        </Footer>
 				</View>

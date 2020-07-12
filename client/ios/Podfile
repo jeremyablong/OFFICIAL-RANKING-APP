@@ -103,6 +103,13 @@ target 'client' do
 
   pod 'RNTouchThroughView', :path => '../node_modules/react-native-touch-through-view'
 
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
+  pod 'RNExitApp', :path => '../node_modules/react-native-exit-app'
+
+  pod 'react-native-ble-manager', :path => '../node_modules/react-native-ble-manager'
+
+
   target 'clientTests' do
     inherit! :complete
     # Pods for testing

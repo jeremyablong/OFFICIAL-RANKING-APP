@@ -29,7 +29,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			const generatedID = uuidv4();
 
 			const bufferImage = new Buffer(avatar.replace(/^data:image\/\w+;base64,/, ""),'base64');
-
+ 
 			const collection = db.collection("users");
 
 			console.log("req.body", req.body);

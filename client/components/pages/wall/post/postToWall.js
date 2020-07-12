@@ -237,7 +237,7 @@ constructor(props) {
 					        </Footer>
 
 
-							<NativeButton onPress={this.handleSubmission} style={{ backgroundColor: "#e31b39", justifyContent: "center" }}>
+							<NativeButton onPress={this.handleSubmission} style={{ backgroundColor: "#613DC1", justifyContent: "center" }}>
 								<NativeText>Submit Posting</NativeText>
 							</NativeButton>	
 						</View>

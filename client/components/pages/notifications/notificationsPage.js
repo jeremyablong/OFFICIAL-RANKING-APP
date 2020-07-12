@@ -25,6 +25,7 @@ import LoadingWall from "../wall/loading.js";
 import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import RBSheet from "react-native-raw-bottom-sheet";
+import moment from "moment";
 
 const { width, height } = Dimensions.get("window");
 
@@ -38,10 +39,24 @@ constructor(props) {
   	last: null,
   	navigate: false,
   	isOpen: false,
-  	selected: null
+  	selected: null,
+  	user: null
   };
 }
 	componentDidMount() {
+		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+          username: this.props.username
+        }).then((res) => {
+          console.log(res.data);
+          if (res.data.message === "FOUND user!") {
+          	this.setState({
+          		user: res.data.user
+          	})
+          }
+        }).catch((err) => {
+          console.log(err);
+        })
+
         return new Promise((resolve, reject) => {
             axios.post("http://recovery-social-media.ngrok.io/gather/notifications", {
 			  	username: this.props.username
@@ -53,6 +68,9 @@ constructor(props) {
 							for (let i = 0; i < response.data.notifications.length; i++) {
 								console.log("i", i)
 								let notification = response.data.notifications[i];
+
+								console.log("NOTIFICATION :", notification);
+
 								// console.log("notification.. :", notification);
 								axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
 				  					username: notification.user
@@ -96,10 +114,19 @@ constructor(props) {
 			  	console.log(err);
 			  })
         });
-		
 
+        
 	}
 	redirectToSpecific = (data) => {
+
+		axios.post("http://recovery-social-media.ngrok.io/mark/notification/viewed", {
+			username: this.props.username,
+			notificationID: data.id
+		}).then((res) => {
+			console.log(res.data);
+		}).catch((err) => {
+			console.log(err);
+		})
 
 		console.log("Data", data);
 
@@ -212,15 +239,53 @@ constructor(props) {
 		            </NativeButton>
 		          </Right>
 		        </Header>
-				
 				<ScrollView style={{ backgroundColor: "white" }}>
-				<List>
+				{this.state.notifications.length === 0 && this.state.user !== null ? <View style={styles.container}>
+		          <View style={styles.header}>
+		              <Text style={styles.headerTitle}>
+		                You have <Text style={{ color: "#97DFFC" }}>0</Text> notifications
+		              </Text>
+		          </View>
+
+		          <View style={styles.postContent}>
+		              <Text style={styles.postTitle}>
+		                You don't have any notifications yet, get involved and interact with others to get some action!
+		              </Text>
+
+		              <Text style={styles.postDescription}>
+		                Interacting with others is an excellent way to create a social world in which you're connected... Send friend requests, message people, comment and most of all... have fun! We want to thank you for using our platform and wish you the best in your indeavors! 
+		              </Text>
+
+		              <Text style={styles.tags}>
+		                "Make sure you're happy in real life and not just on social media"
+		              </Text>
+
+		              <Text style={styles.date}>
+		                {moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a")}
+		              </Text>
+
+		              <View style={styles.profile}>
+		                <Image style={styles.avatar}
+		                  source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}`}}/>
+
+		                <Text style={styles.name}>
+		                    {this.state.user.username}
+		                </Text>
+		              </View>
+		              <TouchableOpacity onPress={() => {
+		              	this.props.navigation.navigate("dashboard");
+		              }} style={styles.shareButton}>
+		                <Text style={styles.shareButtonText}>Interact with others</Text>  
+		              </TouchableOpacity> 
+		          </View>
+		        </View> : null}
+				<List style={{ left: -15 }}>
 					{this.state.notifications && this.state.ready === true ? this.state.notifications.map((notify, index) => {
-{/*						console.log("notify :", notify);*/}
+						console.log("notify :", notify);
 						return (
 							
-								<ListItem key={index} style={{ width: width }} thumbnail>
-								<TouchableOpacity key={index} onPress={() => {
+								<ListItem key={index} style={notify.viewed === true ? styles.viewed : { width: width }} thumbnail>
+								<TouchableOpacity onPress={() => {
 				                	this.redirectToSpecific(notify);
 				                }}>
 					              <Left>
@@ -231,8 +296,9 @@ constructor(props) {
 				                	this.redirectToSpecific(notify);
 				                }}>
 					              <Body style={{ width: width * 0.65 }}>
-					                <NativeText style={{ fontWeight: "bold" }}>{notify.user}</NativeText>
-					                <NativeText style={{ color: "black" }} note numberOfLines={2}>{notify.data}...</NativeText>
+					                <NativeText style={{ fontWeight: "bold", color: "#4E148C" }}>{notify.user}</NativeText>
+					                <NativeText style={{ color: "#2C0735", fontWeight: "bold" }} note numberOfLines={2}>{notify.data}...</NativeText>
+					                <NativeText style={notify.viewed === true ? { color: "#4E148C", fontSize: 12, paddingTop: 5 } : { color: "#613DC1", fontSize: 12, paddingTop: 5 }}>{notify.date}</NativeText>
 					              </Body>
 					            </TouchableOpacity>
 					            <TouchableOpacity key={index} onPress={() => {
@@ -320,6 +386,11 @@ constructor(props) {
 				            }}>
 			              <Image style={styles.icon} source={require("../../../assets/icons/wall.png")} />
 			            </NativeButton>
+			            <NativeButton onPress={() => {
+			            	this.props.navigation.navigate("profile-settings");
+			            }}>
+		              <Image style={styles.icon} source={require("../../../assets/icons/list.png")} />
+		            </NativeButton>
 			          </FooterTab>
 			        </Footer>
 		        </View>
@@ -330,6 +401,12 @@ constructor(props) {
 }
 
 const styles = StyleSheet.create({
+	viewed: {
+		backgroundColor: "#97DFFC",
+		width: width,
+		borderBottomColor: "white",
+		borderBottomWidth: 2
+	},
 	footer: {
 		position: "absolute",
 		bottom: 0,
@@ -348,7 +425,78 @@ const styles = StyleSheet.create({
 	},
 	texttt: {
 		color: "white"
-	}
+	},
+  container:{
+    flex:1,
+    height: height,
+    backgroundColor: "white"
+  },
+  header:{
+    padding:30,
+    alignItems: 'center',
+    backgroundColor: "#858AE3",
+  },
+  headerTitle:{
+    fontSize:30,
+    color:"#FFFFFF",
+    marginTop:10,
+  },
+  name:{
+    fontSize:22,
+    color:"#FFFFFF",
+    fontWeight:'600',
+  },
+  postContent: {
+    flex: 1,
+    padding:30,
+  },
+  postTitle:{
+    fontSize:26,
+    fontWeight:'600',
+  },
+  postDescription:{
+    fontSize:16,
+    marginTop:10,
+  },
+  tags:{
+    color: '#613DC1',
+    marginTop:10,
+  },
+  date:{
+    color: '#696969',
+    marginTop:10,
+  },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 35,
+    borderWidth: 4,
+    borderColor: "#00BFFF",
+  },
+  profile:{
+    flexDirection: 'row',
+    marginTop:20
+  },
+  name:{
+    fontSize:22,
+    color:"#00BFFF",
+    fontWeight:'600',
+    alignSelf:'center',
+    marginLeft:10
+  }, 
+  shareButton: {
+    marginTop:10,
+    height:45,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius:30,
+    backgroundColor: "#00BFFF",
+  },
+  shareButtonText:{
+    color: "#FFFFFF",
+    fontSize:20,
+  }
 })
 const mapStateToProps = (state) => {
 	return {

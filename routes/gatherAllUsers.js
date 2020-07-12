@@ -19,7 +19,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					err
 				})
 			}
-			console.log(users);
 			res.send(users);
 		})
 	});

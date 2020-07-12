@@ -21,6 +21,7 @@ import { connect } from "react-redux";
 import { latLngLocation } from "../../../actions/location/getLocation.js";
 import { authenticated } from "../../../actions/auth/auth.js";
 import axios from "axios";
+import base64ToArrayBuffer from 'base64-arraybuffer';
 
 const { width, height } = Dimensions.get("window");
 
@@ -69,6 +70,10 @@ class SignupPage extends Component {
            }
         }).catch((err) => {
           console.log(err);
+        })
+
+        axios.post("http://recovery-social-media.ngrok.io/add-face", {
+
         })
       } else if ((phoneNumber === phoneNumberReEnter) && (phoneNumber.length > 0 && phoneNumberReEnter.length > 0)) {
 
@@ -333,8 +338,7 @@ class SignupPage extends Component {
                paddingVertical: 30,
                width: 150,
                height: 150,
-               borderRadius: 75, 
-               tintColor: "#858AE3"
+               borderRadius: 75
              }}
              resizeMode='cover'
              source={require("../../../assets/icons/user.png")}

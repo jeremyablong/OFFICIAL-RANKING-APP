@@ -240,6 +240,11 @@ constructor(props) {
 		          </Right>
 		        </Header>
 		        <ScrollView horizontal={false}>
+		        {this.state.messages.length === 0 ? <View style={styles.header}>
+		              <Text style={styles.headerTitle}>
+		                You have <Text style={{ color: "#97DFFC" }}>0</Text> messages
+		              </Text>
+		          </View> : null}
 		        <List>
 				{this.renderModalComponent()}
 
@@ -308,6 +313,11 @@ constructor(props) {
 		            }}>
 		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/wall.png")} />
 		            </NativeButton>
+		            <NativeButton onPress={() => {
+			            	this.props.navigation.navigate("profile-settings");
+			            }}>
+		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/list.png")} />
+		            </NativeButton>
 		          </FooterTab>
 	        	</Footer>
 			</Fragment>
@@ -315,6 +325,16 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
+  header:{
+    padding:30,
+    alignItems: 'center',
+    backgroundColor: "#858AE3",
+  },
+  headerTitle:{
+    fontSize:30,
+    color:"#FFFFFF",
+    marginTop:10,
+  },
   buttonCancel: {
   	width: width * 0.90,
   	marginTop: 50

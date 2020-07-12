@@ -61,6 +61,7 @@ class MessageIndividual extends Component {
       refresh: false,
       modalIsVisible: false,
       showPopover: false,
+      updated: false,
       data: [
         {id:1,  name: "I'm being scammed...",   image: require("../../../../assets/icons/scam.png")},
         {id:2,  name: "They're being offensive...",    image: require("../../../../assets/icons/offensive.png")},
@@ -115,7 +116,7 @@ class MessageIndividual extends Component {
 		  		console.log(err);
 		  	});
 
-			axios.post("http://recovery-social-media.ngrok.io/get/first/message/private", {
+			  axios.post("http://recovery-social-media.ngrok.io/get/first/message/private", {
 		  		id: this.props.route.params.user.id
 		  	}).then((res) => {
 		  		if (res.data.message === "FOUND user!") {
@@ -175,83 +176,87 @@ class MessageIndividual extends Component {
   }
   send = () => {
   	console.log("send message...", this.state.msg);
-  	if (this.props.route.params.user.author === this.props.username) {
-  		axios.post("http://recovery-social-media.ngrok.io/post/replay/message/thread", {
-	  		message: this.state.msg,
-	  		sender: this.state.user.username,
-	  		reciever: this.props.route.params.user.reciever,
-	  		messageID: this.props.route.params.user.id
-	  	}).then((res) => {
-	  		console.log(res.data);
-	  		if (res.data.messageCase === "Successfully updated both users!") {
-				console.log("Successfully updated both users!");
-				this.setState({
-					align: false,
-					repliesUpdated: true,
-					last: null,
-					refresh: true
-				}, () => {
-					Keyboard.dismiss();
-				});
+  	if (this.state.msg.length > 0) {
+      if (this.props.route.params.user.author === this.props.username) {
+      axios.post("http://recovery-social-media.ngrok.io/post/replay/message/thread", {
+        message: this.state.msg,
+        sender: this.state.user.username,
+        reciever: this.props.route.params.user.reciever,
+        messageID: this.props.route.params.user.id
+      }).then((res) => {
+        console.log(res.data);
+        if (res.data.messageCase === "Successfully updated both users!") {
+        console.log("Successfully updated both users!");
+        this.setState({
+          align: false,
+          repliesUpdated: true,
+          last: null,
+          refresh: true
+        }, () => {
+          Keyboard.dismiss();
+        });
 
-				const message = res.data.message;
-				const author = res.data.author;
-				const date = res.data.date;
-				const id = res.data.id;
+        const message = res.data.message;
+        const author = res.data.author;
+        const date = res.data.date;
+        const id = res.data.id;
 
-				socket.emit("messaged", {
-					message,
-					author,
-					date,
-					id,
-					update: true
-				});
-	  		}
-	  	}).catch((err) => {
-	  		console.log(err);
-	  	});
-	  } else {
-	  	axios.post("http://recovery-social-media.ngrok.io/post/replay/message/thread", {
-	  		message: this.state.msg,
-	  		sender: this.state.user.username,
-	  		reciever: this.props.route.params.user.author,
-	  		messageID: this.props.route.params.user.id
-	  	}).then((res) => {
-	  		console.log(res.data);
-	  		if (res.data.messageCase === "Successfully updated both users!") {
-				console.log("Successfully updated both users!");
-				this.setState({
-					align: false,
-					repliesUpdated: true,
-					last: null,
-					refresh: true
-				}, () => {
-					Keyboard.dismiss();
-					// alert("Message sent!");
-				});
+        socket.emit("messaged", {
+          message,
+          author,
+          date,
+          id,
+          update: true
+        });
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    } else {
+      axios.post("http://recovery-social-media.ngrok.io/post/replay/message/thread", {
+        message: this.state.msg,
+        sender: this.state.user.username,
+        reciever: this.props.route.params.user.author,
+        messageID: this.props.route.params.user.id
+      }).then((res) => {
+        console.log(res.data);
+        if (res.data.messageCase === "Successfully updated both users!") {
+        console.log("Successfully updated both users!");
+        this.setState({
+          align: false,
+          repliesUpdated: true,
+          last: null,
+          refresh: true
+        }, () => {
+          Keyboard.dismiss();
+          // alert("Message sent!");
+        });
 
-				const message = res.data.message;
-				const author = res.data.author;
-				const date = res.data.date;
-				const id = res.data.id;
+        const message = res.data.message;
+        const author = res.data.author;
+        const date = res.data.date;
+        const id = res.data.id;
 
 
-				socket.emit("messaged", {
-					message,
-					author,
-					date,
-					id,
-					update: true
-				});
-	  		}
-	  	}).catch((err) => {
-	  		console.log(err);
-	  	});
-	  }
-  	this.setState({
-  		align: false,
-  		msg: ""
-  	})
+        socket.emit("messaged", {
+          message,
+          author,
+          date,
+          id,
+          update: true
+        });
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
+    this.setState({
+      align: false,
+      msg: ""
+    })
+  } else {
+    alert("You must enter a message before sending...")
+  }
   }
 
   renderSockets = () => {
@@ -354,14 +359,183 @@ class MessageIndividual extends Component {
       date: this.state.message.date,
       message: this.state.message.message
     }).then((res) => {
-      console.log(res.data);
+      if (res.data.message === "Successfully reacted to message!") {
+        console.log("THIS IS THE EMOJI :", res.data);
+        this.setState({
+          updated: true
+        }, () => {
+          this.RBSheet.close();
+        });
+
+        axios.post("http://recovery-social-media.ngrok.io/get/first/message/private", {
+          id: this.props.route.params.user.id
+        }).then((res) => {
+          if (res.data.message === "FOUND user!") {
+            if (res.data.messages.replies) {
+              this.setState({
+                first: res.data.messages,
+                replies: res.data.messages.replies.reverse()
+              }, () => {
+                const sender = this.state.first;
+                axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+                  username: this.state.first.author === this.props.username ? this.state.first.reciever : this.state.first.author
+                }).then((res) => {
+
+                  console.log("resolution :", res.data);
+                  const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+                  // append picture to object
+                  sender["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+                  this.setState({
+                    first: sender
+                  })    
+                }).catch((err) => {
+                  console.log("FAILURE :", err);
+                })
+              })
+            } else {
+              this.setState({
+                first: res.data.messages,
+                replies: res.data.messages.replies
+              }, () => {
+                const sender = this.state.first;
+                axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+                  username: this.state.first.author === this.props.username ? this.state.first.reciever : this.state.first.author
+                }).then((res) => {
+
+                  console.log("resolution :", res.data);
+                  const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+                  // append picture to object
+                  sender["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+                  this.setState({
+                    first: sender
+                  })    
+                }).catch((err) => {
+                  console.log("FAILURE :", err);
+                })
+              })
+            }
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
+      }
     }).catch((err) => {
       console.log("FAILURE :", err);
     })
   }
+  renderEmojiResponse = () => {
+    console.log("rendered...");
+    for (let key in this.state.first.reactions) {
+      let element = this.state.first.reactions[key];
+      if (element > 0) {
+        console.log("element", key);
+        switch (key) {
+          case "laugh":
+            console.log("laugh");
+            return <Text style={this.state.first.author === this.props.username ? styles.emojiResponseSender : styles.emojiResponse}> 😆 </Text>
+          case "heartFace":
+            console.log("heartFace");
+            return <Text style={this.state.first.author === this.props.username ? styles.emojiResponseSender : styles.emojiResponse}> 😍 </Text>
+          case "frustrated":
+            console.log("frustrated");
+            return <Text style={this.state.first.author === this.props.username ? styles.emojiResponseSender : styles.emojiResponse}> 😤 </Text>
+          case "heart":
+            console.log("heart");
+            return <Text style={this.state.first.author === this.props.username ? styles.emojiResponseSender : styles.emojiResponse}> ❤️ </Text>
+          case "angry":
+            console.log("angry");
+            return <Text style={this.state.first.author === this.props.username ? styles.emojiResponseSender : styles.emojiResponse}> 🤬 </Text>
+          case "sad":
+            console.log("sad");
+            return <Text style={this.state.first.author === this.props.username ? styles.emojiResponseSender : styles.emojiResponse}> 😥 </Text>
+          case "puke":
+            console.log("puke");
+            return <Text style={this.state.first.author === this.props.username ? styles.emojiResponseSender : styles.emojiResponse}> 🤮 </Text>
+          default:
+            console.log("none match :( - uh oh...");
+        }
+      }
+    }
+  }
+  renderEmojiResponseSender = (message) => {
+    console.log("messageeeeeeeee", message);
+    if (message.reactions !== undefined) {
+      console.log("mess :", message.reactions);
+      for (const [key, value] of Object.entries(message.reactions)) {
+        console.log(key, value);
+        if (value > 0) {
+          console.log("MATCHHHHHHH", key);
+          switch (key) {
+            case "laugh":
+              console.log("laugh");
+              return <Text style={styles.emojiResponseSender}> 😆 </Text>
+            case "heartFace":
+              console.log("heartFace");
+              return <Text style={styles.emojiResponseSender}> 😍 </Text>
+            case "frustrated":
+              console.log("frustrated");
+              return <Text style={styles.emojiResponseSender}> 😤 </Text>
+            case "heart":
+              console.log("heart");
+              return <Text style={styles.emojiResponseSender}> ❤️ </Text>
+            case "angry":
+              console.log("angry");
+              return <Text style={styles.emojiResponseSender}> 🤬 </Text>
+            case "sad":
+              console.log("sad");
+              return <Text style={styles.emojiResponseSender}> 😥 </Text>
+            case "puke":
+              console.log("puke");
+              return <Text style={styles.emojiResponseSender}> 🤮 </Text>
+            default:
+              console.log("none match :( - uh oh...");
+          }
+        }
+      }
+    }
+  }
+  renderEmojiResponseReciever = (message) => {
+    console.log("data", message);
+    if (message.reactions !== undefined) {
+      console.log("mess :", message.reactions);
+      for (const [key, value] of Object.entries(message.reactions)) {
+        console.log(key, value);
+        if (value > 0) {
+          console.log("MATCHHHHHHH", key);
+          switch (key) {
+            case "laugh":
+              console.log("laugh");
+              return <Text style={styles.emojiResponse}> 😆 </Text>
+            case "heartFace":
+              console.log("heartFace");
+              return <Text style={styles.emojiResponse}> 😍 </Text>
+            case "frustrated":
+              console.log("frustrated");
+              return <Text style={styles.emojiResponse}> 😤 </Text>
+            case "heart":
+              console.log("heart");
+              return <Text style={styles.emojiResponse}> ❤️ </Text>
+            case "angry":
+              console.log("angry");
+              return <Text style={styles.emojiResponse}> 🤬 </Text>
+            case "sad":
+              console.log("sad");
+              return <Text style={styles.emojiResponse}> 😥 </Text>
+            case "puke":
+              console.log("puke");
+              return <Text style={styles.emojiResponse}> 🤮 </Text>
+            default:
+              console.log("none match :( - uh oh...");
+          }
+        }
+      }
+    }
+  }
   render() {
   	const { user } = this.state;
-  	console.log("THIS.props :", this.props);
+  	console.log("THIS.state :", this.state);
     return (
 
       <View style={{ flex: 1 }}>
@@ -389,11 +563,11 @@ class MessageIndividual extends Component {
           {this.renderSockets()}
         </Header>
     	<View>
-			<Text style={{ textAlign: "center", paddingTop: 10, color: "darkred" }}>latest messages...</Text>
+			<Text style={{ textAlign: "center", paddingTop: 10, marginBottom: 20, color: "darkred" }}>latest messages...</Text>
     	</View>
 	    <View style={{ flex: 1 }}> 
           <View behavior="padding" style={styles.keyboard}>
-            {this.state.ready === true && this.state.first !== null ? <ScrollView style={{ flex: 1, paddingBottom: 100 }}>{this.state.replies ? this.state.replies.map((item, index) => {
+            {this.state.ready === true && this.state.first !== null ? <ScrollView contentContainerStyle={{flexGrow: 1, paddingBottom: 100}} style={{ flex: 1, paddingBottom: 100, paddingTop: 20, height: "100%" }}>{this.state.replies ? this.state.replies.map((item, index) => {
             	if (item.id === this.props.route.params.user.id && item.author !== this.props.username) {
 			      	return (
 			      	<Fragment>
@@ -407,7 +581,9 @@ class MessageIndividual extends Component {
                       })
                     }} style={styles.msgBlock} >
                           <Text style={styles.msgTxt}>{item.message}</Text>
+                          {this.renderEmojiResponseReciever(item)}
                     </TouchableOpacity>
+                    
 				        </View>
 				        <Text style={{ textAlign: "left", padding: 10 }}>{item.date}</Text>
 				    </Fragment>
@@ -417,6 +593,7 @@ class MessageIndividual extends Component {
 				      return (
 				      <Fragment>
 				        <View style={styles.rightMsg} >
+                
                   <TouchableOpacity onPress={() => {
                       this.setState({
                         message: item
@@ -424,6 +601,7 @@ class MessageIndividual extends Component {
                         this.RBSheet.open();
                       })
                   }} style={styles.rightBlock} >
+                  {this.renderEmojiResponseSender(item)}
                         <Text style={styles.rightTxt}>{item.message}</Text>
                   </TouchableOpacity>
 				          <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} />
@@ -436,6 +614,7 @@ class MessageIndividual extends Component {
             }) : null}<Fragment>
             <View style={this.state.first.author === this.props.username ? styles.rightMsg : styles.eachMsg} >
             {this.state.first.author !== this.props.username ? <Image source={{uri: this.state.first.picture }} style={styles.userPic} /> : null}
+            
             <TouchableOpacity onPress={() => {
               this.setState({
                 message: this.state.first
@@ -443,29 +622,31 @@ class MessageIndividual extends Component {
                 this.RBSheet.open();
               })
             }} style={this.state.first.author === this.props.username ? styles.rightBlock : styles.msgBlock} >
-              <Text style={this.state.first.author === this.props.username ? styles.rightTxt : styles.msgTxt}>{this.state.first.message}</Text>
+              {this.state.first.author === this.props.username ? this.renderEmojiResponse() : null}
+                <Text style={this.state.first.author === this.props.username ? styles.rightTxt : styles.msgTxt}>{this.state.first.message}</Text>
+              {this.state.first.author !== this.props.username ? this.renderEmojiResponse() : null} 
             </TouchableOpacity>
-          
+              
 		          {this.state.first.author === this.props.username ? <Image source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.profilePic.picture}` }} style={styles.userPic} /> : null}
-		        </View><Text style={{ alignItems: 'flex-start', alignSelf: 'flex-start', paddingRight: 10, paddingLeft: 10 }}>{this.state.first.date}</Text></Fragment></ScrollView> : null}
+		        </View><Text style={this.state.first.author === this.props.username ? { alignItems: 'flex-end', alignSelf: 'flex-end', paddingRight: 10, paddingLeft: 10 } : { alignItems: 'flex-start', alignSelf: 'flex-start', paddingRight: 10, paddingLeft: 10 }}>{this.state.first.date}</Text></Fragment></ScrollView> : null}
             <View style={this.state.align ? styles.loadedInput : styles.input}>
             <KeyboardAvoidingView style={{ flex: 1 }} 
-		      behavior={Platform.OS == "ios" ? "padding" : "height"} 
-		      keyboardVerticalOffset={Platform.select({ ios: 80, android: 500 })}
-		    >
-        <RBSheet
-          ref={ref => {
-            this.RBSheet = ref;
-          }}
-          height={75}
-          openDuration={250}
-          customStyles={{
-            container: {
-              justifyContent: "center",
-              alignItems: "center"
-            }
-          }}
-        >
+    		      behavior={Platform.OS == "ios" ? "padding" : "height"} 
+    		      keyboardVerticalOffset={Platform.select({ ios: 80, android: 500 })}
+		        >
+            <RBSheet
+              ref={ref => {
+                this.RBSheet = ref;
+              }}
+              height={75}
+              openDuration={250}
+              customStyles={{
+                container: {
+                  justifyContent: "center",
+                  alignItems: "center"
+                }
+              }}
+            >
            <View style={styles.popoverPop}> 
               <TouchableOpacity onPress={() => {
                 console.log("clicked...");
@@ -504,7 +685,7 @@ class MessageIndividual extends Component {
                 	this._onChange(text);
                 }} 
                 value={this.state.msg}
-                placeholderTextColor = "#696969" 
+                placeholderTextColor = "#613DC1" 
                 onEndEditing={() => {
                 	console.log('boooooom');
                 	this.setState({
@@ -533,6 +714,18 @@ class MessageIndividual extends Component {
 }
 
 const styles = StyleSheet.create({
+  emojiResponse: {
+    fontSize: 30,
+    position: "absolute",
+    right: -25,
+    top: -17
+  },
+  emojiResponseSender: {
+    fontSize: 30,
+    top: -20, 
+    left: -25,
+    position: "absolute"
+  },
   popoverPop: {
     height: "100%", 
     width: "100%", 

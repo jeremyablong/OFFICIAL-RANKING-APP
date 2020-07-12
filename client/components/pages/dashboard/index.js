@@ -13,7 +13,8 @@ import {
   Dimensions, 
   ScrollView, 
   FlatList, 
-  Keyboard
+  Keyboard, 
+  Animated
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import { connect } from "react-redux";
@@ -39,8 +40,11 @@ constructor(props) {
   	searchValue: "",
   	people: [],
   	specific: null,
-  	isOpen: false
+  	isOpen: false,
+    offset: 0
   };
+
+  this.height = new Animated.Value(150);
 }
 	uploadImage = () => {
 		console.log("upload");
@@ -82,7 +86,7 @@ constructor(props) {
 			}
 		}).catch((err) => {
 			console.log(err);
-		})
+		});
 	}
 	componentDidMount() {
 		axios.get("http://recovery-social-media.ngrok.io/gather/all/profiles").then((res) => {
@@ -96,6 +100,12 @@ constructor(props) {
 		}).catch((err) => {
 			console.log(err);
 		})
+
+    // axios.post("http://recovery-social-media.ngrok.io/create-facelist").then((res) => {
+    //   console.log("AI MAGIC :", res.data);
+    // }).catch((err) => {
+    //   console.log(err);
+    // })
 	}
   renderContent = () => {
     if (this.state.searching === true) {
@@ -142,12 +152,30 @@ constructor(props) {
       );
     }
   }
+  onScroll = (event) => {
+    var currentOffset = event.nativeEvent.contentOffset.y;
+    var direction = currentOffset > this.state.offset ? 'down' : 'up';
+    // this.state.offset = currentOffset;
+    this.setState({
+      offset: currentOffset
+    })
+    console.log("DIRECTION ...: ", direction);
+    if (direction === "up") {
+      Animated.timing(this.height, {
+         duration: 400,
+         toValue: 150,
+         useNativeDriver: false
+       }).start()
+    }
+    if (direction === "down") {
+      Animated.timing(this.height, {
+         duration: 400,
+         toValue: 70,
+         useNativeDriver: false
+       }).start()
+    }
+  }
 	render() {
-    window.onscroll = function() {
-      if(window.pageYOffset === 0) {
-        alert('I AM AT THE TOP');
-      }
-    };
 		console.log(this.state);
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		return (
@@ -168,44 +196,42 @@ constructor(props) {
             <NativeButton onPress={() => {
             	console.log("clicked user interface...");
                  {/*this.props.navigation.navigate("chat-users");*/}
-			    this.setState({
-			    	isOpen: true
-			    })
+    			    this.setState({
+    			    	isOpen: true
+    			    })
             }} hasText transparent>
               <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
             </NativeButton>
           </Right>
         </Header>
-		<View style={{ backgroundColor: "white", paddingTop: 20 }}>   
-        <View style={{ alignItems: "center", alignContent: "center", justifyContent: "center" }}>
+    <Animated.View style={this.props.dark_mode ? { backgroundColor: "black", paddingTop: 20, height: this.height } : { backgroundColor: "white", paddingTop: 20, height: this.height }}>   
+        <View style={this.props.dark_mode ? { alignItems: "center", alignContent: "center", justifyContent: "center", backgroundColor: "black" } : { alignItems: "center", alignContent: "center", justifyContent: "center", backgroundColor: "white" }}>
           <NativeButton style={styles.mainBtn} onPress={() => {
                  this.props.navigation.navigate("rank-nearby-users");
             }} hasText>
             <NativeText style={{ color: "black" }}>Rate Users Nearby In Your Proximity </NativeText>
           </NativeButton>
         </View>
-	        <SearchBar   
-			  ref="searchBar"
-			  placeholder="Search by user-name..."
-			  onChangeText={(value) => {
-			  	this.setState({
-			  		searchValue: value,
-			  		searching: true,
-			  		isOpen: false
-			  	})
-			  }} 
-			  onSearchButtonPress={this.handleSearch}
-			  onCancelButtonPress={this.handleCancel}
-			/>
-		</View>
-	 
+          <SearchBar    
+        ref="searchBar"
+        placeholder="Search by user-name..."
+        onChangeText={(value) => {
+          this.setState({
+            searchValue: value,
+            searching: true,
+            isOpen: false
+          })
+        }} 
+        onSearchButtonPress={this.handleSearch}
+        onCancelButtonPress={this.handleCancel}
+      />
+    </Animated.View>
+   
     <View style={{ flex: 1, backgroundColor: "white" }}>
-      <Fragment>
+      <ScrollView onScroll={this.onScroll}>
         {this.renderContent()}
-      </Fragment>
+      </ScrollView>
     </View>
-		
-
 			<Footer>
 	          <FooterTab>
 	            <NativeButton active onPress={() => {
@@ -230,6 +256,11 @@ constructor(props) {
 		            }}>
 	              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
 	            </NativeButton>
+              <NativeButton onPress={() => {
+                  this.props.navigation.navigate("profile-settings");
+                }}>
+                <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/list.png")} />
+              </NativeButton>
 	          </FooterTab>
 	        </Footer>
           <RBSheet
@@ -283,6 +314,7 @@ constructor(props) {
 const styles = StyleSheet.create({
   mainBtn: {
     width: width * 0.95, 
+    marginBottom: 20,
     backgroundColor: "#97DFFC", 
     alignItems: "center", 
     borderColor: "black", 
@@ -523,11 +555,12 @@ const mapStateToProps = state => {
 	console.log(state);
 	if (state.auth.authenticated.username) {
 		return {
-			profilePic: state.auth.authenticated.profilePic ? state.auth.authenticated.profilePic[state.auth.authenticated.profilePic.length - 1] : []
+			profilePic: state.auth.authenticated.profilePic ? state.auth.authenticated.profilePic[state.auth.authenticated.profilePic.length - 1] : [],
+      dark_mode: state.mode.dark_mode
 		}
 	} else {
 		return {
-			
+			dark_mode: state.mode.dark_mode
 		}
 	}
 }

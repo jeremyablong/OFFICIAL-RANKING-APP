@@ -18,7 +18,7 @@ import {
 import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab } from 'native-base';
 import axios from "axios";
 import Modal from 'react-native-modal';
-import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
+import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { connect } from "react-redux";
 import SlidingUpPanel from 'rn-sliding-up-panel';
@@ -42,7 +42,8 @@ constructor(props) {
   	message: "",
   	cover: null,
   	isOpen: false,
-  	alreadyFriends: false
+  	alreadyFriends: false,
+  	requestSent: false
   };
 }
 	componentDidMount() {
@@ -129,11 +130,11 @@ constructor(props) {
 	renderSlideUpContent = () => {
 		const { user } = this.state;
 
-		if (user !== null && (user.username === this.props.username)) {
+		if (user !== null) {
 			return (
-				 <ImageBackground resizeMode='cover' source={{ uri: this.state.cover !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.cover}` : `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.coverPhoto}` }} style={styles.header}><TouchableOpacity onPress={() => {
+				 <ImageBackground resizeMode='cover' source={{ uri: this.state.cover !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.cover}` : `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.coverPhoto}` }} style={styles.header}>{user.username === this.props.username ? <TouchableOpacity onPress={() => {
 		          	this._panel.show();
-		          }}><Image style={{ width: 50, height: 50, position: "absolute", top: 5, left: 5,  tintColor: "white" }} source={require("../../../assets/icons/upload-two.png")} /></TouchableOpacity></ImageBackground>
+		          }}><Image style={{ width: 50, height: 50, position: "absolute", top: 5, left: 5,  tintColor: "white" }} source={require("../../../assets/icons/upload-two.png")} /></TouchableOpacity> : null}</ImageBackground>
 			);
 		} else {
 			return (
@@ -153,6 +154,9 @@ constructor(props) {
           if (res.data.message === "Successfully sent friend request!") {
           	console.log(res.data);
           	alert(res.data.message);
+          	this.setState({
+          		requestSent: true
+          	})
           }
         }).catch((err) => {
           console.log(err);
@@ -223,7 +227,7 @@ constructor(props) {
 		                <Fragment><Image style={{ width: 30, height: 30, tintColor: "white" }} source={require("../../../assets/icons/mail-three.png")} /><Text style={{ color: "white" }}>   Message This User</Text></Fragment>  
 		              </TouchableOpacity> : null} 
 		              <View  /> 
-		              {this.props.username !== this.props.route.params.user.username && this.state.alreadyFriends !== true ? <TouchableOpacity onPress={() => {
+		              {(this.props.username !== this.props.route.params.user.username && this.state.alreadyFriends !== true) && this.state.requestSent === false ? <TouchableOpacity onPress={() => {
 		              	this.sendFriendRequest();
 		              }} style={styles.buttonContainerThree}>
 		                <Fragment><Image style={{ width: 30, height: 30 }} source={require("../../../assets/icons/request.png")} /><Text style={{ color: "white" }}>  Send Friend Request</Text></Fragment>  
@@ -232,7 +236,7 @@ constructor(props) {
 		                <Text>Opcion 2</Text> 
 		              </TouchableOpacity>*/}
 		            </View>
-		            <FriendsListSubComponent navigation={this.props.navigation} />
+		            <FriendsListSubComponent navigation={this.props.navigation} user={this.props.route.params.user} />
 		        </View>
 		      </ScrollView>
 		    </SideMenu>

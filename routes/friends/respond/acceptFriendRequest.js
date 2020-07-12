@@ -29,22 +29,44 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						console.log("logged in user... :", user);
 						for (let i = 0; i < user.friends.length; i++) {
 							let friend = user.friends[i];
+							console.log("frienddddddd :", friend);
 							if (friend.id === requestID) {
 								console.log("User - acceptFriendRequest.js MATCHHHHH:", friend);
 								friend.status = "accepted";
+								if (user.confirmedFriendsList) {
+									user.confirmedFriendsList.push({ acceptedUser: friend.author });
+								} else {
+									user["confirmedFriendsList"] = [{ acceptedUser: friend.author }];
+								}
 								count++;
 							}
 						}
+
+						for (var i = 0; i < user.notifications.length; i++) {
+							let notify = user.notifications[i];
+							
+							if (notify.id === requestID) {
+								console.log("notify... :", notify);
+								user.notifications.splice(i, 1);
+							}
+						}
+						console.log("This is the notification array after alterations ... :", user.notifications);
 					} else if (user.username === requester) {
 						console.log("sender user... :", user);
 						for (let i = 0; i < user.friends.length; i++) {
 							const friend = user.friends[i];
 							if (friend.id === requestID) {
 								friend.status = "accepted";
+								if (user.confirmedFriendsList) {
+									user.confirmedFriendsList.push({ acceptedUser: friend.recipient });
+								} else {
+									user["confirmedFriendsList"] = [{ acceptedUser: friend.recipient }];
+								}
 								count++;
 							}
 						}
 					}
+
 					collection.save(user);
 				}
 				if (count === 2) {

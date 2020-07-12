@@ -2,6 +2,8 @@ package com.client;
 
 import com.facebook.react.ReactActivity;
 
+import com.BV.LinearGradient.LinearGradientPackage;
+
 public class MainActivity extends ReactActivity {
 
   /**
@@ -11,5 +13,11 @@ public class MainActivity extends ReactActivity {
   @Override
   protected String getMainComponentName() {
     return "client";
+  }
+  protected List<ReactPackage> getPackages() {
+    return Arrays.<ReactPackage>asList(
+      new MainReactPackage(),
+      new LinearGradientPackage() // <---- and This! 
+    );
   }
 }

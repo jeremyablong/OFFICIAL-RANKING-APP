@@ -15,8 +15,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 			console.log("req.body", req.body);
 
-			collection.findOne({ username: searchValue.trim() }).then((user) => {
-				console.log(user);
+			collection.findOne({ username: searchValue }).then((user) => {
 				if (user) {
 					res.json({
 						message: "FOUND user!",

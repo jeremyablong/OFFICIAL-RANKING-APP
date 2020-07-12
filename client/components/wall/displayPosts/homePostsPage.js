@@ -19,6 +19,7 @@ import Carousel from 'react-native-snap-carousel';
 import Modal from 'react-native-modal';
 import ProgressiveImage from "../../image/image.js";
 
+
 const { width, height } = Dimensions.get("window");
 
 const URL = "http://recovery-social-media.ngrok.io";
@@ -89,7 +90,7 @@ constructor(props) {
 	renderModal = () => {
 		return (
 			<Modal isVisible={this.state.showModal}>
-	          <View style={styles.modalView}>
+	          <View style={this.props.dark_mode ? styles.modalViewDark : styles.modalView}>
 	            <ProgressiveImage source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.modalImageValue}` }} style={{ width: width - 75, height: height * 0.60 }} />
 	            <NativeButton onPress={() => {
 	            	this.setState({
@@ -108,7 +109,7 @@ constructor(props) {
 
 	    return(
 	      <View style={styles.row}>
-	        <TouchableOpacity resizeMode={"contain"} style={[styles.imageContent, styles.imageContent2]} onPress={() => {
+	        <TouchableOpacity resizeMode={"contain"} style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent2] : [styles.imageContent, styles.imageContent2]} onPress={() => {
 	        	if (conditionalRender) {
 					this.viewImage(images[1]);
 	        	} else {
@@ -117,7 +118,7 @@ constructor(props) {
 	        }}>
 	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[1]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[0]}`}}/>
 	        </TouchableOpacity>
-	        <TouchableOpacity style={[styles.imageContent, styles.imageContent2]} onPress={() => {
+	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent2] : [styles.imageContent, styles.imageContent2]} onPress={() => {
 	        	if (conditionalRender) {
 					this.viewImage(images[2]);
 	        	} else {
@@ -137,7 +138,7 @@ constructor(props) {
 
 	    return(
 	      <View style={styles.row}>
-	        <TouchableOpacity style={[styles.imageContent, styles.imageContent3]} onPress={() => {
+	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent3] : [styles.imageContent, styles.imageContent3]} onPress={() => {
 	        	if (conditionalRender) {
 					this.viewImage(images[1]);
 	        	} else {
@@ -147,7 +148,7 @@ constructor(props) {
 	        }}>
 	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[1]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[2]}`}}/>
 	        </TouchableOpacity>
-	        <TouchableOpacity style={[styles.imageContent, styles.imageContent3]} onPress={() => {
+	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent3] : [styles.imageContent, styles.imageContent3]} onPress={() => {
 	        	if (conditionalRender) {
 					this.viewImage(images[2]);
 	        	} else {
@@ -163,7 +164,7 @@ constructor(props) {
 
 	renderOverlay(images) {
 	    return(
-	        <TouchableOpacity style={[styles.imageContent, styles.imageContent3]} onPress={() => {
+	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent3] : [styles.imageContent, styles.imageContent3]} onPress={() => {
 	        	this.viewImage(images[images.length - 1]);
 	        }}>
 	          <ProgressiveImage style={styles.image} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${images[images.length - 1]}`}}/>
@@ -184,7 +185,7 @@ constructor(props) {
 	        	}
 	        }}>
 	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[3]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[4]}`}}/>
-	          <View style={styles.overlayContent}>
+	          <View style={this.props.dark_mode ? styles.overlayContentDark : overlayContent}>
 	            <View>
 	              <Text style={styles.count}>+{extra}</Text>
 	            </View>
@@ -227,31 +228,36 @@ constructor(props) {
 					console.log("post... :", post);
 					return (
 						<Card>
-			            <CardItem>
+			            <CardItem style={this.props.dark_mode ? styles.backgroundBlack : styles.backgroundWhite}>
 			              <Left>
 			                <Thumbnail source={{ uri: post.picture }} />
 			                <Body>
 			                  <TouchableOpacity onPress={() => {
 			                  	this.handleRedirect(post);
-			                  }}><NativeText>{post.author}</NativeText></TouchableOpacity>
+			                  }}><NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{post.author}</NativeText></TouchableOpacity>
 			                  <NativeText note>{post.date}</NativeText>
 			                </Body>
 			              </Left>
 			            </CardItem>
-			            <CardItem cardBody style={{ flex: 1 }}>
-			              {post.text ?  <NativeText style={{ textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20 }}>{post.text}</NativeText> : null}
+			            <CardItem cardBody style={this.props.dark_mode ? { flex: 1, backgroundColor: "black" } : { flex: 1 }}>
+			              {post.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20 }}>{post.text}</NativeText> : null}
 			            </CardItem>
-			            <CardItem>
-							{post.images ? <View style={styles.container}>
+			            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
+							{post.images ? <View style={this.props.dark_mode ? styles.containerDark : styles.container}>
 					          {[1, 3, 4].includes(post.images.length)  && this.renderOne(post.images)}
 					          {post.images.length >= 2 && post.images.length != 4 && this.renderTwo(post.images)}
 					          {post.images.length >= 4 && this.renderThree(post.images)}
 					      </View> : null}
 					      
 			            </CardItem>
-			            <CardItem>
-							<Text style={{ textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😂😍😁</Text>
-							<Text style={{ textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{Math.floor(Math.random() * (33 - 0 + 1)) + 0} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
+			            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
+							<TouchableOpacity onPress={() => {
+								console.log("clicked.")
+								this.props.navigation.navigate("wall-individual", { post });
+							}}>
+								<Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😂😍😁</Text>
+								<Text style={this.props.dark_mode ? { textAlign: "right", color: "white", position: "absolute", right: 6, bottom: 10 } : { textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{Math.floor(Math.random() * (33 - 0 + 1)) + 0} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
+							</TouchableOpacity>
 			            </CardItem>
 			            <Footer style={{ width: width }}>
 				          <FooterTab>
@@ -279,6 +285,12 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
+	backgroundBlack: {
+		backgroundColor: "black"
+	},
+	backgroundWhite: {	
+		backgroundColor: "white"
+	},
 	modalView: {
 		flex: 1, 
 		backgroundColor: "white", 
@@ -301,11 +313,22 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		alignContent: "center"
 	},
-	title: {
-
+	modalViewDark: {
+		flex: 1, 
+		backgroundColor: "black", 
+		width: width * 0.90, 
+		height: height, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center"
 	},
   container: {
     flex: 1,
+    marginVertical: 20,
+  },
+  containerDark: {
+	backgroundColor: "black",
+	flex: 1,
     marginVertical: 20,
   },
   row:{
@@ -320,6 +343,12 @@ const styles = StyleSheet.create({
     width:'100%',
     height: 350
   },
+  imageContentDark: {
+  	backgroundColor: "black",
+    borderWidth:1,
+    borderColor:'black',
+    height:120
+  },
   imageContent2:{
     width:'50%',
   },
@@ -328,7 +357,7 @@ const styles = StyleSheet.create({
   },
   image:{
     width:'100%',
-    height:'100%',
+    height:'100%'
   },
   //overlay efect
   overlayContent: {
@@ -342,6 +371,17 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems:'center'
   },
+  overlayContentDark: {
+    flex: 1,
+    position: 'absolute',
+    zIndex: 100,
+    right: 0,
+    width:'100%',
+    height:'100%',
+    backgroundColor: 'black',
+    justifyContent:'center',
+    alignItems:'center' 	
+  },
   count:{
     fontSize:50,
     color: "#ffffff",
@@ -350,5 +390,10 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 10
   },
-});  
-export default HomePostsPage;
+}); 
+const mapStateToProps = state => {
+	return {
+		dark_mode: state.mode.dark_mode
+	}
+} 
+export default connect(mapStateToProps, { })(HomePostsPage);

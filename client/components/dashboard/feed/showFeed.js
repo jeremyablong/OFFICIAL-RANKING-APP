@@ -69,13 +69,13 @@ constructor(props) {
 			<Fragment>
 			<View style={{ flex: 1 }}>
 				<ScrollView style={{ borderBottomColor: 'black', borderBottomWidth: 2 }}>
-					<ScrollView horizontal={true} style={{  }}> 
+					<ScrollView horizontal={true} style={this.props.dark_mode ? styles.darkScroll : styles.lightScroll}> 
 						<FlatList  
 							horizontal
 					        data={this.state.entries}
 					        renderItem={({ item }) => {
 								return (
-									<View style={styles.box}>
+									<View style={this.props.dark_mode ? styles.boxDark : styles.box}>
 										<Image 
 										    style={{width: 60, height: 60, borderRadius: 40 / 2, marginLeft: 6, marginRight: 6 }} 
 										    source={{ uri: this.props.profilePic ? `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` : "" }}
@@ -136,19 +136,42 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
-  rowTwo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: '#DCDCDC',
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    padding: 10
-  },
-  nameContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: 270,
-  },
+	darkScroll: {
+		backgroundColor: "black"
+	},
+	lightScroll: {
+		backgroundColor: "white"
+	},
+	boxDark: {
+		shadowColor: 'white',
+	    shadowOffset: {
+	      width: 10,
+	      height: 6,
+	    },
+	    shadowOpacity: 0.77,
+	    shadowRadius: 7.49,
+	    elevation: 22,
+	    width: 70, 
+		height: 70, 
+		borderRadius: 60 / 2, 
+		marginLeft: 6, 
+		marginRight: 6,
+		marginTop: 10,
+		marginBottom: 5
+	},
+    rowTwo: {
+	    flexDirection: 'row',
+	    alignItems: 'center',
+	    borderColor: '#DCDCDC',
+	    backgroundColor: '#fff',
+	    borderBottomWidth: 1,
+    	padding: 10
+    },
+    nameContainer: {
+	    flexDirection: 'row',
+	    justifyContent: 'space-between',
+	    width: 270,
+    },
 	box: {
 		shadowColor: 'black',
 	    shadowOffset: {
@@ -170,11 +193,12 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
 	if (state.auth.authenticated.username) {
 		return {
-			profilePic: state.auth.authenticated.profilePic ? state.auth.authenticated.profilePic[state.auth.authenticated.profilePic.length - 1] : []
+			profilePic: state.auth.authenticated.profilePic ? state.auth.authenticated.profilePic[state.auth.authenticated.profilePic.length - 1] : [],
+			dark_mode: state.mode.dark_mode
 		}
 	} else {
 		return {
-			
+			dark_mode: state.mode.dark_mode
 		}
 	}
 }

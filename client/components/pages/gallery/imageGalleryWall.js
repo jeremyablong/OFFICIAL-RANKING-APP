@@ -847,9 +847,11 @@ constructor(props) {
 	          <Left>
 	            <NativeButton onPress={() => {
 	              if (this.props.route.params.index) {
-	              	this.props.navigation.navigate("notifications");
+	              	this.props.navigation.navigate("notifications", { user: this.props.route.params.user });
 	              } else {
-	              	this.props.navigation.navigate("profile-pic-view");
+	              	// USER IS POSSIBLY NOT CORRECT.... 
+	              	this.props.navigation.navigate("profile-pic-view",  { user: this.props.route.params.user });
+	              	// USER IS POSSIBLY NOT CORRECT....  ^^^^^^^^^^^^^^^^^^^^^^
 	              }
 	            }} hasText transparent>
 	              <NativeText>Back</NativeText>

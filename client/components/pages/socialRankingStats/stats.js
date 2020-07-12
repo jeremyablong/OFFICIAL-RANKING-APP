@@ -47,9 +47,9 @@ constructor(props) {
 	  data: [0.4, 0.6, 0.1, 0.7, 0.9]
 	};
 	const chartConfig = {
-	  backgroundGradientFrom: "#1E2923",
+	  backgroundGradientFrom: "#4E148C",
 	  backgroundGradientFromOpacity: 0,
-	  backgroundGradientTo: "black",
+	  backgroundGradientTo: "#858AE3",
 	  backgroundGradientToOpacity: 0.5,
 	  color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
 	  strokeWidth: 2, // optional, default 3
@@ -68,35 +68,35 @@ constructor(props) {
 	  {
 	    name: "- 1 Star",
 	    timesRated: 9,
-	    color: "#0f7337",
+	    color: "#97DFFC",
 	    legendFontColor: "#7F7F7F",
 	    legendFontSize: 15
 	  },
 	  {
 	    name: "- 2 Star",
 	    timesRated: 11,
-	    color: "black",
+	    color: "#858AE3",
 	    legendFontColor: "#7F7F7F",
 	    legendFontSize: 15
 	  },
 	  {
 	    name: "- 3 Star",
 	    timesRated: 56,
-	    color: "lightgreen",
+	    color: "#613DC1",
 	    legendFontColor: "#7F7F7F",
 	    legendFontSize: 15
 	  },
 	  {
 	    name: "- 4 Star",
 	    timesRated: 33,
-	    color: "#8cc2a1",
+	    color: "#4E148C",
 	    legendFontColor: "#7F7F7F",
 	    legendFontSize: 15
 	  },
 	  {
 	    name: "- 5 Star",
 	    timesRated: 43,
-	    color: "#d9ce0b",
+	    color: "#2C0735",
 	    legendFontColor: "#7F7F7F",
 	    legendFontSize: 15
 	  }
@@ -151,9 +151,9 @@ constructor(props) {
 					    yAxisSuffix="k"
 					    yAxisInterval={1}
 					    chartConfig={{
-					      backgroundColor: "#e26a00",
-					      backgroundGradientFrom: "#21db6b",
-					      backgroundGradientTo: "#08130D",
+					      backgroundColor: "#4E148C",
+					      backgroundGradientFrom: "#4E148C",
+					      backgroundGradientTo: "#858AE3",
 					      decimalPlaces: 2, // optional, defaults to 2dp
 					      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
 					      labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -180,8 +180,8 @@ constructor(props) {
 						  radius={32}
 						  chartConfig={{
 						      backgroundColor: "#e26a00",
-						      backgroundGradientFrom: "#21db6b",
-						      backgroundGradientTo: "#08130D",
+						      backgroundGradientFrom: "#613DC1",
+						      backgroundGradientTo: "#858AE3",
 						      decimalPlaces: 2, // optional, defaults to 2dp
 						      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
 						      labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -204,8 +204,8 @@ constructor(props) {
 						  yAxisLabel="$"
 						  chartConfig={{
 						      backgroundColor: "#e26a00",
-						      backgroundGradientFrom: "#21db6b",
-						      backgroundGradientTo: "#08130D",
+						      backgroundGradientFrom: "#4E148C",
+						      backgroundGradientTo: "#858AE3",
 						      decimalPlaces: 2, // optional, defaults to 2dp
 						      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
 						      labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -221,9 +221,9 @@ constructor(props) {
 						  width={width}
 						  height={300}
 						  chartConfig={{
-						      backgroundColor: "#e26a00",
-						      backgroundGradientFrom: "#21db6b",
-						      backgroundGradientTo: "#08130D",
+						      backgroundColor: "#858AE3",
+						      backgroundGradientFrom: "#858AE3",
+						      backgroundGradientTo: "#4E148C",
 						      decimalPlaces: 2, // optional, defaults to 2dp
 						      color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
 						      labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
@@ -350,9 +350,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius:30,
-    backgroundColor: "darkred",
+    backgroundColor: "#613DC1",
     borderWidth:3,
-    borderColor:"orange",
+    borderColor:"#97DFFC",
     width: width * 0.60
   },
   followButtonText:{
