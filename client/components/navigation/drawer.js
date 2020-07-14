@@ -10,8 +10,8 @@ import {
   FlatList, 
   Dimensions
 } from 'react-native';
-
-
+import { connect } from "react-redux";
+import { Text as NativeText, Button as NativeButton } from "native-base";
 
 const { width, height } = Dimensions.get("window");
 
@@ -39,7 +39,12 @@ constructor(props) {
 		return (
 			<Fragment>	
 				<View style={styles.container}>
-			        <FlatList style={styles.list}
+              <NativeButton style={{ backgroundColor: "#858AE3", justifyContent: "center" }} onPress={() => {
+                console.log("clicked...");
+              }}>  
+                <NativeText>Cancel</NativeText>
+              </NativeButton>
+			        <FlatList style={this.props.dark_mode ? styles.listDark : styles.list}
 			          contentContainerStyle={styles.listContainer}
 			          data={this.state.data}
 			          horizontal={false}
@@ -77,12 +82,17 @@ const styles = StyleSheet.create({
     marginTop:40,
     backgroundColor:'#f6f6f6',
   },
+  listDark: {
+    paddingHorizontal: 5,
+    backgroundColor:"black",
+  },
   list: {
     paddingHorizontal: 5,
     backgroundColor:"#4E148C",
   },
   listContainer:{
-    alignItems:'center'
+    alignItems:'center',
+    paddingTop: 50
   },
   /******** card **************/
   card:{
@@ -139,5 +149,10 @@ const styles = StyleSheet.create({
     color:"white"
   },
 });  
+const mapStateToProps = state => {
+  return {
+    dark_mode: state.mode.dark_mode
+  }
+}
 
-export default NavigationDrawer;
+export default connect(mapStateToProps, { })(NavigationDrawer);

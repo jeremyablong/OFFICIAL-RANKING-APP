@@ -309,18 +309,19 @@ constructor(props) {
 					    marginTop: -4,
 					    marginLeft: -4,
 					    borderWidth: 4,
+					    zIndex: 999,
 					    borderColor: "white",
 					    paddingRight: 10 }} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}` }}/>
 				  </TouchableOpacity>
-		          <View style={styles.body}>
+		          <View style={this.props.dark_mode ? styles.bodyDark : styles.body}>
 		            <View style={styles.bodyContent}>
 		              {this.state.user.username === this.props.username ? <TouchableOpacity onPress={() => {
 		              	this.props.navigation.navigate("upload-profile-picture", { publicProfile: true });
 		              }} style={{ right: 15, top: 5, position: "absolute" }}><Image style={{ width: 50, height: 50 }} source={require("../../../../assets/icons/ar-camera.png")}/></TouchableOpacity> : null}
 		              <Text style={styles.name}>{this.state.user !== null ? this.state.user.fullName : "--"}</Text>
-		              <Text style={styles.ranking}><Text style={{ color: "black" }}>Social Ranking:</Text>834</Text>
+		              <Text style={styles.ranking}><Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Social Ranking:</Text>834</Text>
 		              <Text style={styles.info}>{this.state.user ? this.state.user.username : "--"}</Text>
-		              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
+		              <Text style={this.props.dark_mode ? styles.descriptionDark : styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              <View style={styles.customContainer}>
 					      <NativeButton style={{ width: width * 0.45, backgroundColor: "#4E148C" }} onPress={() => {
 							// do something
@@ -341,21 +342,21 @@ constructor(props) {
 		            	console.log("post... :", post);
 							return (
 								<Card>
-					            <CardItem>
+					            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 					              <Left>
 					                <Thumbnail source={{ uri: post.picture }} />
 					                <Body>
 					                  <TouchableOpacity onPress={() => {
 					                  	this.handleRedirect(post);
-					                  }}><NativeText>{post.author}</NativeText></TouchableOpacity>
+					                  }}><NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{post.author}</NativeText></TouchableOpacity>
 					                  <NativeText note>{post.date}</NativeText>
 					                </Body>
 					              </Left>
 					            </CardItem>
-					            <CardItem cardBody style={{ flex: 1 }}>
-					              {post.text ?  <NativeText style={{ textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20 }}>{post.text}</NativeText> : null}
+					            <CardItem cardBody style={this.props.dark_mode ? { backgroundColor: "black", flex: 1 } : { backgroundColor: "white", flex: 1 }}>
+					              {post.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20 }}>{post.text}</NativeText> : null}
 					            </CardItem>
-					            <CardItem>
+					            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 									{post.images ? <View style={styles.container}>
 							          {[1, 3, 4].includes(post.images.length)  && this.renderOne(post.images)}
 							          {post.images.length >= 2 && post.images.length != 4 && this.renderTwo(post.images)}
@@ -363,9 +364,9 @@ constructor(props) {
 							      </View> : null}
 							      
 					            </CardItem>
-					            <CardItem>
+					            <CardItem style={this.props.dark_mode ? { backgroundColor: "black", paddingTop: 15, paddingBottom: 10 } : { backgroundColor: "white", paddingTop: 15, paddingBottom: 10 }}>
 									<Text style={{ textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😂😍😁</Text>
-									<Text style={{ textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{Math.floor(Math.random() * (33 - 0 + 1)) + 0} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
+									<Text style={this.props.dark_mode ? { textAlign: "right", position: "absolute", right: 6, bottom: 10, color: "white" } : { textAlign: "right", position: "absolute", color: "black", right: 6, bottom: 10 }}>{Math.floor(Math.random() * (33 - 0 + 1)) + 0} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
 					            </CardItem>
 					            <Footer style={{ width: width }}>
 						          <FooterTab>
@@ -392,7 +393,7 @@ constructor(props) {
 			);
 		} else {
 			return (
-				<View style={{ backgroundColor: "white", height: height }}>
+				<View style={this.props.dark_mode ? { backgroundColor: "black", height: height } : { backgroundColor: "white", height: height }}>
 					<TouchableOpacity style={{ justifyContent: "center", alignItems: "center" }}>
 						<NativeButton onPress={() => {
 							this.handleRerender(); 
@@ -509,6 +510,9 @@ constructor(props) {
 }
 
 const styles = StyleSheet.create({
+	descriptionDark: {
+		color: "lightgrey"
+	},
   load: {
   	width: width * 0.80, 
   	justifyContent: "center", 
@@ -576,7 +580,8 @@ const styles = StyleSheet.create({
     marginBottom:10,
     alignSelf:'center',
     position: 'absolute',
-    marginTop:130
+    marginTop:130,
+    zIndex: 999
   },
   name:{
     fontSize:22,
@@ -592,6 +597,9 @@ const styles = StyleSheet.create({
   },
   body:{
     marginTop: 20,
+  },
+  bodyDark: {
+	backgroundColor: "black"
   },
   bodyContent: {
     flex: 1,
@@ -679,7 +687,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
 	return {
 		profilePic: state.auth.authenticated.profilePic,
-		username: state.auth.authenticated.username
+		username: state.auth.authenticated.username,
+		dark_mode: state.mode.dark_mode
 	}
 }
 

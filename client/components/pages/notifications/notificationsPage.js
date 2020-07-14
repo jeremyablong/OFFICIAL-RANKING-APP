@@ -239,7 +239,7 @@ constructor(props) {
 		            </NativeButton>
 		          </Right>
 		        </Header>
-				<ScrollView style={{ backgroundColor: "white" }}>
+				<ScrollView style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 				{this.state.notifications.length === 0 && this.state.user !== null ? <View style={styles.container}>
 		          <View style={styles.header}>
 		              <Text style={styles.headerTitle}>
@@ -500,7 +500,8 @@ const styles = StyleSheet.create({
 })
 const mapStateToProps = (state) => {
 	return {
-		username: state.auth.authenticated.username
+		username: state.auth.authenticated.username,
+		dark_mode: state.mode.dark_mode
 	}
 }
 

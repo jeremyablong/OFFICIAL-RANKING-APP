@@ -13,7 +13,7 @@ constructor () {
 	render() {
 		return (
 			<View>
-				<Spinner style={{ width: 200, height: 200, marginLeft: 100, marginTop: 100, justifyContent: "center", alignItems: "center" }} color='blue' />
+				<Spinner style={{ width: 200, height: 200, marginLeft: 100, marginTop: 100, justifyContent: "center", alignItems: "center" }} color='teal' />
 			</View> 
 		);
 	}

@@ -22,13 +22,14 @@ import io from "socket.io-client";
 import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import uuid from "react-uuid";
-const ENDPOINT = "http://recovery-social-media.ngrok.io";
 import _ from "lodash";
 import LoadingMessage from "../../../chat/loader.js";
 import Popover from 'react-native-popover-view';
 import RBSheet from "react-native-raw-bottom-sheet";
 
 const { width, height } = Dimensions.get('window'); 
+
+const ENDPOINT = "http://recovery-social-media.ngrok.io";
 
 const socket = io('https://recovery-social-media.ngrok.io', {
 	transport: ['websocket']
@@ -562,12 +563,12 @@ class MessageIndividual extends Component {
           </Right>
           {this.renderSockets()}
         </Header>
-    	<View>
-			<Text style={{ textAlign: "center", paddingTop: 10, marginBottom: 20, color: "darkred" }}>latest messages...</Text>
+    	<View style={this.props.dark_mode ? styles.latestDark : styles.latestLight}>
+			<Text style={this.props.dark_mode ? { textAlign: "center", paddingTop: 10, marginBottom: 20, color: "white" } : { textAlign: "center", paddingTop: 10, marginBottom: 20, color: "darkred" }}>latest messages...</Text>
     	</View>
-	    <View style={{ flex: 1 }}> 
+	    <View style={this.props.dark_mode ? { flex: 1, backgroundColor: "black" } : { flex: 1, backgroundColor: "white" }}> 
           <View behavior="padding" style={styles.keyboard}>
-            {this.state.ready === true && this.state.first !== null ? <ScrollView contentContainerStyle={{flexGrow: 1, paddingBottom: 100}} style={{ flex: 1, paddingBottom: 100, paddingTop: 20, height: "100%" }}>{this.state.replies ? this.state.replies.map((item, index) => {
+            {this.state.ready === true && this.state.first !== null ? <ScrollView contentContainerStyle={{flexGrow: 1, paddingBottom: 100}} style={this.props.dark_mode ? { backgroundColor: "black", flex: 1, paddingBottom: 100, paddingTop: 20, height: "100%" } : { backgroundColor: "white", flex: 1, paddingBottom: 100, paddingTop: 20, height: "100%" }}>{this.state.replies ? this.state.replies.map((item, index) => {
             	if (item.id === this.props.route.params.user.id && item.author !== this.props.username) {
 			      	return (
 			      	<Fragment>
@@ -714,6 +715,9 @@ class MessageIndividual extends Component {
 }
 
 const styles = StyleSheet.create({
+  latestDark: {
+    backgroundColor: "black"
+  },
   emojiResponse: {
     fontSize: 30,
     position: "absolute",
@@ -839,6 +843,9 @@ const styles = StyleSheet.create({
       height: 10,
     },
   },
+  latestLight: {
+    backgroundColor: "white"
+  },
   rightBlock: {
     width: 220,
     borderRadius: 5,
@@ -935,7 +942,8 @@ const mapStateToProps = state => {
 	return {
 		id: state.auth.authenticated.id,
 		profilePic: state.auth.authenticated.profilePic ? state.auth.authenticated.profilePic[state.auth.authenticated.profilePic.length - 1] : null,
-		username: state.auth.authenticated.username
+		username: state.auth.authenticated.username,
+    dark_mode: state.mode.dark_mode
 	}
 }
 export default connect(mapStateToProps, {  })(MessageIndividual);

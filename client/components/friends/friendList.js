@@ -68,8 +68,8 @@ constructor(props) {
 		return (
 			<Fragment>
 				<View style={{ marginBottom: 100, marginLeft: 10, marginRight: 10 }}>
-					<Text style={{ textAlign: "left", fontSize: 30, fontWeight: "bold" }}>Friends</Text>
-					<Text style={{ textAlign: "left", fontSize: 20 }}>452 Friends</Text>
+					<Text style={this.props.dark_mode ? { textAlign: "left", fontSize: 30, color: "white", fontWeight: "bold" } : { textAlign: "left", fontSize: 30, fontWeight: "bold" }}>Friends</Text>
+					<Text style={this.props.dark_mode ? { textAlign: "left", fontSize: 20, color: "white" } : { textAlign: "left", fontSize: 20 }}>452 Friends</Text>
             {this.state.friends ? <FlatList
                   contentContainerStyle={{ alignSelf: 'flex-start' }}
                   numColumns={3}
@@ -99,7 +99,7 @@ constructor(props) {
 					<NativeButton onPress={() => {
 						this.props.navigation.navigate("friends-list");
 					}} style={styles.seeMore}>
-						<NativeText style={{ color: "white", fontSize: 20 }}>See All Friends</NativeText>
+						<NativeText style={this.props.dark_mode ?  { color: "white", fontSize: 20 } : { color: "white", fontSize: 20 }}>See All Friends</NativeText>
 					</NativeButton>
 				</View>
 			</Fragment>
@@ -146,7 +146,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
   return {
-    username: state.auth.authenticated.username
+    username: state.auth.authenticated.username,
+    dark_mode: state.mode.dark_mode
   }
 }
 

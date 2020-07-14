@@ -178,7 +178,11 @@ constructor(props) {
 		        </ScrollView>
 			);
 		} else {
-			return <LoadingWall />;
+			return (
+				<View style={this.props.dark_mode ? { backgroundColor: "black", height } : { backgroundColor: "white" }}>
+					<LoadingWall />
+				</View>
+			);
 		}
 	}
 	render() {

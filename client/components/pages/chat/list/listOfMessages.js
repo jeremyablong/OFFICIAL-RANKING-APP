@@ -144,12 +144,12 @@ constructor(props) {
 					                <Thumbnail square source={item.picture ? { uri: item.picture } : require("../../../../assets/icons/anonymous.png")} />
 					              </Left>
 					              <Body>
-					                <Text>{item.reciever === this.props.username ? item.author : item.reciever}</Text>
-					                <Text note numberOfLines={1}>{item.replies ? item.replies[item.replies.length - 1].message : item.message}</Text>
+					                <Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{item.reciever === this.props.username ? item.author : item.reciever}</Text>
+					                <Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }} note numberOfLines={1}>{item.replies ? item.replies[item.replies.length - 1].message : item.message}</Text>
 					              </Body>
 					              <Right>
 					                <NativeButton transparent>
-					                  <Text style={{ color: "darkred" }}>View</Text>
+					                  <Text style={this.props.dark_mode ? { color: "#97DFFC" } : { color: "darkred" }}>View</Text>
 					                </NativeButton>
 					              </Right>
 					            </ListItem>
@@ -239,7 +239,7 @@ constructor(props) {
 		            </NativeButton>
 		          </Right>
 		        </Header>
-		        <ScrollView horizontal={false}>
+		        <ScrollView style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }} horizontal={false}>
 		        {this.state.messages.length === 0 ? <View style={styles.header}>
 		              <Text style={styles.headerTitle}>
 		                You have <Text style={{ color: "#97DFFC" }}>0</Text> messages
@@ -256,21 +256,21 @@ constructor(props) {
 				            <NativeButton>
 				              <NativeText>Camera</NativeText>
 				            </NativeButton>*/}
-				            <NativeButton onPress={() => {
+				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderWidth: 3, borderColor: "white" } : { backgroundColor: "white" }} onPress={() => {
 				            	this.setState({
 				            		inboxActive: true,
 				            		groupActive: false
 				            	})
 				            }} active={this.state.inboxActive}>
-				              <NativeText>Inbox</NativeText>
+				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Inbox</NativeText>
 				            </NativeButton>
-				            <NativeButton onPress={() => {
+				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderWidth: 3, borderColor: "white" } : { backgroundColor: "white" }} onPress={() => {
 				            	this.setState({
 				            		groupActive: true,
 				            		inboxActive: false
 				            	})
 				            }} active={this.state.groupActive}>
-				              <NativeText>Group Messages</NativeText>
+				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Group Messages</NativeText>
 				            </NativeButton>
 				          </FooterTab></Footer><SearchBar
 							  ref="searchBar"
@@ -411,7 +411,8 @@ const styles = StyleSheet.create({
 })	
 const mapStateToProps = state => {
 	return {
-		username: state.auth.authenticated.username
+		username: state.auth.authenticated.username,
+		dark_mode: state.mode.dark_mode
 	}
 }
 

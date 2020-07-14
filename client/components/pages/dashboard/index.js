@@ -111,7 +111,8 @@ constructor(props) {
     if (this.state.searching === true) {
       if (this.state.people) {
         return (
-          <FlatList
+          <FlatList 
+            style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}
             data={this.state.people}
             renderItem={({ item }) => {
               console.log("itemmmmmm :", item);
@@ -121,7 +122,7 @@ constructor(props) {
                       <Thumbnail square source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${item.profilePic[item.profilePic.length - 1].picture}` }} />
                     </Left>
                     <Body>
-                      <NativeText style={{ color: "#4E148C" }}>{item.username}</NativeText>
+                      <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "#4E148C" }}>{item.username}</NativeText>
                       {/*<NativeText note numberOfLines={1}>{}</NativeText>*/}
                     </Body>
                     <Right style={{ top: -1 }}>
@@ -129,7 +130,7 @@ constructor(props) {
                         Keyboard.dismiss();
                           this.props.navigation.navigate("profile-individual", { user: item });
                       }} transparent>
-                        <NativeText style={{ color: "#2C0735" }}>View</NativeText>
+                        <NativeText style={this.props.dark_mode ? { color: "#97DFFC" } : { color: "#2C0735" }}>View</NativeText>
                       </NativeButton>
                     </Right>
                   </ListItem>
@@ -140,7 +141,7 @@ constructor(props) {
         );
       } else {
         return (
-          <View style={{ backgroundColor: "white", height: height, width: width }}><NativeButton><NativeText>Load page...</NativeText></NativeButton></View>
+          <View style={this.props.dark_mode ? { backgroundColor: "black", height: height, width: width } : { backgroundColor: "white", height: height, width: width }}><NativeButton><NativeText>Load page...</NativeText></NativeButton></View>
         );
       }
     } else {
@@ -157,7 +158,8 @@ constructor(props) {
     var direction = currentOffset > this.state.offset ? 'down' : 'up';
     // this.state.offset = currentOffset;
     this.setState({
-      offset: currentOffset
+      offset: currentOffset,
+      isOpen: false
     })
     console.log("DIRECTION ...: ", direction);
     if (direction === "up") {
@@ -181,7 +183,7 @@ constructor(props) {
 		return (
 		<Fragment>
 		<SideMenu isOpen={this.state.isOpen} menu={menu}>
-		    <Header>
+		    <Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
           <Left>
             <NativeButton onPress={() => {
               this.RBSheet.open();
@@ -190,7 +192,7 @@ constructor(props) {
             </NativeButton>
           </Left>
           <Body>
-            <Title>Dashboard</Title>
+            <Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Dashboard</Title>
           </Body>
           <Right>
             <NativeButton onPress={() => {
@@ -200,7 +202,7 @@ constructor(props) {
     			    	isOpen: true
     			    })
             }} hasText transparent>
-              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
+              <Image style={this.props.dark_mode ? { width: 45, height: 45, marginBottom: 10, tintColor: "white" } : { width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
             </NativeButton>
           </Right>
         </Header>
@@ -232,7 +234,7 @@ constructor(props) {
         {this.renderContent()}
       </ScrollView>
     </View>
-			<Footer>
+			<Footer style={this.props.dark_mode ? { backgroundColor: "black" } : {  }}>
 	          <FooterTab>
 	            <NativeButton active onPress={() => {
 		            	this.props.navigation.navigate("dashboard");
@@ -243,27 +245,27 @@ constructor(props) {
 		            	this.props.navigation.navigate("notifications");
 		            }}>
 		            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
-	               <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/notification.png")} />
+	               <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/notification.png")} />
 	            </NativeButton>
 	            <NativeButton onPress={() => {
 		            	this.props.navigation.navigate("chat-users");
 		            }}>
 		          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
-	              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/mail-three.png")} />
+	              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/mail-three.png")} />
 	            </NativeButton>
 	            <NativeButton onPress={() => {
 		            	this.props.navigation.navigate("public-wall");
 		            }}>
-	              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
+	              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
 	            </NativeButton>
               <NativeButton onPress={() => {
                   this.props.navigation.navigate("profile-settings");
                 }}>
-                <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/list.png")} />
+                <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/list.png")} />
               </NativeButton>
 	          </FooterTab>
 	        </Footer>
-          <RBSheet
+          <RBSheet 
               ref={ref => {
                 this.RBSheet = ref;
               }}
@@ -276,7 +278,7 @@ constructor(props) {
                 }
               }}
             >
-              <View>
+              <View style={this.props.dark_mode ? { backgroundColor: "black", height: 300 } : { backgroundColor: "white", height: 300 }}>
           <TouchableOpacity style={styles.card} onPress={() => {
             this.props.authenticated({});
             this.RBSheet.close();

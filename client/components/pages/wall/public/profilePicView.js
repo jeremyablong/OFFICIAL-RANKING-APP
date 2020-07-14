@@ -680,7 +680,7 @@ constructor(props) {
 	renderSlideUpContent = () => {
 		if (this.state.ready === true && this.state.loading === false) {
 			return (
-				<ScrollView {...this._panResponder.panHandlers} style={styles.containerModal}>
+				<ScrollView {...this._panResponder.panHandlers} style={this.props.dark_mode ? styles.containerModalDark : styles.containerModal}>
 				<View style={{ marginTop: 50 }}>
 					<Button title='Hide' onPress={() => this._panel.hide()} />
 					<AutoGrowingTextInput value={this.state.comment} onChangeText={(value) => {
@@ -688,7 +688,7 @@ constructor(props) {
 							comment: value
 						})
 					}} placeholderTextColor='black' style={styles.textInput} placeholder={'Your your Comment/Message Here...'} />
-					<View style={styles.containerTwoRow}>
+					<View style={this.props.dark_mode ? styles.containerTwoRowDark : styles.containerTwoRow}>
 						<PhotoUpload
 							   onPhotoSelect={avatar => {
 							     if (avatar) {
@@ -702,14 +702,14 @@ constructor(props) {
 							   }} 
 							 >
 							   <Image
-							     style={styles.camera}
+							     style={this.props.dark_mode ? styles.cameraDark : styles.camera}
 							     resizeMode='cover'
 							     source={require("../../../../assets/icons/upload-two.png")}
 							   />
 							 </PhotoUpload>
 				     	<NativeButton onPress={() => {
 				     		this.handleCommentSubmission();
-				     	}} style={styles.btn}>
+				     	}} style={this.props.dark_mode ? styles.darkBtn : styles.btn}>
 							<NativeText style={{ color: "white" }}>Submit New Comment</NativeText>
 						</NativeButton>
 				    </View>
@@ -733,13 +733,13 @@ constructor(props) {
 			              </TouchableOpacity>
 			              <View style={styles.content}>
 			                <View style={styles.contentHeader}>
-			                  <Text  style={styles.name}>{item.poster}</Text>
+			                  <Text  style={this.props.dark_mode ? styles.darkName : styles.name}>{item.poster}</Text>
 			                  
 			                </View>
 			                <Text style={styles.time}>
 			                    {item.date}
 			                  </Text>
-			                <Text rkType='primary3 mediumLine'>{item.comment}</Text>
+			                <Text rkType='primary3 mediumLine' style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{item.comment}</Text>
 			               	{item.likes ? <Popover
 						      isVisible={this.state.showPopoverTwo}
 						      onRequestClose={() => {
@@ -755,7 +755,7 @@ constructor(props) {
 							      		display: item.likes
 							      	})
 						        }}>
-						          <Text style={{ color: "red" }}>View Reactions</Text>
+						          <Text style={this.props.dark_mode ? { color: "white" } : { color: "darkred" }}>View Reactions</Text>
 						        </TouchableOpacity>
 						      )}>
 						      <NativeButton onPress={() => {
@@ -773,7 +773,7 @@ constructor(props) {
 							              {this.loadImage(like)}
 							              <View style={styles.content}>
 							                <View style={styles.contentHeader}>
-							                  <Text style={{ color: "black" }}>{like.likedBy}</Text>
+							                  <Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{like.likedBy}</Text>
 							                  
 							                </View>
 							                <Text style={styles.time}>
@@ -808,7 +808,7 @@ constructor(props) {
 			return (
 				<Fragment>
 				{this.renderLikesOrNot()}
-					<Header>
+					<Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 			          <Left>
 			            <NativeButton onPress={() => {
 			             	// redirect
@@ -819,23 +819,23 @@ constructor(props) {
 			             	}
 			             	
 			            }} transparent>
-			              <Image style={{ width: 35, height: 35, marginBottom: 10 }} source={require("../../../../assets/icons/back-again.png")}/>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, marginBottom: 10, tintColor: "white" } : { width: 35, height: 35, marginBottom: 10 }} source={require("../../../../assets/icons/back-again.png")}/>
 			            </NativeButton>
 			          </Left>
-			          <Body><Title>Profile Picture</Title>
+			          <Body><Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Profile Picture</Title>
 			          </Body>
 			          <Right>
 			            <NativeButton onPress={() => {
 			            	
 			            }} transparent>
-			              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../../assets/icons/chat.png")}/>
+			              <Image style={this.props.dark_mode ? { tintColor: "white", width: 45, height: 45, marginBottom: 10 } : { width: 45, height: 45, marginBottom: 10 }} source={require("../../../../assets/icons/chat.png")}/>
 			            </NativeButton>
 			          </Right>
 			        </Header>
-			    <ScrollView style={{ maxHeight: height - 150 }}>
+			    <ScrollView style={this.props.dark_mode ? { maxHeight: height, backgroundColor: "black" } : { maxHeight: height - 150 }}>
 			       <Image resizeMode={'cover'} style={{ width: width * 0.90, marginLeft: 20,  height: 400 }} source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.props.route.params.user.profilePic[this.props.route.params.user.profilePic.length - 1].picture}` }} />
 			       <Footer>
-			          <FooterTab>
+			          <FooterTab style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 						{this.renderPopover()} 
 			            <NativeButton onPress={() => {
 			            	this._panel.show();
@@ -862,28 +862,33 @@ constructor(props) {
 				{this.handleReviewRedirect()}
 			       <View style={{ bottom: 0, width: width, position: "absolute" }}>
 						<Footer>
-				          <FooterTab>
+				          <FooterTab style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 				            <NativeButton onPress={() => {
 					            	this.props.navigation.navigate("dashboard");
 					            }}>
-				              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/home-run.png")} />
+				              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/home-run.png")} />
 				            </NativeButton>
 				            <NativeButton onPress={() => {
 					            	this.props.navigation.navigate("dashboard");
 					            }}>
 					            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
-				               <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
+				               <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
 				            </NativeButton>
 				            <NativeButton onPress={() => {
 					            	this.props.navigation.navigate("chat-users");
 					            }}>
-				              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
+				              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
 				            </NativeButton>
 				            <NativeButton active onPress={() => {
 					            	this.props.navigation.navigate("public-wall");
 					            }}>
 				              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/wall.png")} />
 				            </NativeButton>
+				            <NativeButton onPress={() => {
+			                  this.props.navigation.navigate("profile-settings");
+			                }}>
+			                <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/list.png")} />
+			              </NativeButton>
 				          </FooterTab>
 			        	</Footer>
 					</View>
@@ -921,7 +926,9 @@ constructor(props) {
 		            </NativeButton>
 		          </Right>
 		        </Header>
-				<LoadingWall />
+				<View style={this.props.dark_mode ? { backgroundColor: "black", height: height } : { backgroundColor: "white" }}>
+					<LoadingWall />
+				</View>
 			</Fragment>
 			);
 		}
@@ -945,12 +952,29 @@ const styles = StyleSheet.create({
   	alignContent: "center",
   	marginBottom: 50
   },
+  cameraDark: {
+	width: 35, 
+	height: 35, 
+	bottom: 0, 
+	marginLeft: 20, 
+	marginTop: 20,
+	marginRight: 10,
+	tintColor: "#858AE3"
+  },
   camera: {
 	width: 35, 
 	height: 35, 
 	bottom: 0, 
 	marginLeft: 20, 
 	marginTop: 6
+  },
+  darkBtn: {
+	alignItems: "center", 
+	justifyContent: "center", 
+	width: width * 0.80,
+	marginRight: 10,
+	marginTop: 20,
+	backgroundColor: "#858AE3"
   },
   btn: {
 	alignItems: "center", 
@@ -964,14 +988,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
+  containerTwoRowDark: {
+ 	flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20
+  },
   button: {
     backgroundColor: 'green',
     width: '40%',
     height: 40
   },
   containerModal: {
-    backgroundColor: 'white',
-
+    backgroundColor: 'white'
+  },
+  containerModalDark: {
+  	backgroundColor: 'black'
   },
   textInput: {
     paddingLeft: 10,
@@ -1020,17 +1052,23 @@ const styles = StyleSheet.create({
   },
   time:{
     fontSize:11,
-    color:"#808080",
+    color: "#808080",
+  },
+  darkName: {
+    fontSize:16,
+    fontWeight:"bold",
+    color: "white"
   },
   name:{
     fontSize:16,
-    fontWeight:"bold",
+    fontWeight:"bold"
   },
 })
 
 const mapStateToProps = state => {
 	return {
-		username: state.auth.authenticated.username
+		username: state.auth.authenticated.username,
+		dark_mode: state.mode.dark_mode
 	}
 }
 export default connect(mapStateToProps, {  })(ProfilePicView);

@@ -68,7 +68,7 @@ constructor(props) {
 		return (
 			<Fragment>
 			<View style={{ flex: 1 }}>
-				<ScrollView style={{ borderBottomColor: 'black', borderBottomWidth: 2 }}>
+				<ScrollView style={this.props.dark_mode ? { borderBottomColor: 'black', backgroundColor: "black", borderBottomWidth: 2 } : { borderBottomColor: 'black', backgroundColor: "white", borderBottomWidth: 2 }}>
 					<ScrollView horizontal={true} style={this.props.dark_mode ? styles.darkScroll : styles.lightScroll}> 
 						<FlatList  
 							horizontal
@@ -143,19 +143,18 @@ const styles = StyleSheet.create({
 		backgroundColor: "white"
 	},
 	boxDark: {
-		shadowColor: 'white',
 	    shadowOffset: {
 	      width: 10,
 	      height: 6,
 	    },
 	    shadowOpacity: 0.77,
-	    shadowRadius: 7.49,
+	    shadowRadius: 3.49,
 	    elevation: 22,
 	    width: 70, 
 		height: 70, 
 		borderRadius: 60 / 2, 
-		marginLeft: 6, 
-		marginRight: 6,
+		marginLeft: 2, 
+		marginRight: 2,
 		marginTop: 10,
 		marginBottom: 5
 	},
@@ -173,19 +172,17 @@ const styles = StyleSheet.create({
 	    width: 270,
     },
 	box: {
-		shadowColor: 'black',
+		shadowColor: 'lightgrey',
 	    shadowOffset: {
 	      width: 0,
 	      height: 6,
 	    },
 	    shadowOpacity: 0.77,
-	    shadowRadius: 7.49,
 	    elevation: 22,
 		width: 70, 
 		height: 70, 
-		borderRadius: 60 / 2, 
-		marginLeft: 6, 
-		marginRight: 6,
+		marginLeft: 2, 
+		marginRight: 2,
 		marginTop: 10,
 		marginBottom: 5
 	},

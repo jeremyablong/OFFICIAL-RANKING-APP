@@ -87,7 +87,7 @@ constructor(props) {
               </ImageBackground>
              
             </TouchableOpacity> : null}
-					<FlatList style={{ paddingLeft: 20 }}
+					<FlatList style={{ paddingLeft: 5 }}
 						horizontal
 				        data={this.state.stories}
 				        renderItem={({ item }) => {
@@ -153,7 +153,6 @@ const styles = StyleSheet.create({
     height: 125, 
     maxHeight: 125, 
     width: 125,
-    shadowColor: 'black',
     shadowOffset: {
       width: 0,
       height: 6,
@@ -173,13 +172,12 @@ const styles = StyleSheet.create({
     },
     borderRadius: 25,
     shadowOpacity: 0.87,
-    shadowRadius: 7.49,
+    shadowRadius: 3.49,
     elevation: 22,
   },
   backBack: { 
     height: 200, 
     width: 125,
-    shadowColor: 'black',
     shadowOffset: {
       width: 0,
       height: 6,
@@ -198,7 +196,8 @@ const styles = StyleSheet.create({
   containerBtn: {
     justifyContent: "center", 
     alignItems: "center", 
-    alignContent: "center"
+    alignContent: "center",
+    backgroundColor: "white"
   },
   containerBtnDark: {
     justifyContent: "center", 
@@ -269,15 +268,6 @@ const styles = StyleSheet.create({
   },
   /******** card **************/
   card:{
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    shadowOpacity: 0.87,
-    shadowRadius: 7.49,
-    elevation: 22,
-
     marginVertical: 5,
     flexBasis: '46%',
     marginHorizontal: 5,

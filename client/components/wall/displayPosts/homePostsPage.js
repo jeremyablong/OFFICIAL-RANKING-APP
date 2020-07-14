@@ -259,18 +259,18 @@ constructor(props) {
 								<Text style={this.props.dark_mode ? { textAlign: "right", color: "white", position: "absolute", right: 6, bottom: 10 } : { textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{Math.floor(Math.random() * (33 - 0 + 1)) + 0} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
 							</TouchableOpacity>
 			            </CardItem>
-			            <Footer style={{ width: width }}>
+			            <Footer style={{ width: width * 0.99 }}>
 				          <FooterTab>
-				            <NativeButton onPress={() => {
+				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white" }} onPress={() => {
 				            	this.likePost();
 				            }}>
-				              <NativeText><Image source={require("../../../assets/icons/like.png")} style={{ width: 20, height: 20 }} />Like</NativeText>
+				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Like</NativeText>
 				            </NativeButton>
-				            <NativeButton>
-				              <NativeText><Image source={require("../../../assets/icons/comment.png")} style={{ width: 20, height: 20 }} />Comment</NativeText>
+				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white" }}>
+				              <NativeText style={this.props.dark_mode ? { color: "white", marginLeft: 6 } : { color: "black" }}>Comment</NativeText>
 				            </NativeButton>
-				            <NativeButton>
-				              <NativeText><Image source={require("../../../assets/icons/fb-share.png")} style={{ width: 20, height: 20 }} />Share</NativeText>
+				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white" }}>
+				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Share</NativeText>
 				            </NativeButton>
 				          </FooterTab>
 				        </Footer>
