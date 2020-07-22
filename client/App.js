@@ -48,6 +48,10 @@ import EditProfileHomepage from "./components/pages/profile/edit/editProfileHome
 import NewsHomepage from "./components/pages/news/newsHomepage.js";
 import MarketplaceHomepage from "./components/pages/marketplace/marketplaceHomepage.js";
 import IndividualWallPosting from "./components/pages/wall/individual/index.js";
+import ProfileMenuListDisplay from "./components/pages/profile/profile_menu_list/list.js";
+import MusicPlayerPage from "./components/pages/music/musicPlayerPage.js";
+import StoriesPageSlider from "./components/pages/stories/slider/storiesPageSlider.js";
+import CreateStoryFeedPage from "./components/pages/stories/create.js";
 
 import { locationBackground, latLngLocation } from "./actions/location/getLocation.js";
 
@@ -59,6 +63,7 @@ const Stack = createStackNavigator();
 // ocean blue - #613DC1
 // blue violet color wheel - #4E148C
 // russian violet - #2C0735
+// #5eb8db
 
 class App extends Component {
 constructor(props) {
@@ -208,7 +213,11 @@ constructor(props) {
             <Stack.Screen name="edit-profile" component={EditProfileHomepage} />
             <Stack.Screen name="news-homepage" component={NewsHomepage} />
             <Stack.Screen name="marketplace-homepage" component={MarketplaceHomepage} />
-            <Stack.Screen name="wall-individual" component={IndividualWallPosting} />
+            <Stack.Screen name="wall-individual" component={IndividualWallPosting} /> 
+            <Stack.Screen name="profile-settings-list" component={ProfileMenuListDisplay} />
+            <Stack.Screen name="profile-music-playlist" component={MusicPlayerPage} />
+            <Stack.Screen name="stories-review-show" component={StoriesPageSlider} />
+            <Stack.Screen name="create-story-feed" component={CreateStoryFeedPage} />
           </Stack.Navigator>
         </NavigationContainer>
     );

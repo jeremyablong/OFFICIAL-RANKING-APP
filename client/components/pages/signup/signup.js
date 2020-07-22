@@ -41,15 +41,17 @@ class SignupPage extends Component {
       base64: "",
       hometown: "",
       username: "",
-      showEmail: false
+      showEmail: false,
+      shown: true,
+      base64MUGSHOT: ""
     }
   }
 
   handleSubmission = () => {
 
-    const { fullName, emailReEnter, phoneNumberReEnter, password, birthdate, base64, hometown, username, phoneNumber, email } = this.state;
+    const { fullName, emailReEnter, base64MUGSHOT, phoneNumberReEnter, password, birthdate, base64, hometown, username, phoneNumber, email } = this.state;
 
-    if (fullName.length > 0 && (phoneNumber.length > 0 || email.length > 0) && password.length > 0 && birthdate.length > 0 && base64.length > 0 && hometown.length > 0 && username.length > 0) {
+    if (fullName.length > 0 && (phoneNumber.length > 0 || email.length > 0) && password.length > 0 && birthdate.length > 0 && base64.length > 0 && hometown.length > 0 && username.length > 0 && base64MUGSHOT.length > 0) {
       if ((email === emailReEnter) && (email.length > 0 && emailReEnter.length > 0)) {
         console.log("emails MATCH.");
         axios.post("http://recovery-social-media.ngrok.io/register/user", {
@@ -59,7 +61,8 @@ class SignupPage extends Component {
           birthdate, 
           base64, 
           hometown, 
-          username: username.toLowerCase()
+          username: username.toLowerCase(),
+          base64MUGSHOT
         }).then((res) => {
           console.log(res.data);
            if (res.data.message === "Successfully registered!") {
@@ -91,7 +94,8 @@ class SignupPage extends Component {
           base64, 
           hometown, 
           username, 
-          phoneNumber: output
+          phoneNumber: output, 
+          base64MUGSHOT
         }).then((res) => {
           console.log(res.data);
           if (res.data.message === "Successfully registered!") {
@@ -172,7 +176,9 @@ class SignupPage extends Component {
       <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>First & Last Name</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={require("../../../assets/icons/name.png")}/>
-          <TextInput style={styles.inputs}
+          <TextInput style={styles.inputs} 
+              value={this.state.fullName} 
+              placeholderTextColor={"black"}
               placeholder="Full Name"
               underlineColorAndroid='transparent'
               onChangeText={(fullName) => this.setState({
@@ -198,7 +204,8 @@ class SignupPage extends Component {
             })
           }}><Image style={styles.inputIcon} source={require("../../../assets/icons/phone.png")}/></TouchableOpacity>
           <TextInput style={styles.inputs}
-              placeholder="Enter Your Phone Number..."
+              placeholder="Enter Your Phone Number..." 
+              placeholderTextColor={"black"}
               underlineColorAndroid='transparent' 
               value={this.state.phoneNumber}
               onChangeText={(phoneNumber) => this.setState({
@@ -217,7 +224,8 @@ class SignupPage extends Component {
             })
           }}><Image style={styles.inputIcon} source={require("../../../assets/icons/phone.png")}/></TouchableOpacity>
           <TextInput style={styles.inputs}
-              placeholder="Re-Enter Phone Number..."
+              placeholder="Re-Enter Phone Number..." 
+              placeholderTextColor={"black"}
               underlineColorAndroid='transparent' 
               value={this.state.phoneNumberReEnter}
               onChangeText={(phoneNumberReEnter) => this.setState({
@@ -232,7 +240,8 @@ class SignupPage extends Component {
             })
           }}><Image style={styles.inputIcon} source={require("../../../assets/icons/mail-two.png")}/></TouchableOpacity>
           <TextInput style={styles.inputs}
-              placeholder="Enter Your Email..." 
+              placeholder="Enter Your Email..."  
+              placeholderTextColor={"black"}
               value={this.state.email}
               underlineColorAndroid='transparent'
               onChangeText={(email) => this.setState({
@@ -250,7 +259,8 @@ class SignupPage extends Component {
             })
           }}><Image style={styles.inputIcon} source={require("../../../assets/icons/mail-two.png")}/></TouchableOpacity>
           <TextInput style={styles.inputs} 
-              value={this.state.emailReEnter}
+              value={this.state.emailReEnter} 
+              placeholderTextColor={"black"}
               placeholder="Re-Enter Your Email..."
               underlineColorAndroid='transparent'
               onChangeText={(emailReEnter) => this.setState({
@@ -259,10 +269,18 @@ class SignupPage extends Component {
         </View></React.Fragment>}
         <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Password</Text>
         <View style={styles.inputContainer}>
-          <Image style={styles.inputIcon} source={require("../../../assets/icons/login.png")}/>
-          <TextInput style={styles.inputs}
+          <TouchableOpacity onPress={() => {
+            this.setState({
+              shown: !this.state.shown
+            })
+          }}>
+            <Image style={styles.inputIcon} source={require("../../../assets/icons/login.png")}/>
+          </TouchableOpacity>
+          <TextInput style={styles.inputs} 
+              placeholderTextColor={"black"}
+              value={this.state.password}
               placeholder="Enter a password" 
-              secureTextEntry={true}
+              secureTextEntry={this.state.shown}
               underlineColorAndroid='transparent'
               onChangeText={(password) => this.setState({
                 password
@@ -271,8 +289,8 @@ class SignupPage extends Component {
         <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Birthdate</Text>
         <View style={styles.inputContainer}>
           <DatePicker
-          style={{width: 250}}
-          date={this.state.birthdate}
+          style={{width: 250 }}
+          date={this.state.birthdate} 
           mode="date"
           placeholder="select date"
           format="YYYY-MM-DD"
@@ -301,7 +319,9 @@ class SignupPage extends Component {
         <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10 , paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Username</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={require("../../../assets/icons/user.png")}/>
-          <TextInput style={styles.inputs}
+          <TextInput style={styles.inputs} 
+              placeholderTextColor={"black"}
+              value={this.state.username}
               placeholder="Enter Your Username..."
               underlineColorAndroid='transparent'
               onChangeText={(username) => this.setState({
@@ -311,7 +331,9 @@ class SignupPage extends Component {
         <Text style={{ textAlign: "left", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10, paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Hometown</Text>
         <View style={styles.inputContainer}>
           <Image style={styles.inputIcon} source={require("../../../assets/icons/real.png")}/>
-          <TextInput style={styles.inputs}
+          <TextInput style={styles.inputs} 
+              value={this.state.hometown}
+              placeholderTextColor={"black"}
               placeholder="Enter Your Hometown..."
               underlineColorAndroid='transparent'
               onChangeText={(hometown) => 
@@ -322,7 +344,7 @@ class SignupPage extends Component {
         
        
         <View style={{ marginBottom: 30 }}>
-        <Text style={{ textAlign: "left", fontSize: 24, fontWeight: "bold", marginBottom: 20 , paddingLeft: 5, paddingTop: 7, paddingBottom: 5, color: "white"}}>Select a profile picture</Text>
+        <Text style={{ textAlign: "left", fontSize: 20, fontWeight: "bold", marginBottom: 20 , paddingLeft: 5, paddingTop: 7, paddingBottom: 5, color: "white"}}>Select a profile picture</Text>
           <PhotoUpload
            onPhotoSelect={avatar => {
              if (avatar) {
@@ -334,7 +356,13 @@ class SignupPage extends Component {
            }}
          >
            <Image
-             style={{
+             style={this.state.base64.length === 0 ? {
+               paddingVertical: 30,
+               width: 150,
+               height: 150,
+               borderRadius: 75, 
+               tintColor: "#613DC1"
+             } : {
                paddingVertical: 30,
                width: 150,
                height: 150,
@@ -342,6 +370,35 @@ class SignupPage extends Component {
              }}
              resizeMode='cover'
              source={require("../../../assets/icons/user.png")}
+           />
+         </PhotoUpload>
+        </View>
+         <View style={{ marginBottom: 30 }}>
+        <Text style={{ textAlign: "left", fontSize: 20, maxWidth: width - 125, fontWeight: "bold", marginBottom: 20 , paddingLeft: 5, paddingTop: 7, paddingBottom: 5, color: "white"}}>Select your sign-in authentication verifcation image...</Text>
+        <View style={{ borderBottomWidth: 3, borderBottomColor: "white", maxWidth: width - 125, }} />
+        <Text style={{ color: "white", padding: 10, maxWidth: width - 125, paddingBottom: 20, fontWeight: "bold" }}>Take a CLEAR headshot of your face - this picture will be used to authenticate you as the account owner when signing in to prevent secuirty threats</Text>
+          <PhotoUpload
+           onPhotoSelect={avatar => {
+             if (avatar) {
+               console.log('Image base64 string: ', avatar);
+               this.setState({
+                base64MUGSHOT: avatar
+               })
+             }
+           }}
+           imagePickerProps={{
+            chooseFromLibraryButtonTitle: null 
+          }}
+         >
+           <Image
+             style={{
+               paddingVertical: 30,
+               width: 150,
+               height: 150,
+               borderRadius: 75
+             }}
+             resizeMode='cover'
+             source={require("../../../assets/images/headshot.jpg")}
            />
          </PhotoUpload>
         </View>
@@ -384,13 +441,15 @@ const styles = StyleSheet.create({
       alignItems:'center',
       borderRadius:10,
       borderWidth: 2,
-      borderColor: 'black'
+      borderColor: 'black',
+      color: "black"
   },
   inputs:{
       height:45,
       marginLeft:16,
       borderBottomColor: '#FFFFFF',
       flex:1,
+      color: "black"
   },
   inputIcon:{
     width:30,

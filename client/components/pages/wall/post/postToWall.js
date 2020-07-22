@@ -14,6 +14,7 @@ import {
   ScrollView, 
   FlatList, 
   Keyboard, 
+  FileSystem,
   TouchableWithoutFeedback
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Button as NativeButton, Content, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
@@ -27,6 +28,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import ImageView from 'react-native-image-view';
 import axios from "axios";
 import { connect } from "react-redux";
+import * as RNFS from 'react-native-fs';
 
 const { width, height } = Dimensions.get("window");
 
@@ -62,14 +64,21 @@ constructor(props) {
 	uploadImg = () => {
 		ImagePicker.openPicker({
 		  multiple: true,
-		  mediaType: "photo",
-		  includeBase64: true
+		  mediaType: "photo"
 		}).then(image => {
 		  	for (var i = 0; i < image.length; i++) {
 	    		let element = image[i];
-	    		this.setState(prevState => ({
-	    			selectedImages: [ ...prevState.selectedImages, { source: { uri: element.path }, mime: element.mime, filename: element.filename, base64: element.data } ]
-	    		}))
+	    		let selectedWithFileSystem = RNFS.readFile(element.path, 'base64').then((response) => {
+	    			console.log("BASE64 :", response);
+	    			return response;
+	    		});
+	    		console.log("selectedWithFileSystem", selectedWithFileSystem)
+	    		selectedWithFileSystem.then((result) => {
+	    			console.log("RESULT :", result);
+	    			this.setState(prevState => ({
+		    			selectedImages: [ ...prevState.selectedImages, { source: { uri: element.path }, mime: element.mime, filename: element.filename, base64: result } ]
+		    		}))
+	    		})
 	    	}
 	    	this.setState({
 	    		display: true

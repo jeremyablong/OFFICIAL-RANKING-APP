@@ -36,6 +36,7 @@
     "mongoose": "^5.9.19",
     "nodemon": "^2.0.4",
     "path": "^0.12.7",
+    "paypal-rest-sdk": "^1.8.1",
     "pdf2json": "^1.2.0",
     "pusher": "^3.0.1",
     "request": "^2.88.2",

@@ -29,6 +29,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 		const generatedID = uuidv4();
 
+		const mugshotUUID = uuidv4();
+
 		if (req.body.phoneNumber) {
 			console.log(req.body);
 
@@ -40,10 +42,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				birthdate,
 				base64,
 				hometown,
-				username
+				username, 
+				base64MUGSHOT
 	        } = req.body;
 
 	        const bufferImage = new Buffer(base64.replace(/^data:image\/\w+;base64,/, ""),'base64');
+
+	        const bufferImageTwo = new Buffer(base64MUGSHOT.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
 			const newUser = new User({
 			    fullName: fullName.trim(),
@@ -66,7 +71,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					heart: 0,
 					angry: 0,
 					sad: 0
-				}
+				},
+				base64MUGSHOT: mugshotUUID
 			});
 
 			const collection = db.collection("users");
@@ -107,11 +113,23 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						     console.log(err);
 						  }
 						  console.log(data);
-						  	res.json({
-								message: "Successfully registered!",
-								data: doc,
-								image: generatedID
-							})
+						  	s3.putObject({
+							  Body: bufferImageTwo,
+							  Bucket: "rating-people",
+							  Key: mugshotUUID,
+							  ContentEncoding: 'base64'
+							}
+							, (errorr, dataaa) => {
+							  if (errorr) {
+							     console.log(errorr);
+							  }
+							  console.log(dataaa);
+							  	res.json({
+									message: "Successfully registered!",
+									data: doc,
+									image: generatedID
+								})
+							});
 						});
 						
 					})
@@ -133,10 +151,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				birthdate,
 				base64,
 				hometown,
-				username
+				username, 
+				base64MUGSHOT
 	        } = req.body;
 
 	        const bufferImage = new Buffer(base64.replace(/^data:image\/\w+;base64,/, ""),'base64');
+
+	        const bufferImageTwo = new Buffer(base64MUGSHOT.replace(/^data:image\/\w+;base64,/, ""),'base64');
 
 			const newUser = new User({
 			    fullName: fullName.trim(),
@@ -159,7 +180,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					heart: 0,
 					angry: 0,
 					sad: 0
-				}
+				},
+				base64MUGSHOT: mugshotUUID
 			});
 
 			console.log("username :", username, "email", email);
@@ -199,12 +221,26 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						     console.log(err);
 						  }
 						  console.log(data);
-						  	res.json({
-								message: "Successfully registered!",
-								data: doc,
-								image: generatedID
-							})
+						  	s3.putObject({
+							  Body: bufferImageTwo,
+							  Bucket: "rating-people",
+							  Key: mugshotUUID,
+							  ContentEncoding: 'base64'
+							}
+							, (errorr, dataaa) => {
+							  if (errorr) {
+							     console.log(errorr);
+							  }
+							  console.log(dataaa);
+							  	res.json({
+									message: "Successfully registered!",
+									data: doc,
+									image: generatedID
+								})
+							});
 						});
+
+
 					})
 				}
 			}).catch((err) => {

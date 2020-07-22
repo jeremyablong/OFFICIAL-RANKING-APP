@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,11 +9,13 @@ import {
   Image,
   Alert, 
   ImageBackground, 
-  Dimensions
+  Dimensions, 
+  TouchableOpacity
 } from 'react-native';
 import axios from "axios";
 import { connect } from "react-redux";
 import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText } from 'native-base';
+import SurfaceDisplay from "../../gl-react-native/surface.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -30,48 +32,44 @@ constructor(props) {
    console.log("handle submission...");
    this.props.navigation.navigate(route);
   }
-
   render() {
     return (
     <>
-        <Header>
-          <Left>
-          </Left>
-          <Body>
-            <Title>Homepage</Title>
-          </Body>
-          <Right>
-            <NativeButton hasText transparent>
-              <NativeText>help?</NativeText>
-            </NativeButton>
-          </Right>
-        </Header>
-      <ImageBackground source={require("../../../assets/images/modern.jpg")} style={styles.background}>
-      <View style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', padding: 10, marginBottom: 30 }}>
-        <Text style={{ marginBottom: 14, fontWeight: "bold", fontSize: 24, color: "white", textAlign: "center" }}>What would you like to do?</Text>
-      </View>
-        <View style={styles.inputContainerCustom}>
+      <Fragment>
+      <SurfaceDisplay height={height - 250} />
+      
+          <View style={{ justifyContent: "center", alignItems: "center", alignContent: "center", backgroundColor: "black", height: 250 }}>
+            <View ref={ref => this.viewReference = ref} style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)', padding: 10, marginBottom: 30 }}>
+              <Text style={{ marginBottom: 14, fontWeight: "bold", fontSize: 24, color: "white", textAlign: "center" }}>What would you like to do?</Text>
+              <TouchableOpacity onPress={() => {
+                this.props.navigation.navigate("login");
+              }}><Text style={{ color: "white", textAlign: "center" }}>Already have an account?</Text></TouchableOpacity>
+            </View>
+            <View style={styles.inputContainerCustom}>
 
-          <TouchableHighlight style={[styles.buttonContainerTwo, styles.loginButtonTwo]} onPress={() => {
-            this.setState({
-              route: "login"
-            }, () => {
-              this.handleSubmission(this.state.route);
-            })
-          }}>
-            <Text style={styles.loginText}>SIGN-IN</Text>
-          </TouchableHighlight>
-             <TouchableHighlight style={[styles.buttonContainerTwo, styles.loginButtonTwo]} onPress={() => {
-              this.setState({
-                route: "sign-up"
-              }, () => {
-                this.handleSubmission(this.state.route);
-              })
-             }}>
-            <Text style={styles.loginText}>SIGN-UP</Text>
-          </TouchableHighlight>
-        </View>
-      </ImageBackground>
+                <TouchableHighlight style={[styles.buttonContainerTwo, styles.loginButtonTwo]} onPress={() => {
+                  this.setState({
+                    route: "login"
+                  }, () => {
+                    this.handleSubmission(this.state.route);
+                  })
+                }}>
+                  <Text style={styles.loginText}>SIGN-IN</Text>
+                </TouchableHighlight>
+                   <TouchableHighlight style={[styles.buttonContainerTwo, styles.loginButtonTwo]} onPress={() => {
+                    this.setState({
+                      route: "sign-up"
+                    }, () => {
+                      this.handleSubmission(this.state.route);
+                    })
+                   }}>
+                  <Text style={styles.loginText}>SIGN-UP</Text>
+                </TouchableHighlight>
+            </View>
+          </View>
+ 
+         
+      </Fragment>
     </>
     );
   }

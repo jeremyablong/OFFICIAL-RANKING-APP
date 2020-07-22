@@ -18,8 +18,18 @@ const nodeAddress = uuidv4().split("-").join("");
 // !important stuff...
 const PORT = process.env.PORT || 5000;
 const mongoDB = require("./config/db.js");
+const paypal = require("paypal-rest-sdk");
 
 mongoDB();
+
+paypal.configure({
+    mode: "sandbox", //sandbox or live
+    client_id:
+        "AXePa0bR0DgSMIh8yphFqnY4i45QQ1KaY8jgG2hYX-WrKXwPvRDLi09DaarchpIFMVg68GTsws-9zCMo",
+    client_secret:
+        "EFGL6IiWX96C8GioXm6yyIsXRUXch_32KxoVismUz51-QTBFAGdvJr5TD7lBG936L0R6aV195EnMJJMu"
+});
+
 
 app.use('*', cors());
 
@@ -70,7 +80,9 @@ app.use("/accept/friend/request", require("./routes/friends/respond/acceptFriend
 app.use("/reaction/individual/message", require("./routes/messages/reaction/reactToMessage.js"));
 app.use("/mark/notification/viewed", require("./routes/notifications/viewed.js"));
 app.use("/decline/friend/request", require("./routes/friends/respond/declineFriendRequest.js"));
-
+app.use("/paypal", require("./routes/paypal/payment.js"));
+app.use("/cancel", require("./routes/paypal/cancel.js"));
+app.use("/success", require("./routes/paypal/success.js"));
 
 
 app.get("/blockchain", (req, res) => {

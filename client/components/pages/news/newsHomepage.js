@@ -21,6 +21,7 @@ import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import axios from "axios";
 import moment from "moment";
+import ProgressiveImage from "../../image/image.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -96,7 +97,7 @@ constructor(props) {
 				  </Right>
 				</Header>
 				<ScrollView style={styles.background}>
-					<ScrollView style={{ flex: 1, flexDirection: "row", margin: 15 }} showsHorizontalScrollIndicator={false} horizontal={true}>
+					<ScrollView style={{ flex: 1, flexDirection: "row" }} showsHorizontalScrollIndicator={false} horizontal={true}>
 						<NativeButton onPress={() => {
 							this.handleChangeSearch("entertainment");
 						}} style={styles.roundedBtn} transparent textStyle={{color: '#87838B'}}>
@@ -153,8 +154,8 @@ constructor(props) {
 							              </Left>
 							            </CardItem>
 							            <CardItem>
-							              <Body>
-							                <Image resizeMode={"cover"} source={{uri: source.urlToImage }} style={{height: height * 0.40, width: width * 0.90, flex: 1}}/>
+							              <Body style={{ flex: 1 }}>
+							                <ProgressiveImage  resizeMode={"cover"} source={{uri: source.urlToImage }} style={{height: height * 0.40, maxHeight: height * 0.40, width: width * 0.93, flex: 1}}/>
 							                <NativeText>
 							                  {source.content ? source.content.slice(0, 225) : "---------"}
 							                </NativeText>

@@ -10,6 +10,8 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -57,7 +59,7 @@
 		<string>com.transistorsoft.customtask</string>
 	</array>
 	<key>NSMotionUsageDescription</key>
-	<string>We detect when you&apos;re moving or not moving to conserve your phone battery life</string>
+	<string>We detect when you're moving or not moving to conserve your phone battery life</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need to access your camera to upload pictures to your account</string>
 	<key>UIAppFonts</key>

@@ -10,13 +10,17 @@ import {
   Image,
   Alert, 
   ImageBackground, 
-  Dimensions
+  Dimensions, 
+  ScrollView
 } from 'react-native';
 import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText } from 'native-base';
 import axios from "axios";
 import { authenticated } from "../../../actions/auth/auth.js";
 import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import PhotoUpload from 'react-native-photo-upload';
+import RBSheet from "react-native-raw-bottom-sheet";
+import LoadingLoading from "../../loader/loader.js";
 
 const { width, height } = Dimensions.get("window");
 
@@ -28,21 +32,26 @@ constructor(props) {
   	phoneNumber: "",
   	email: "",
   	password: "",
-  	showEmail: false
+  	showEmail: false,
+  	base64MUGSHOT: "",
+  	show: true
   };
 }
 	handleSubmission = () => {
 		console.log("handle submission...");
 		
-		if (this.state.email.length > 0 && this.state.password.length > 0 && this.state.phoneNumber.length === 0) {
+		if (this.state.email.length > 0 && this.state.password.length > 0 && this.state.base64MUGSHOT.length > 0 && this.state.phoneNumber.length === 0) {
 			
 			const { email, password } = this.state;
 
 			console.log("email RAN.");
 
+			this.RBSheet.open();
+
 			axios.post("http://recovery-social-media.ngrok.io/login", {
 	          email,
-	          password
+	          password,
+	          confirmationPhoto: this.state.base64MUGSHOT
 	        }).then((res) => {
 	          console.log("YYYYYYY :", res.data);
 	          if (res.data.message === "User could NOT be found...") {
@@ -51,7 +60,7 @@ constructor(props) {
 	          }
 	          if (res.data.message === "User FOUND!") {
 
-	          	const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+	          	const picture = res.data.user.base64MUGSHOT;
 
 	          	const config = {
           			headers: {
@@ -62,37 +71,54 @@ constructor(props) {
 
           		// api key - 5f09ef175b54a106df315f75
 
-	   //        	const conversion = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
-				// axios.post("http://facexapi.com/compare_faces", {
-				// 	img_1: "https://s3.us-west-1.wasabisys.com/rating-people/08a97ce9-3b09-4fb3-b313-ca2e0bffe380",
-				// 	img_2: "https://s3.us-west-1.wasabisys.com/rating-people/0996eeff-5e4f-452f-a554-6f0da12c9b03"
-				// }, config).then((res) => {
-	   //        		console.log("majestical :", res.data);
-	   //        	}).catch((err) => {
-	   //        		console.log(err);
-	   //        	})
+	          	const conversion = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
 
-	          	this.props.authenticated(res.data.user);
-	          	this.props.navigation.navigate("dashboard");
+	          	const currentPhoto = `https://s3.us-west-1.wasabisys.com/rating-people/${res.data.image}`;
+	          	
+				axios.post("http://facexapi.com/compare_faces", {
+					img_1: conversion,
+					img_2: currentPhoto
+				}, config).then((resolution) => {
+	          		console.log("majestical :", resolution.data);
+	          		if (Number(resolution.data.data.confidence) >= 0.55) {
+	          			this.RBSheet.close();
+						this.props.authenticated(res.data.user);
+	          			this.props.navigation.navigate("dashboard");
+	          		} else {
+	          			alert("We could not identify your account because your photo does not match the verfication photo in our records.")
+	          		}
+	          	}).catch((err) => {
+	          		console.log(err);
+	          	})
+
+	          	// this.props.authenticated(res.data.user);
+	          	// this.props.navigation.navigate("dashboard");
 	          
 	          } else if (res.data.message === "Password/email did match our records...") {
-	          	alert(res.data.message);
+	          	this.RBSheet.close();
+	          	setTimeout(() => {
+					alert(res.data.message);
+	          	}, 1500)
 	          }
 	        }).catch((err) => {
 	          console.log(err);
 	        })
-		} else if (this.state.password.length > 0 && this.state.phoneNumber.length > 0 && this.state.email.length === 0) {
+		} else if (this.state.password.length > 0 && this.state.phoneNumber.length > 0 && this.state.base64MUGSHOT.length > 0 && this.state.email.length === 0) {
 			
 			const { phoneNumber, password } = this.state;
 
 			const output = phoneNumber.replace(/[^\d]/g, "");
 
+			this.RBSheet.open();
+
 			console.log("phoneNumber RAN.")
 			axios.post("http://recovery-social-media.ngrok.io/login", {
 	          phoneNumber: output,
-	          password
+	          password,
+	          confirmationPhoto: this.state.base64MUGSHOT
 	        }).then((res) => {
 	          console.log("YYYYY :", res.data);
+
 	          if (res.data.message === "User FOUND!") {
 
 	          	const config = {
@@ -100,37 +126,44 @@ constructor(props) {
           				"Content-Type": "application/json",
           				"user_id": "5f09ef175b54a106df315f75"
           			}
-          		}
+          		};
+
+          		const picture = res.data.user.base64MUGSHOT;
 
 	          	const conversion = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
 
-				// axios.post("http://facexapi.com/compare_faces", {
-				// 	img_1: "https://s3.us-west-1.wasabisys.com/rating-people/08a97ce9-3b09-4fb3-b313-ca2e0bffe380",
-				// 	img_2: "https://s3.us-west-1.wasabisys.com/rating-people/0996eeff-5e4f-452f-a554-6f0da12c9b03"
-				// }, config).then((res) => {
-	   //        		console.log("majestical :", res.data);
-	   //        	}).catch((err) => {
-	   //        		console.log(err);
-	   //        	})
-	          	// axios.post("http://recovery-social-media.ngrok.io/add-face").then((res) => {
-	          	// 	console.log("majestical :", res.data);
-	          		// this.props.authenticated(res.data.user);
-	          		// this.props.navigation.navigate("verify-identity");
-	          	// }).catch((err) => {
-	          	// 	console.log(err);
-	          	// })
+	          	const currentPhoto = `https://s3.us-west-1.wasabisys.com/rating-people/${res.data.image}`;
 
-	          	this.props.authenticated(res.data.user);
-	          	this.props.navigation.navigate("dashboard");
+				axios.post("http://facexapi.com/compare_faces", {
+					img_1: conversion, 
+					img_2: currentPhoto
+				}, config).then((resolution) => {
+	          		console.log("majestical :", resolution.data);
+	          		if (Number(resolution.data.data.confidence) >= 0.55) {
+	          			this.RBSheet.close();
+						this.props.authenticated(res.data.user);
+	          			this.props.navigation.navigate("dashboard");
+	          		} else {
+	          			alert("We could not identify your account because your photo does not match the verfication photo in our records.")
+	          		}
+	          	}).catch((err) => {
+	          		console.log(err);
+	          	})
+
+	          	// this.props.authenticated(res.data.user);
+	          	// this.props.navigation.navigate("dashboard");
 	          	
 	          } else if (res.data.message === "Password/email did match our records...") {
-	          	alert(res.data.message);
+	          	this.RBSheet.close();
+	          	setTimeout(() => {
+					alert(res.data.message);
+	          	}, 1500)
 	          }
 	        }).catch((err) => {
 	          console.log(err);
 	        })
 		} else {
-			alert("Please fill out both fields.");
+			alert("Please fill out all three fields.");
 		}
 	}
 	render() {
@@ -154,32 +187,40 @@ constructor(props) {
           </Right>
         </Header>
 			<ImageBackground style={styles.container} source={require("../../../assets/images/bloom.jpg")}>
-			 <View style={styles.overlay}>	
+			 <ScrollView contentContainerStyle={{ justifyContent: "center", alignItems: "center", paddingTop: 100, paddingBottom: 100 }} style={styles.overlay}>	
 				{this.state.showEmail === true ? <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5 }}>Email Address</Text><View style={styles.inputContainer}>
 		          <TouchableOpacity onPress={() => {
 		          	this.setState({
 		          		showEmail: !this.state.showEmail,
-		          		email: ""
+		          		email: "",
+		          		password: ""
 		          	})
 		          }}><Image style={styles.inputIcon} source={require("../../../assets/icons/mail.png")}/></TouchableOpacity>
-		          <TextInput style={styles.inputs}
+		          <TextInput style={styles.inputs} 
+		          	  value={this.state.email}
+		          	  placeholderTextColor="black"
 		              placeholder="Enter Your Email Address..."
 		              underlineColorAndroid='transparent'
 		              onChangeText={(email) => this.setState({
 		                email
-		              })}/>
+		          })}/>
 		        </View><TouchableOpacity onPress={() => {
 		          this.setState({
-		            showEmail: false
+		            showEmail: false,
+		            email: "",
+		          	password: ""
 		          })
 		        }}><Text style={{ textAlign: "left", fontSize: 15, color: "white", fontWeight: "bold", textDecorationLine: "underline", paddingBottom: 5, paddingLeft: 5, marginTop: -7, paddingBottom: 5 }}><Image style={{ width: 20, height: 20, tintColor: "white" }} source={require("../../../assets/icons/select.png")}/>Use phone number instead</Text></TouchableOpacity></Fragment> : <Fragment><Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingLeft: 5, paddingTop: 7, paddingBottom: 5}}>Phone Number</Text><View style={styles.inputContainer}>
 		          <TouchableOpacity onPress={() => {
 		          	this.setState({
 		          		showEmail: !this.state.showEmail,
-		          		phoneNumber: ""
+		          		phoneNumber: "",
+		          		password: ""
 		          	})
 		          }}><Image style={styles.inputIcon} source={require("../../../assets/icons/phone.png")}/></TouchableOpacity>
-		          <TextInput style={styles.inputs}
+		          <TextInput style={styles.inputs} 
+		          	  value={this.state.phoneNumber}
+		          	  placeholderTextColor="black"
 		              placeholder="Enter Your Phone Number..."
 		              underlineColorAndroid='transparent'
 		              onChangeText={(phoneNumber) => this.setState({
@@ -188,29 +229,76 @@ constructor(props) {
 		        </View></Fragment>}
 		        {this.state.showEmail === false ? <TouchableOpacity onPress={() => {
 		          this.setState({
-		            showEmail: true
+		            showEmail: true,
+		            phoneNumber: "",
+		          	password: ""
 		          })
 		        }}><Text style={{ textAlign: "left", fontSize: 15, color: "white", fontWeight: "bold", textDecorationLine: "underline", paddingBottom: 5, paddingLeft: 5, marginTop: -7, paddingBottom: 5 }}><Image style={{ width: 20, height: 20, tintColor: "white" }} source={require("../../../assets/icons/select.png")}/>Use email instead</Text></TouchableOpacity> : null}
 		        <Text style={{ textAlign: "center", fontSize: 24, color: "white", fontWeight: "bold", paddingBottom: 10 }}>Password</Text>
 		        <View style={styles.inputContainer}>
 
-		          <Image style={styles.inputIcon} source={require("../../../assets/icons/login.png")}/>
-		          <TextInput style={styles.inputs}
+		          <TouchableOpacity onPress={() => {
+		          	this.setState({
+		          		show: !this.state.show
+		          	})
+		          }}><Image style={styles.inputIcon} source={require("../../../assets/icons/login.png")}/></TouchableOpacity>
+		          <TextInput style={styles.inputs}  
+		          	  value={this.state.password}
+		          	  placeholderTextColor="black"
 		              placeholder="Enter Your Password..." 
-		              secureTextEntry={true}
+		              secureTextEntry={this.state.show}
 		              underlineColorAndroid='transparent'
 		              onChangeText={(password) => this.setState({
 		                password
 		              })}/>
 		        </View>
-			 
+			 	<PhotoUpload
+				   onPhotoSelect={avatar => {
+				     if (avatar) {
+				       console.log('Image base64 string: ', avatar);
+				       this.setState({
+				        base64MUGSHOT: avatar
+				       })
+				     }
+				   }}
+				   imagePickerProps={{
+				    chooseFromLibraryButtonTitle: null 
+				  }}
+				 >
+				   <Image
+				     style={{
+				       paddingVertical: 30,
+				       width: 150,
+				       height: 150,
+				       borderRadius: 75
+				     }}
+				     resizeMode='cover'
+				     source={require("../../../assets/images/headshot.jpg")}
+				   />
+				</PhotoUpload>
 			 <TouchableHighlight style={[styles.buttonContainer, styles.signupButton]} onPress={() => {
 	          this.handleSubmission();
 	        }}>
 	          <Text style={styles.signUpText}>Sign in</Text>
 	        </TouchableHighlight>
-	        </View>
+	        </ScrollView>
 		    </ImageBackground>
+		    <RBSheet
+	          ref={ref => {
+	            this.RBSheet = ref;
+	          }}
+	          height={height}
+	          openDuration={250}
+	          customStyles={{
+	            container: {
+	              justifyContent: "center",
+	              alignItems: "center",
+	              backgroundColor: "white"
+	            }
+	          }}
+	        >
+	          <LoadingLoading />
+	        </RBSheet>
 		</React.Fragment>
 		)
 	}
@@ -228,9 +316,7 @@ const styles = StyleSheet.create({
   	backgroundColor: 'rgba(0, 0, 0, 0.6)', 
   	width: width * 0.90, 
   	height: height * 0.80, 
-  	flex: 1, 
-  	justifyContent: 'center', 
-  	alignItems: 'center'
+  	flex: 1
   },
   inputContainer: {
       backgroundColor: '#FFFFFF',
@@ -249,6 +335,7 @@ const styles = StyleSheet.create({
       marginLeft:16,
       borderBottomColor: '#FFFFFF',
       flex:1,
+      color: "black"
   },
   inputIcon:{
     width:30,
@@ -264,6 +351,7 @@ const styles = StyleSheet.create({
     marginBottom:20,
     width:250,
     borderRadius:30,
+    marginTop: 30
   },
   signupButton: {
     backgroundColor: "white",

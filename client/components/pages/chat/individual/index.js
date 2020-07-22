@@ -540,16 +540,16 @@ class MessageIndividual extends Component {
     return (
 
       <View style={{ flex: 1 }}>
-        <Header>
+        <Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
           <Left>
             <NativeButton onPress={() => {
               this.props.navigation.navigate("chat-users");
             }} hasText transparent>
-              <NativeText>Back</NativeText>
+              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Back</NativeText>
             </NativeButton>
           </Left>
           <Body>
-           {user !== null ? <Title>{user.username === this.props.username ? this.props.route.params.user.author : this.props.route.params.user.author}</Title> : null}
+           {user !== null ? <Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{user.username === this.props.username ? this.props.route.params.user.author : this.props.route.params.user.author}</Title> : null}
           </Body>
           <Right>
             <NativeButton onPress={() => {
@@ -558,7 +558,7 @@ class MessageIndividual extends Component {
             		modalIsVisible: true
             	})
             }} hasText transparent>
-             	<NativeText>Report?</NativeText>
+             	<NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Report?</NativeText>
             </NativeButton>
           </Right>
           {this.renderSockets()}

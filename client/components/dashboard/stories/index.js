@@ -42,9 +42,9 @@ constructor(props) {
     picture: null
   };
 }
-	clickEventListener = () => {
+	redirectPath = () => {
 		console.log("clicked.");
-    this.props.navigation.navigate("story-individual");
+    this.props.navigation.navigate("stories-review-show");
 	}
   componentDidMount() {
     const URL = "http://recovery-social-media.ngrok.io";
@@ -64,6 +64,7 @@ constructor(props) {
   } 
   createStory = () => {
     console.log("create story...");
+    this.props.navigation.navigate("create-story-feed");
   }
 	render() {
     console.log("dis state... :", this.state);
@@ -93,7 +94,7 @@ constructor(props) {
 				        renderItem={({ item }) => {
 							return (
 								<TouchableOpacity style={styles.card} onPress={() => {
-									this.clickEventListener(item)
+									this.redirectPath(item)
 								}}>
                 
 								<ImageBackground imageStyle={{ borderRadius: 25 }} style={this.props.dark_mode ? styles.darkModeBackground : styles.backBack} source={{ uri: item.picture }}>
@@ -107,7 +108,7 @@ constructor(props) {
 		                    
 		                    {/*<Text style={styles.position}>{item.position}</Text>*/}
 		                    <TouchableOpacity style={styles.followButton} onPress={() => {
-		                    	this.clickEventListener(item)
+		                    	this.redirectPath(item)
 		                    }}>
 		                      <Text style={styles.followButtonText}>View</Text>  
 		                    </TouchableOpacity>
@@ -222,15 +223,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   cardTwo: {
-    shadowColor: 'black',
-    shadowOffset: {
-      width: 0,
-      height: 6,
-    },
-    borderRadius: 25,
-    shadowOpacity: 0.87,
-    shadowRadius: 7.49,
-    elevation: 22,
+   
     height: 200,
     marginVertical: 5,
     flexBasis: '46%',

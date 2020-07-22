@@ -46,7 +46,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					// push images into array to add to mongodb datebase post later in file
 					pictures.push(image.key);
 
-					const bufferImage = new Buffer(image.base64.replace(/^data:image\/\w+;base64,/, ""),'base64');
+					console.log("image.base64 :", image.base64);
+
+					const bufferImage = new Buffer(image.base64,'base64');
 					
 					s3.putObject({
 					  Body: bufferImage,
@@ -103,7 +105,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 					// push images into array to add to mongodb datebase post later in file
 					pictures.push(image.key);
 
-					const bufferImage = new Buffer(image.base64.replace(/^data:image\/\w+;base64,/, ""),'base64');
+					const bufferImage = new Buffer(image.base64,'base64');
 					
 					s3.putObject({
 					  Body: bufferImage,

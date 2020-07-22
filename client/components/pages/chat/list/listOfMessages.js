@@ -217,16 +217,16 @@ constructor(props) {
 		console.log(this.state);
 		return (
 			<Fragment>
-				<Header>
+				<Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 		          <Left>
 		            <NativeButton onPress={() => {
 		              this.props.navigation.navigate("dashboard");
 		            }} hasText transparent>
-		              <Image style={{ width: 35, height: 35, marginBottom: 10 }} source={require("../../../../assets/icons/construction.png")}/>
+		              <Image style={this.props.dark_mode ? { width: 35, height: 35, marginBottom: 10, tintColor: "white" } : { width: 35, height: 35, marginBottom: 10 }} source={require("../../../../assets/icons/construction.png")}/>
 		            </NativeButton>
 		          </Left>
 		          <Body>
-		            <Title>Message List</Title>
+		            <Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Message List</Title>
 		          </Body>
 		          <Right>
 		            <NativeButton onPress={() => {
@@ -235,7 +235,7 @@ constructor(props) {
 		            		modalIsVisible: true
 		            	})
 		            }} hasText transparent>
-		             	<NativeText>Report?</NativeText>
+		             	<NativeText style={this.props.dark_mode ? { color: "white" } : null}>Report?</NativeText>
 		            </NativeButton>
 		          </Right>
 		        </Header>
@@ -289,37 +289,37 @@ constructor(props) {
 							/>{this.renderList()}</Fragment> : <Loading />}
 				</List>
 				</ScrollView>
-				<Footer>
-		          <FooterTab>
-		            <NativeButton onPress={() => {
-		            	this.props.navigation.navigate("dashboard");
-		            }}>
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/home-run.png")} />
-		            </NativeButton>
-		            <NativeButton onPress={() => {
-		            	this.props.navigation.navigate("notifications");
-		            }}>
-		            	<Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
-		               <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
-		            </NativeButton>
-		            <NativeButton onPress={() => {
-		            	this.props.navigation.navigate("dashboard");
-		            }} active>
-		              <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
-		            </NativeButton>
-		            <NativeButton onPress={() => {
-		            	this.props.navigation.navigate("public-wall");
-		            }}>
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/wall.png")} />
-		            </NativeButton>
-		            <NativeButton onPress={() => {
-			            	this.props.navigation.navigate("profile-settings");
-			            }}>
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/list.png")} />
-		            </NativeButton>
-		          </FooterTab>
-	        	</Footer>
+					<Footer style={this.props.dark_mode ? { backgroundColor: "black" } : {  }}>
+			          <FooterTab>
+			            <NativeButton onPress={() => {
+				            	this.props.navigation.navigate("dashboard");
+				            }}>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/home-run.png")} />
+			            </NativeButton>
+			            <NativeButton onPress={() => {
+				            	this.props.navigation.navigate("notifications");
+				            }}>
+				            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
+			               <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
+			            </NativeButton>
+			            <NativeButton active onPress={() => {
+				            	this.props.navigation.navigate("chat-users");
+				            }}>
+				          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "black" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
+			            </NativeButton>
+			            <NativeButton onPress={() => {
+				            	this.props.navigation.navigate("public-wall");
+				            }}>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/wall.png")} />
+			            </NativeButton>
+		              <NativeButton onPress={() => {
+		                  this.props.navigation.navigate("profile-settings");
+		                }}>
+		                <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/list.png")} />
+		              </NativeButton>
+			          </FooterTab>
+			        </Footer>
 			</Fragment>
 		)
 	}

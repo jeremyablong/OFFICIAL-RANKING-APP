@@ -240,7 +240,7 @@ constructor(props) {
 			              </Left>
 			            </CardItem>
 			            <CardItem cardBody style={this.props.dark_mode ? { flex: 1, backgroundColor: "black" } : { flex: 1 }}>
-			              {post.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20 }}>{post.text}</NativeText> : null}
+			              {post.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20, marginBottom: 60 }}>{post.text}</NativeText> : null}
 			            </CardItem>
 			            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 							{post.images ? <View style={this.props.dark_mode ? styles.containerDark : styles.container}>
@@ -261,15 +261,15 @@ constructor(props) {
 			            </CardItem>
 			            <Footer style={{ width: width * 0.99 }}>
 				          <FooterTab>
-				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white" }} onPress={() => {
+				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }} onPress={() => {
 				            	this.likePost();
 				            }}>
 				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Like</NativeText>
 				            </NativeButton>
-				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white" }}>
+				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
 				              <NativeText style={this.props.dark_mode ? { color: "white", marginLeft: 6 } : { color: "black" }}>Comment</NativeText>
 				            </NativeButton>
-				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white" }}>
+				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
 				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Share</NativeText>
 				            </NativeButton>
 				          </FooterTab>

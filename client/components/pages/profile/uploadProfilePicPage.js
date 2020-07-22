@@ -68,7 +68,7 @@ constructor(props) {
 		console.log("this.state :", this.state);
 		return (
 			<Fragment>
-				<Header>
+				<Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 		          <Left>
 		            <NativeButton onPress={() => {
 		              if (this.props.route.params.publicProfile === true) {
@@ -77,18 +77,18 @@ constructor(props) {
 		              	this.props.navigation.navigate("profile-individual");
 		              }
 		            }} hasText transparent>
-		             <NativeText>Back</NativeText>
+		             <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Back</NativeText>
 		            </NativeButton>
 		          </Left>
 		          <Body>
-		            <Title>Profile Picture</Title>
-		          </Body>
+		            <Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Profile Picture</Title>
+		          </Body> 
 		          <Right>
 		            <NativeButton onPress={() => {
 		            	console.log("clicked chat...");
 		            	this.props.navigation.navigate("chat-users");
 		            }} hasText transparent>
-		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/chat.png")}/>
+		              <Image style={this.props.dark_mode ? { width: 45, height: 45, marginBottom: 10, tintColor: "white" } : { width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/chat.png")}/>
 		            </NativeButton>
 		          </Right>
 		        </Header>
@@ -113,7 +113,7 @@ constructor(props) {
 					 </PhotoUpload>
 					 <View style={styles.container}>
 				        <View style={styles.inputContainer}>
-				          <TextInput value={this.state.title} style={styles.inputs}
+				          <TextInput placeholderTextColor={"black"} value={this.state.title} style={styles.inputs}
 				              placeholder="Enter your title... (REQUIRED)"
 				              underlineColorAndroid='transparent'
 				              onChangeText={(title) => {
@@ -125,7 +125,7 @@ constructor(props) {
 				        </View>
 				        
 				        <View style={styles.inputContainer}>
-				          <TextInput value={this.state.description} style={styles.inputs}
+				          <TextInput placeholderTextColor={"black"} value={this.state.description} style={styles.inputs}
 				              placeholder="Enter your post description... (NOT required)"
 				              underlineColorAndroid='transparent'
 				              onChangeText={(description) => {
@@ -144,29 +144,35 @@ constructor(props) {
 				      </View>
 				</ImageBackground>
 				<View style={{ position: "absolute", bottom: 0, width: width }}>
-					<Footer>
+					<Footer style={this.props.dark_mode ? { backgroundColor: "black" } : {  }}>
 			          <FooterTab>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("dashboard");
 				            }}>
-			              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/home-run.png")} />
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/home-run.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
-				            	this.props.navigation.navigate("dashboard");
+				            	this.props.navigation.navigate("notifications");
 				            }}>
-			               <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/sport-team.png")} />
+				            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
+			               <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/notification.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("chat-users");
 				            }}>
-				            <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
-			              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/mail-three.png")} />
+				          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/mail-three.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("public-wall");
 				            }}>
-			              <Image style={{ width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
 			            </NativeButton>
+		              <NativeButton onPress={() => {
+		                  this.props.navigation.navigate("profile-settings");
+		                }}>
+		                <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/list.png")} />
+		              </NativeButton>
 			          </FooterTab>
 			        </Footer>
 				</View>
@@ -228,6 +234,7 @@ const styles = StyleSheet.create({
     marginLeft:16,
     borderBottomColor: '#FFFFFF',
     flex:1,
+    color: "black"
   },
   inputIcon:{
     width:30,
@@ -286,8 +293,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => {
 	return {
-		username: state.auth.authenticated.username
+		username: state.auth.authenticated.username,
+		dark_mode: state.mode.dark_mode
 	}
 }
+
 
 export default connect(mapStateToProps, {  })(UploadProfilePicPage);

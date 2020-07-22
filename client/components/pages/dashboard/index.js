@@ -229,7 +229,7 @@ constructor(props) {
       />
     </Animated.View>
    
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={this.props.dark_mode ? { flex: 1, backgroundColor: "black" } : { flex: 1, backgroundColor: "white" }}>
       <ScrollView onScroll={this.onScroll}>
         {this.renderContent()}
       </ScrollView>

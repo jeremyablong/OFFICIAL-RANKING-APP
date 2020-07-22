@@ -15,6 +15,7 @@ import {
   FlatList
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Card, CardItem, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
+const TrackPlayer = require("react-native-track-player");
 import { connect } from "react-redux";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import PhotoUpload from 'react-native-photo-upload';
@@ -26,11 +27,13 @@ import NavigationDrawer from "../../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import ProgressiveImage from "../../../image/image.js";
 import Modal from 'react-native-modal';
+ 
+ 
 
 const { width, height } = Dimensions.get("window");
-
+ 
 const URL = "http://recovery-social-media.ngrok.io";
-
+ 
 class PublicWall extends React.Component {
 constructor(props) {
   super(props);
@@ -40,18 +43,19 @@ constructor(props) {
 	cover: null,
 	user: null,
 	ready: false,
-	isOpen: false,
+	isOpen: false,   
 	posts: [],
 	countFrom: 5,
     conditionalRender: false,
 	modalImageValue: null,
-	showModal: false
-  };
-
-
+	showModal: false,
+	playing: false
+  };  
+    
+  
 } 
 	componentDidMount() {
-		
+
 		axios.post(`${URL}/get/user/by/username`, {
           username: this.props.username
         }).then((res) => {
@@ -81,11 +85,37 @@ constructor(props) {
           	this.setState({
           		ready: true
           	})
-          }
+          }  
         }).catch((err) => {
           console.log(err);
-        });        
+        });         
 	}
+	start = async () => {
+		console.log("pressed...");
+		if (TrackPlayer) {
+			this.setState({
+				playing: !this.state.playing
+			}, async () => {
+				if (this.state.playing === true) {
+					// Set up the player
+				    await TrackPlayer.setupPlayer();
+
+				    // Add a track to the queue
+				    await TrackPlayer.add({
+				        id: 'trackId',
+				        url: require("../../../../assets/music/tom.mp3"),
+				        title: 'Track Title',
+				        artist: 'Track Artist'
+				    });
+
+				    // Start playing it
+				    await TrackPlayer.play();
+				} else {
+					TrackPlayer.stop();
+				}
+			})
+		}
+	};
 	uploadCoverPhoto = () => { 
 		
 		const { avatar } = this.state;
@@ -119,29 +149,29 @@ constructor(props) {
 	          }
 	        }).catch((err) => {
 	          console.log(err);
-	        })
+	        }) 
 		}
-	}
+	} 
 	handleRerender = () => {
 		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
           username: this.props.username
         }).then((res) => {
           console.log(res.data);
           if (res.data.message === "FOUND user!") {
-          	this.setState({
+          	this.setState({ 
           		user: res.data.user,
           		ready: true
-          	})
+          	}) 
           }
         }).catch((err) => {
           console.log(err);
         })
-	}
+	} 
 	redirectUser = () => {
 		this.props.navigation.navigate("profile-pic-view", { user: this.state.user });
 	}
 	renderOne = (images) => {
-	    const {countFrom} = this.state;
+	    const {countFrom} = this.state;  
 	    return(
 	      <View style={styles.row}>
 	        <TouchableOpacity style={[styles.imageContent, styles.imageContent1]} onPress={() => {
@@ -158,22 +188,6 @@ constructor(props) {
 			modalImageValue: imageUrl,
 			showModal: true
 		})
-	}
-	renderModal = () => {
-		return (
-			<Modal isVisible={this.state.showModal}>
-	          <View style={styles.modalView}>
-	            <ProgressiveImage source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.modalImageValue}` }} style={{ width: width - 75, height: height * 0.60 }} />
-	            <NativeButton onPress={() => {
-	            	this.setState({
-	            		showModal: false
-	            	})
-	            }} style={styles.closeBtn}>
-					<NativeText style={{ color: "white" }}>Close</NativeText>
-	            </NativeButton>
-	          </View>
-	        </Modal>
-		);
 	}
 	renderTwo = (images) => {
 	    const { countFrom } = this.state;
@@ -242,7 +256,7 @@ constructor(props) {
 	          <ProgressiveImage style={styles.image} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${images[images.length - 1]}`}}/>
 	        </TouchableOpacity>
 	    );
-	}
+	}  
 
 	renderCountOverlay = (images) => {
 	    const {countFrom} = this.state;
@@ -252,7 +266,7 @@ constructor(props) {
 	        <TouchableOpacity style={[styles.imageContent, styles.imageContent3]} onPress={() => {
 	        	if (conditionalRender) {
 	        		this.viewImage(images[3]);
-	        	} else {
+	         	} else {
 	        		this.viewImage(images[4]);
 	        	}
 	        }}>
@@ -260,10 +274,10 @@ constructor(props) {
 	          <View style={styles.overlayContent}>
 	            <View>
 	              <Text style={styles.count}>+{extra}</Text>
-	            </View>
+	            </View> 
 	          </View>
 	        </TouchableOpacity>
-	    );
+	    );  
 	}
 	handleRedirect = (data) => {
 		console.log("handle redirect occurred...", data);
@@ -281,7 +295,7 @@ constructor(props) {
 	renderModal = () => {
 		return (
 			<Modal isVisible={this.state.showModal}>
-	          <View style={styles.modalView}>
+	          <View style={this.props.dark_mode ? styles.modalViewDark : styles.modalView}>
 	            <ProgressiveImage source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.modalImageValue}` }} style={{ width: width - 75, height: height * 0.60 }} />
 	            <NativeButton onPress={() => {
 	            	this.setState({
@@ -297,18 +311,21 @@ constructor(props) {
 	renderContent = () => {
 		if (this.state.ready === true) {
 			return (
-				<ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={styles.container}>
+				<ScrollView contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={styles.container}>
 		          {this.state.ready ? <ImageBackground resizeMode='cover' source={{ uri: this.state.cover !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.cover}` : `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.coverPhoto}` }} style={styles.header}><TouchableOpacity onPress={() => {
 		          	console.log("clicked..");
 		          	this._panel.show()
-		          }}><Image style={{ position: "absolute", top: 10, left: 10, width: 55, height: 55, tintColor: "white" }} source={require("../../../../assets/icons/upload-two.png")}/></TouchableOpacity></ImageBackground> : <Fragment><View style={styles.header}></View></Fragment>}
+		          }}><Image style={{ position: "absolute", top: 10, left: 10, width: 40, height: 40, tintColor: "white" }} source={require("../../../../assets/icons/upload-two.png")}/></TouchableOpacity></ImageBackground> : <Fragment><View style={styles.header}></View></Fragment>}
+		          <TouchableOpacity style={{ position: "absolute", right: 10, top: 10 }} onPress={() => {
+		              	this.props.navigation.navigate("profile-music-playlist", { user: this.state.user });
+		              }}><Image source={require("../../../../assets/icons/multi.png")} style={this.props.dark_mode ? styles.goToMusicPlaylistDark : styles.goToMusicPlaylistLight} /></TouchableOpacity>
 		          <TouchableOpacity style={styles.avatar} onPress={this.redirectUser}>
 					 <Image style={{ width: 130,
 					    height: 130,
 					    borderRadius: 63,
 					    marginTop: -4,
 					    marginLeft: -4,
-					    borderWidth: 4,
+					    borderWidth: 4, 
 					    zIndex: 999,
 					    borderColor: "white",
 					    paddingRight: 10 }} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}` }}/>
@@ -317,8 +334,12 @@ constructor(props) {
 		            <View style={styles.bodyContent}>
 		              {this.state.user.username === this.props.username ? <TouchableOpacity onPress={() => {
 		              	this.props.navigation.navigate("upload-profile-picture", { publicProfile: true });
-		              }} style={{ right: 15, top: 5, position: "absolute" }}><Image style={{ width: 50, height: 50 }} source={require("../../../../assets/icons/ar-camera.png")}/></TouchableOpacity> : null}
-		              <Text style={styles.name}>{this.state.user !== null ? this.state.user.fullName : "--"}</Text>
+		              }} style={{ right: 15, top: 5, position: "absolute" }}><Image style={this.props.dark_mode ? { width: 50, height: 50, tintColor: "white" } : { width: 50, height: 50 }} source={require("../../../../assets/icons/ar-camera.png")}/></TouchableOpacity> : null}
+		              <TouchableOpacity style={{ position: "absolute", left: 10, top: 10 }} onPress={() => {
+		              	this.start();
+		              }}><Image source={require("../../../../assets/icons/music.png")} style={this.props.dark_mode ? styles.darkMusicIcon : styles.lightMusicIcon} /></TouchableOpacity>
+		              
+		              <Text style={this.props.dark_mode ? styles.nameDark : styles.name}>{this.state.user !== null ? this.state.user.fullName : "--"}</Text>
 		              <Text style={styles.ranking}><Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Social Ranking:</Text>834</Text>
 		              <Text style={styles.info}>{this.state.user ? this.state.user.username : "--"}</Text>
 		              <Text style={this.props.dark_mode ? styles.descriptionDark : styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
@@ -327,21 +348,21 @@ constructor(props) {
 							// do something
 					      }}><Image style={styles.specialBtn} source={require("../../../../assets/icons/math.png")}/><NativeText style={{ color: "white" }}>Add Story</NativeText></NativeButton>
 					     <NativeButton style={{ width: width * 0.20, backgroundColor: "transparent" }} onPress={() => {
-							// do something
+							this.props.navigation.navigate("profile-settings-list", { user: this.state.user });
 					      }}><Image style={styles.specialBtnTwo} source={require("../../../../assets/icons/more.png")}/></NativeButton>
 					      <NativeButton style={{ width: width * 0.10, backgroundColor: "transparent" }} onPress={() => {
 							this.props.navigation.navigate("view-instagram-style-images", { user: null });
-					      }}><Image style={styles.specialBtnThree} source={require("../../../../assets/icons/content.png")}/></NativeButton>
-					    </View>
-		            </View>
+			   		      }}><Image style={styles.specialBtnThree} source={require("../../../../assets/icons/content.png")}/></NativeButton>
+					    </View> 
+		            </View>   
 		            <FriendsListSubComponent navigation={this.props.navigation} user={this.state.user} />
-
+   
 		            <PostToWallSubComponent navigation={this.props.navigation}  />
 
 		            {this.state.ready === true ? this.state.posts.map((post, index) => {
 		            	console.log("post... :", post);
 							return (
-								<Card>
+								<Card>  
 					            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 					              <Left>
 					                <Thumbnail source={{ uri: post.picture }} />
@@ -350,10 +371,10 @@ constructor(props) {
 					                  	this.handleRedirect(post);
 					                  }}><NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{post.author}</NativeText></TouchableOpacity>
 					                  <NativeText note>{post.date}</NativeText>
-					                </Body>
+					                </Body> 
 					              </Left>
 					            </CardItem>
-					            <CardItem cardBody style={this.props.dark_mode ? { backgroundColor: "black", flex: 1 } : { backgroundColor: "white", flex: 1 }}>
+					             <CardItem cardBody style={this.props.dark_mode ? { backgroundColor: "black", flex: 1 } : { backgroundColor: "white", flex: 1 }}>
 					              {post.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20 }}>{post.text}</NativeText> : null}
 					            </CardItem>
 					            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
@@ -368,18 +389,18 @@ constructor(props) {
 									<Text style={{ textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😂😍😁</Text>
 									<Text style={this.props.dark_mode ? { textAlign: "right", position: "absolute", right: 6, bottom: 10, color: "white" } : { textAlign: "right", position: "absolute", color: "black", right: 6, bottom: 10 }}>{Math.floor(Math.random() * (33 - 0 + 1)) + 0} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
 					            </CardItem>
-					            <Footer style={{ width: width }}>
+					            <Footer style={{ width: width * 0.98 }}>
 						          <FooterTab>
-						            <NativeButton onPress={() => {
+						            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderWidth: 3, borderColor: "white" } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }} onPress={() => {
 						            	this.likePost();
 						            }}>
-						              <NativeText><Image source={require("../../../../assets/icons/like.png")} style={{ width: 20, height: 20 }} />Like</NativeText>
+						              <NativeText style={this.props.dark_mode ? styles.darkText : styles.lightText}>Like</NativeText>
 						            </NativeButton>
-						            <NativeButton>
-						              <NativeText><Image source={require("../../../../assets/icons/comment.png")} style={{ width: 20, height: 20 }} />Comment</NativeText>
+						            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderWidth: 3, borderColor: "white" } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+						              <NativeText style={this.props.dark_mode ? styles.darkText : styles.lightText}>Comment</NativeText>
 						            </NativeButton>
-						            <NativeButton>
-						              <NativeText><Image source={require("../../../../assets/icons/fb-share.png")} style={{ width: 20, height: 20 }} />Share</NativeText>
+						            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderWidth: 3, borderColor: "white" } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+						              <NativeText style={this.props.dark_mode ? styles.darkText : styles.lightText}>Share</NativeText>
 						            </NativeButton>
 						          </FooterTab>
 						        </Footer>
@@ -415,17 +436,17 @@ constructor(props) {
 		return (
 			<Fragment>
 			<SideMenu isOpen={this.state.isOpen} menu={menu}>
-				<Header>
+				<Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 		          <Left>
 		            <NativeButton onPress={() => {
 		             	// redirect
 		             	this.props.navigation.navigate("dashboard")
 		            }} hasText transparent>
-		              <Image style={{ width: 35, height: 35, marginBottom: 10 }} source={require("../../../../assets/icons/construction.png")}/>
+		              <Image style={this.props.dark_mode ? { width: 35, height: 35, marginBottom: 10, tintColor: "white" } : { width: 35, height: 35, marginBottom: 10 }} source={require("../../../../assets/icons/construction.png")}/>
 		            </NativeButton>
 		          </Left>
 		          <Body>
-		            <Title>Public Wall</Title>
+		            <Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Public Wall</Title>
 		          </Body>
 		          <Right>
 		            <NativeButton onPress={() => {
@@ -435,7 +456,7 @@ constructor(props) {
 					    	isOpen: true
 					    })
 		            }} hasText transparent>
-		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../../assets/icons/user-interface.png")}/>
+		              <Image style={this.props.dark_mode ? { width: 45, height: 45, marginBottom: 10, tintColor: "white" } : { width: 45, height: 45, marginBottom: 10 }} source={require("../../../../assets/icons/user-interface.png")}/>
 		            </NativeButton>
 		          </Right>
 		        </Header>
@@ -461,7 +482,7 @@ constructor(props) {
 							<NativeButton style={{ backgroundColor: "black" }} onPress={this.uploadCoverPhoto}>
 								<NativeText style={{ color: "white" }}>Submit Cover Photo</NativeText>
 							 </NativeButton>
-							 <NativeButton style={{ justifyContent: "center", alignItems: "center", alignContent: "center", backgroundColor: "#e31b39", marginTop: 50 }} onPress={() => {
+							 <NativeButton style={{ justifyContent: "center", alignItems: "center", alignContent: "center", backgroundColor: "#613DC1", marginTop: 50 }} onPress={() => {
 							 	this._panel.hide();
 							 }}><NativeText style={{ color: "white" }}>Close Screen</NativeText>
 							 </NativeButton>
@@ -471,37 +492,37 @@ constructor(props) {
 			        </SlidingUpPanel>
 			{this.renderModal()}
 			<View style={{ position: "absolute", bottom: 0, width: width }}>
-				<Footer>
-		          <FooterTab>
-		            <NativeButton onPress={() => {
-			            	this.props.navigation.navigate("dashboard");
-			            }}>
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/home-run.png")} />
-		            </NativeButton>
-		            <NativeButton onPress={() => {
-			            	this.props.navigation.navigate("notifications");
-			            }}>
-			            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
-		               <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
-		            </NativeButton>
-		            <NativeButton onPress={() => {
-			            	this.props.navigation.navigate("chat-users");
-			            }}>
-			            <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
-		            </NativeButton>
-		            <NativeButton active onPress={() => {
-			            	this.props.navigation.navigate("public-wall");
-			            }}>
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/wall.png")} />
-		            </NativeButton>
-		            <NativeButton onPress={() => {
-			            	this.props.navigation.navigate("profile-settings");
-			            }}>
-		              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/list.png")} />
-		            </NativeButton>
-		          </FooterTab>
-		        </Footer>
+				<Footer style={this.props.dark_mode ? { backgroundColor: "black" } : {  }}>
+			          <FooterTab>
+			            <NativeButton onPress={() => {
+				            	this.props.navigation.navigate("dashboard");
+				            }}>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/home-run.png")} />
+			            </NativeButton>
+			            <NativeButton onPress={() => {
+				            	this.props.navigation.navigate("notifications");
+				            }}>
+				            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
+			               <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/notification.png")} />
+			            </NativeButton>
+			            <NativeButton onPress={() => {
+				            	this.props.navigation.navigate("chat-users");
+				            }}>
+				          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/mail-three.png")} />
+			            </NativeButton>
+			            <NativeButton active onPress={() => {
+				            	this.props.navigation.navigate("public-wall");
+				            }}>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "black" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/wall.png")} />
+			            </NativeButton>
+		              <NativeButton onPress={() => {
+		                  this.props.navigation.navigate("profile-settings");
+		                }}>
+		                <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../../assets/icons/list.png")} />
+		              </NativeButton>
+			          </FooterTab>
+			        </Footer>
 			</View>
 			</SideMenu>
 			</Fragment>
@@ -510,6 +531,62 @@ constructor(props) {
 }
 
 const styles = StyleSheet.create({
+	darkText: {
+		color: "white"
+	},
+	lightText: {
+		color: "black"
+	},
+	backDark: {
+		backgroundColor: "black",
+		flex: 1,  
+		width: width * 0.90, 
+		height: height, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center"
+	},
+	backLight: {
+		flex: 1, 
+		backgroundColor: "white", 
+		width: width * 0.90, 
+		height: height, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center"
+	},
+	goToMusicPlaylistDark: {
+		position: "absolute",
+		right: 10,
+		top: 10,
+		tintColor: "white",
+		width: 40, 
+		height: 40
+	},
+	goToMusicPlaylistLight: {
+		position: "absolute",
+		right: 10,
+		top: 10,
+		tintColor: "black",
+		width: 40, 
+		height: 40		
+	},
+	darkMusicIcon: {
+		tintColor: "white", 
+		width: 40, 
+		height: 40, 
+		position: "absolute", 
+		left: 10, 
+		top: 10
+	},
+	lightMusicIcon: {
+		tintColor: "black", 
+		width: 40, 
+		height: 40, 
+		position: "absolute", 
+		left: 10, 
+		top: 10
+	},
 	descriptionDark: {
 		color: "lightgrey"
 	},
@@ -527,7 +604,7 @@ const styles = StyleSheet.create({
    width: 150,
    height: 150,
    borderRadius: 75,
-   tintColor: "#e31b39"
+   tintColor: "#613DC1"
   },
   picNoTint: {
    paddingVertical: 30,
@@ -588,6 +665,12 @@ const styles = StyleSheet.create({
     color:"black",
     fontWeight:'600',
     marginTop: 20
+  },
+  nameDark:{
+    fontSize:22,
+    color:"white",
+    fontWeight:'600',
+    marginTop: 40
   },
   ranking: {
     fontSize:30,
@@ -673,6 +756,17 @@ const styles = StyleSheet.create({
 		justifyContent: "center", 
 		alignItems: "center", 
 		alignContent: "center"
+	},
+	modalViewDark: {
+		flex: 1, 
+		backgroundColor: "black", 
+		width: width * 0.90, 
+		height: height, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center",
+		borderWidth: 3,
+		borderColor: "white"
 	},
 	closeBtn: {
 		width: width - 75, 

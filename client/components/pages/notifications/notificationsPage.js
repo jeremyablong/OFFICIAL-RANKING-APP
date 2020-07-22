@@ -216,17 +216,17 @@ constructor(props) {
 		return (
 			<Fragment>
 			<SideMenu isOpen={this.state.isOpen} menu={menu}>
-				<Header>
+				<Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 		          <Left>
 		            <NativeButton onPress={() => {
 		            	console.log("clicked chat...");
 		            	this.props.navigation.navigate("chat-users");
 		            }} hasText transparent>
-		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/chat.png")}/>
+		              <Image style={this.props.dark_mode ? { width: 45, height: 45, marginBottom: 10, tintColor: "white" } : { width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/chat.png")}/>
 		            </NativeButton>
 		          </Left>
 		          <Body>
-		            <Title>Notifications</Title>
+		            <Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Notifications</Title>
 		          </Body>
 		          <Right>
 		          	<NativeButton onPress={() => {
@@ -235,12 +235,12 @@ constructor(props) {
 					    	isOpen: true
 					    })
 		            }} hasText transparent>
-		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
+		              <Image style={this.props.dark_mode ? { width: 45, height: 45, marginBottom: 10, tintColor: "white" } : { width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
 		            </NativeButton>
 		          </Right>
 		        </Header>
 				<ScrollView style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
-				{this.state.notifications.length === 0 && this.state.user !== null ? <View style={styles.container}>
+				{this.state.notifications.length === 0 && this.state.user !== null ? <View style={this.props.dark_mode ? { backgroundColor: "black" } : styles.container}>
 		          <View style={styles.header}>
 		              <Text style={styles.headerTitle}>
 		                You have <Text style={{ color: "#97DFFC" }}>0</Text> notifications
@@ -248,19 +248,19 @@ constructor(props) {
 		          </View>
 
 		          <View style={styles.postContent}>
-		              <Text style={styles.postTitle}>
+		              <Text style={this.props.dark_mode ? { color: "white" } : styles.postTitle}>
 		                You don't have any notifications yet, get involved and interact with others to get some action!
 		              </Text>
 
-		              <Text style={styles.postDescription}>
+		              <Text style={this.props.dark_mode ? { color: "white" } : styles.postDescription}>
 		                Interacting with others is an excellent way to create a social world in which you're connected... Send friend requests, message people, comment and most of all... have fun! We want to thank you for using our platform and wish you the best in your indeavors! 
 		              </Text>
 
-		              <Text style={styles.tags}>
+		              <Text style={this.props.dark_mode ? { color: "white" } : styles.tags}>
 		                "Make sure you're happy in real life and not just on social media"
 		              </Text>
 
-		              <Text style={styles.date}>
+		              <Text style={this.props.dark_mode ? { color: "white" } : styles.date}>
 		                {moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a")}
 		              </Text>
 
@@ -268,7 +268,7 @@ constructor(props) {
 		                <Image style={styles.avatar}
 		                  source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}`}}/>
 
-		                <Text style={styles.name}>
+		                <Text style={this.props.dark_mode ? { color: "white" } : styles.name}>
 		                    {this.state.user.username}
 		                </Text>
 		              </View>
@@ -362,35 +362,35 @@ constructor(props) {
 		        </ScrollView>
 		        </RBSheet>
 		        <View style={styles.footer}>
-					<Footer>
+					<Footer style={this.props.dark_mode ? { backgroundColor: "black" } : {  }}>
 			          <FooterTab>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("dashboard");
 				            }}>
-			              <Image style={styles.icon} source={require("../../../assets/icons/home-run.png")} />
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/home-run.png")} />
 			            </NativeButton>
 			            <NativeButton active onPress={() => {
 				            	this.props.navigation.navigate("notifications");
 				            }}>
 				            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
-			               <Image style={styles.icon} source={require("../../../assets/icons/notification.png")} />
+			               <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "black" } : { width: 35, height: 35 }} source={require("../../../assets/icons/notification.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("chat-users");
 				            }}>
-				            <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
-			              <Image style={styles.icon} source={require("../../../assets/icons/mail-three.png")} />
+				          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/mail-three.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("public-wall");
 				            }}>
-			              <Image style={styles.icon} source={require("../../../assets/icons/wall.png")} />
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
 			            </NativeButton>
-			            <NativeButton onPress={() => {
-			            	this.props.navigation.navigate("profile-settings");
-			            }}>
-		              <Image style={styles.icon} source={require("../../../assets/icons/list.png")} />
-		            </NativeButton>
+		              <NativeButton onPress={() => {
+		                  this.props.navigation.navigate("profile-settings");
+		                }}>
+		                <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/list.png")} />
+		              </NativeButton>
 			          </FooterTab>
 			        </Footer>
 		        </View>

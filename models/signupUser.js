@@ -33,6 +33,9 @@ const UserSchema = new mongoose.Schema({
 	},
 	profilePicReactions: {
 		type: Object
+	},
+	base64MUGSHOT: {
+		type: String
 	}
 });
 

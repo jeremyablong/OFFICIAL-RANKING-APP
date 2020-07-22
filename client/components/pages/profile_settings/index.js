@@ -192,16 +192,16 @@ constructor(props) {
 		return (
 			<Fragment>
 			<SideMenu isOpen={this.state.isOpen} menu={menu}>
-				<Header>
+				<Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 		          <Left>
 		            <NativeButton onPress={() => {
 		              this.RBSheet.open();
 		            }} hasText transparent>
-		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/logout.png")}/>
+		              <Image style={this.props.dark_mode ? { width: 45, height: 45, marginBottom: 10, tintColor: "white" } : { width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/logout.png")}/>
 		            </NativeButton>
 		          </Left>
 		          <Body>
-		            <Title>Settings</Title>
+		            <Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Settings</Title>
 		          </Body>
 		          <Right>
 		            <NativeButton onPress={() => {
@@ -211,7 +211,7 @@ constructor(props) {
 		                 	isOpen: true
 		                 })
 		            }} hasText transparent>
-		              <Image style={{ width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
+		              <Image style={this.props.dark_mode ? { width: 45, height: 45, marginBottom: 10, tintColor: "white" } : { width: 45, height: 45, marginBottom: 10 }} source={require("../../../assets/icons/user-interface.png")}/>
 		            </NativeButton>
 		          </Right>
 		        </Header>
@@ -222,33 +222,35 @@ constructor(props) {
 		       </View>
 		        </List>
 		        <View style={styles.footer}>
-					<Footer>
+					<Footer style={this.props.dark_mode ? { backgroundColor: "black" } : {  }}>
 			          <FooterTab>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("dashboard");
 				            }}>
-			              <Image style={styles.icon} source={require("../../../assets/icons/home-run.png")} />
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/home-run.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("notifications");
 				            }}>
-			               <Image style={styles.icon} source={require("../../../assets/icons/notification.png")} />
+				            <Badge style={{ marginBottom: -15, marginLeft: 5 }}><NativeText>3</NativeText></Badge>
+			               <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/notification.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("chat-users");
 				            }}>
-			              <Image style={styles.icon} source={require("../../../assets/icons/mail-three.png")} />
+				          <Badge style={{ marginBottom: -10 }}><NativeText>51</NativeText></Badge>
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/mail-three.png")} />
 			            </NativeButton>
 			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("public-wall");
 				            }}>
-			              <Image style={styles.icon} source={require("../../../assets/icons/wall.png")} />
+			              <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "white" } : { width: 35, height: 35 }} source={require("../../../assets/icons/wall.png")} />
 			            </NativeButton>
-			            <NativeButton active onPress={() => {
-				            	this.props.navigation.navigate("profile-settings");
-				            }}>
-			              <Image style={styles.icon} source={require("../../../assets/icons/list.png")} />
-			            </NativeButton>
+		              <NativeButton active onPress={() => {
+		                  this.props.navigation.navigate("profile-settings");
+		                }}>
+		                <Image style={this.props.dark_mode ? { width: 35, height: 35, tintColor: "black" } : { width: 35, height: 35 }} source={require("../../../assets/icons/list.png")} />
+		              </NativeButton>
 			          </FooterTab>
 			        </Footer>
 		        </View>
@@ -297,7 +299,6 @@ constructor(props) {
 }
 const styles = StyleSheet.create({
 	blackCard: {
-		shadowColor: 'black',
 	    shadowOffset: {
 	      width: 0,
 	      height: 6,
@@ -330,7 +331,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "#edebeb",
 		marginRight: 10,
 		marginLeft: 10,
-		shadowColor: "white",
 		shadowOffset: {
 			width: 6,
 			height: 12,
@@ -347,7 +347,6 @@ const styles = StyleSheet.create({
 	    backgroundColor: "#edebeb",
 	    marginRight: 10,
 	    marginLeft: 10,
-	    shadowColor: "white",
 		shadowOffset: {
 			width: 0,
 			height: 12,
@@ -364,7 +363,6 @@ const styles = StyleSheet.create({
 	    backgroundColor: "#edebeb",
 	    marginRight: 10,
 	    marginLeft: 10,
-	    shadowColor: "white",
 		shadowOffset: {
 			width: 0,
 			height: 12,
@@ -403,7 +401,6 @@ const styles = StyleSheet.create({
 	    backgroundColor: "white",
 	    marginRight: 10,
 	    marginLeft: 10,
-	    shadowColor: "black",
 		shadowOffset: {
 			width: 0,
 			height: 12,
@@ -420,7 +417,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		marginRight: 10,
 		marginLeft: 10,
-		shadowColor: "black",
 		shadowOffset: {
 			width: 0,
 			height: 12,
@@ -437,7 +433,6 @@ const styles = StyleSheet.create({
 	    backgroundColor: "white",
 	    marginRight: 10,
 	    marginLeft: 10,
-	    shadowColor: "black",
 		shadowOffset: {
 			width: 0,
 			height: 12,
@@ -476,7 +471,6 @@ const styles = StyleSheet.create({
   },
 
   card:{
-    shadowColor: 'black',
     shadowOffset: {
       width: 0,
       height: 6,

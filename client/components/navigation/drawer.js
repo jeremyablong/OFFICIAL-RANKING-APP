@@ -36,14 +36,11 @@ constructor(props) {
   };
 }
 	render() {
+    console.log(this.props.open);
 		return (
 			<Fragment>	
 				<View style={styles.container}>
-              <NativeButton style={{ backgroundColor: "#858AE3", justifyContent: "center" }} onPress={() => {
-                console.log("clicked...");
-              }}>  
-                <NativeText>Cancel</NativeText>
-              </NativeButton>
+              
 			        <FlatList style={this.props.dark_mode ? styles.listDark : styles.list}
 			          contentContainerStyle={styles.listContainer}
 			          data={this.state.data}
@@ -79,7 +76,6 @@ constructor(props) {
 const styles = StyleSheet.create({
   container:{
     flex:1,
-    marginTop:40,
     backgroundColor:'#f6f6f6',
   },
   listDark: {
@@ -91,8 +87,7 @@ const styles = StyleSheet.create({
     backgroundColor:"#4E148C",
   },
   listContainer:{
-    alignItems:'center',
-    paddingTop: 50
+    alignItems:'center'
   },
   /******** card **************/
   card:{
