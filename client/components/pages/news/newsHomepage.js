@@ -97,7 +97,7 @@ constructor(props) {
 				  </Right>
 				</Header>
 				<ScrollView style={styles.background}>
-					<ScrollView style={{ flex: 1, flexDirection: "row" }} showsHorizontalScrollIndicator={false} horizontal={true}>
+					<ScrollView style={{ flex: 1, flexDirection: "row", padding: 20, backgroundColor: "black" }} showsHorizontalScrollIndicator={false} horizontal={true}>
 						<NativeButton onPress={() => {
 							this.handleChangeSearch("entertainment");
 						}} style={styles.roundedBtn} transparent textStyle={{color: '#87838B'}}>

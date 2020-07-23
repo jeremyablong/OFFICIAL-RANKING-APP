@@ -18,6 +18,8 @@ import { Container, Header, Left, Body, Right, Button as NativeButton, Footer, F
 import Carousel from 'react-native-snap-carousel';
 import Modal from 'react-native-modal';
 import ProgressiveImage from "../../image/image.js";
+import Popover from 'react-native-popover-view';
+import RBSheet from "react-native-raw-bottom-sheet";
 
 
 const { width, height } = Dimensions.get("window");
@@ -34,7 +36,10 @@ constructor(props) {
     conditionalRender: false,
     ready: false,
     modalImageValue: null,
-    showModal: false
+    showModal: false,
+    showPopover: false,
+    selected: null,
+    alreadyLikedPost: false
   };
 }
 
@@ -206,18 +211,31 @@ constructor(props) {
 	  		console.log(err);
 	  	})
 	}
-	likePost = () => {
-		console.log("like post.");
-		// axios.post(`${URL}/like `, {
-	 //  		username: data.author
-	 //  	}).then((res) => {
-	 //  		console.log(res.data);
-	 //  		if (res.data.message === "FOUND user!") {
-	 //  			this.props.navigation.navigate("profile-individual", { user: res.data.user });
-	 //  		}
-	 //  	}).catch((err) => {
-	 //  		console.log(err);
-	 //  	})
+	handleEmojiSubmission = (reaction) => {
+		const { selected } = this.state;
+
+		console.log("this.state.selected", selected)
+
+		axios.post(`${URL}/react/emoji/main/wall/posts`, {
+	  		poster: selected.author,
+	  		reaction,
+	  		id: selected.id,
+	  		username: this.props.username
+	  	}).then((res) => {
+	  		console.log(res.data);
+	  		if (res.data.message === "You've successfully liked this user's post!") {
+	  			this.setState({
+	  				alreadyLikedPost: true
+	  			}, () => {
+	  				this.RBSheet.close();
+	  			})
+	  		}
+	  	}).catch((err) => {
+	  		console.log(err);
+	  	})
+	}
+	takeBackLike = () => {
+		console.log("TAKE BACK LIKE....");
 	}
 	render() {
 		return (
@@ -247,7 +265,7 @@ constructor(props) {
 					          {[1, 3, 4].includes(post.images.length)  && this.renderOne(post.images)}
 					          {post.images.length >= 2 && post.images.length != 4 && this.renderTwo(post.images)}
 					          {post.images.length >= 4 && this.renderThree(post.images)}
-					      </View> : null}
+					      </View> : null} 
 					      
 			            </CardItem>
 			            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
@@ -256,16 +274,36 @@ constructor(props) {
 								this.props.navigation.navigate("wall-individual", { post });
 							}}>
 								<Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😂😍😁</Text>
-								<Text style={this.props.dark_mode ? { textAlign: "right", color: "white", position: "absolute", right: 6, bottom: 10 } : { textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{Math.floor(Math.random() * (33 - 0 + 1)) + 0} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
+								<Text style={this.props.dark_mode ? { textAlign: "right", color: "white", position: "absolute", right: 6, bottom: 10 } : { textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{post.replies.length} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
 							</TouchableOpacity>
 			            </CardItem>
 			            <Footer style={{ width: width * 0.99 }}>
 				          <FooterTab>
-				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }} onPress={() => {
-				            	this.likePost();
-				            }}>
-				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Like</NativeText>
-				            </NativeButton>
+					        {post.likes.map((like, index) => {
+								if (like.username === this.props.username) {
+									return (
+										<NativeButton onPress={() => {
+								        	this.takeBackLike();
+								        }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+							              <NativeText>Un-Like</NativeText>
+							            </NativeButton>
+									);
+								} 
+								if (like.username !== this.props.username) {
+									return (
+										<NativeButton onPress={() => {
+								        	this.setState({
+								        		selected: post
+								        	}, () => {
+								        		this.RBSheet.open();
+								        	})
+								        	
+								        }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+							              <NativeText>Like</NativeText>
+							            </NativeButton>
+									);
+								}
+					        })}
 				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
 				              <NativeText style={this.props.dark_mode ? { color: "white", marginLeft: 6 } : { color: "black" }}>Comment</NativeText>
 				            </NativeButton>
@@ -279,12 +317,66 @@ constructor(props) {
 			          </Card>
 					);
 				}) : null}
+			<RBSheet
+	          ref={ref => {
+	            this.RBSheet = ref;
+	          }}
+	          height={height * 0.10}
+	          openDuration={250}
+	          customStyles={{
+	            container: {
+	              justifyContent: "center",
+	              alignItems: "center"
+	            }
+	          }}
+	        >
+	          <View style={styles.popoverPop}> 
+			      <TouchableOpacity onPress={() => {
+			        console.log("clicked...");
+			        this.handleEmojiSubmission("laugh");                  
+			      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😆</Text></TouchableOpacity>
+			      <TouchableOpacity onPress={() => {
+			        console.log("clicked...");
+			        this.handleEmojiSubmission("heartFace");
+			      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😍</Text></TouchableOpacity>
+			      <TouchableOpacity onPress={() => {
+			        console.log("clicked...");
+			        this.handleEmojiSubmission("frustrated");
+			      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😤</Text></TouchableOpacity>
+			      <TouchableOpacity onPress={() => {
+			        console.log("clicked...");
+			        this.handleEmojiSubmission("heart");
+			      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>❤️</Text></TouchableOpacity>
+			      <TouchableOpacity onPress={() => {
+			        console.log("clicked...");
+			        this.handleEmojiSubmission("angry");
+			      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>🤬</Text></TouchableOpacity>
+			      <TouchableOpacity onPress={() => {
+			        console.log("clicked...");
+			        this.handleEmojiSubmission("sad");
+			      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😢</Text></TouchableOpacity>
+			      <TouchableOpacity style={{ left: -10 }} onPress={() => {
+			        console.log("clicked...");
+			        this.handleEmojiSubmission("puke");
+			      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}> 🤮</Text></TouchableOpacity>
+			  </View>
+	        </RBSheet>
 			</Content>
 			</Fragment>
 		)
 	}
 }
 const styles = StyleSheet.create({
+	popoverPop: {
+	    height: "100%", 
+	    width: "100%", 
+	    backgroundColor: "white", 
+	    flex: 1, 
+	    flexDirection: 'row', 
+	    justifyContent: 'space-between', 
+	    paddingTop: 10, 
+	    paddingBottom: 10
+    },
 	backgroundBlack: {
 		backgroundColor: "black"
 	},
@@ -393,7 +485,8 @@ const styles = StyleSheet.create({
 }); 
 const mapStateToProps = state => {
 	return {
-		dark_mode: state.mode.dark_mode
+		dark_mode: state.mode.dark_mode,
+		username: state.auth.authenticated.username
 	}
 } 
 export default connect(mapStateToProps, { })(HomePostsPage);

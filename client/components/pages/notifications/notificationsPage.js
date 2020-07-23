@@ -284,7 +284,7 @@ constructor(props) {
 						console.log("notify :", notify);
 						return (
 							
-								<ListItem key={index} style={notify.viewed === true ? styles.viewed : { width: width }} thumbnail>
+								<ListItem key={index} style={notify.viewed === true ? styles.viewed : { width: width, backgroundColor: "white" }} thumbnail>
 								<TouchableOpacity onPress={() => {
 				                	this.redirectToSpecific(notify);
 				                }}>

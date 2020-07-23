@@ -63,7 +63,7 @@ constructor(props) {
           if (res.data.message === "FOUND user!") {
           	this.setState({
           		user: res.data.user
-          	});
+          	});  
 			for (var i = 0; i < res.data.user.wall.length; i++) {
           		let post = res.data.user.wall[i];
           		console.log("postieeee ", post);
@@ -89,7 +89,7 @@ constructor(props) {
         }).catch((err) => {
           console.log(err);
         });         
-	}
+	}  
 	start = async () => {
 		console.log("pressed...");
 		if (TrackPlayer) {
@@ -131,11 +131,11 @@ constructor(props) {
           	}, () => {
           		alert("Successfully uploaded your new cover photo!");
           	})
-          }
+          } 
         }).catch((err) => {
           console.log(err);
         })
-	}
+	} 
 	componentDidUpdate(prevProps, prevState) {
 		if (prevState.cover !== this.state.cover) {
 			axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
@@ -147,9 +147,9 @@ constructor(props) {
 	          		user: res.data.user
 	          	})
 	          }
-	        }).catch((err) => {
+	        }).catch((err) => {  
 	          console.log(err);
-	        }) 
+	        })  
 		}
 	} 
 	handleRerender = () => {
@@ -176,7 +176,7 @@ constructor(props) {
 	      <View style={styles.row}>
 	        <TouchableOpacity style={[styles.imageContent, styles.imageContent1]} onPress={() => {
 	        	this.viewImage();
-	        }}>
+	        }}> 
 	          <ProgressiveImage style={styles.image} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${images[0]}`}}/>
 	        </TouchableOpacity>
 	      </View>
@@ -216,7 +216,7 @@ constructor(props) {
 	      </View>
 	    );
 	}
-
+ 
 	renderThree = (images) => {
 	    const { countFrom } = this.state;
 	    const overlay = !countFrom || countFrom > 5 || images.length > countFrom && [4, 5].includes(+countFrom) ? this.renderCountOverlay(images) : this.renderOverlay(images);
@@ -230,7 +230,7 @@ constructor(props) {
 	        	} else {
 	        		this.viewImage(images[2]);
 	        	}
-	        	
+	        	 
 	        }}>
 	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[1]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[2]}`}}/>
 	        </TouchableOpacity>
@@ -273,15 +273,15 @@ constructor(props) {
 	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[3]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[4]}`}}/>
 	          <View style={styles.overlayContent}>
 	            <View>
-	              <Text style={styles.count}>+{extra}</Text>
-	            </View> 
+	              <Text style={styles.count}>+{extra}</Text> 
+	            </View>  
 	          </View>
 	        </TouchableOpacity>
-	    );  
-	}
+	    );   
+	} 
 	handleRedirect = (data) => {
 		console.log("handle redirect occurred...", data);
-		axios.post(`${URL}/get/user/by/username`, {
+		axios.post(`${URL}/get/user/by/username`, { 
 	  		username: data.author
 	  	}).then((res) => {
 	  		console.log(res.data);
@@ -487,7 +487,7 @@ constructor(props) {
 							 }}><NativeText style={{ color: "white" }}>Close Screen</NativeText>
 							 </NativeButton>
 						 </View>
-			            
+			             
 			          </View>
 			        </SlidingUpPanel>
 			{this.renderModal()}

@@ -83,7 +83,9 @@ app.use("/decline/friend/request", require("./routes/friends/respond/declineFrie
 app.use("/paypal", require("./routes/paypal/payment.js"));
 app.use("/cancel", require("./routes/paypal/cancel.js"));
 app.use("/success", require("./routes/paypal/success.js"));
-
+app.use("/post/comment/general/wall", require("./routes/wall/comments/commentGeneralWallPosting.js"));
+app.use("/gather/general/comments/feed", require("./routes/wall/comments/gatherGeneralWallComments.js"));
+app.use("/react/emoji/main/wall/posts", require("./routes/wall/homeWall/replyEmoji.js"));
 
 app.get("/blockchain", (req, res) => {
   res.send(gemshire);

@@ -55,8 +55,10 @@ constructor(props) {
 	        }).then((res) => {
 	          console.log("YYYYYYY :", res.data);
 	          if (res.data.message === "User could NOT be found...") {
-	          	
-	          	alert("Please enter valid credentials...")
+	          	this.RBSheet.close();
+	          	setTimeout(() => {
+	          		alert("Please enter valid credentials...")
+	          	}, 1500)
 	          }
 	          if (res.data.message === "User FOUND!") {
 
@@ -118,7 +120,12 @@ constructor(props) {
 	          confirmationPhoto: this.state.base64MUGSHOT
 	        }).then((res) => {
 	          console.log("YYYYY :", res.data);
-
+			  if (res.data.message === "User could NOT be found...") {
+			  	this.RBSheet.close();
+	          	setTimeout(() => {
+	          		alert("Please enter valid credentials...")
+	          	}, 1500)
+			  }
 	          if (res.data.message === "User FOUND!") {
 
 	          	const config = {
