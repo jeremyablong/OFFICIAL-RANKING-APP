@@ -20,7 +20,8 @@ import Modal from 'react-native-modal';
 import ProgressiveImage from "../../image/image.js";
 import Popover from 'react-native-popover-view';
 import RBSheet from "react-native-raw-bottom-sheet";
-
+import moment from "moment";
+import uuid from "react-uuid";
 
 const { width, height } = Dimensions.get("window");
 
@@ -214,7 +215,7 @@ constructor(props) {
 	handleEmojiSubmission = (reaction) => {
 		const { selected } = this.state;
 
-		console.log("this.state.selected", selected)
+		console.log("this.state.selected", selected);
 
 		axios.post(`${URL}/react/emoji/main/wall/posts`, {
 	  		poster: selected.author,
@@ -224,11 +225,24 @@ constructor(props) {
 	  	}).then((res) => {
 	  		console.log(res.data);
 	  		if (res.data.message === "You've successfully liked this user's post!") {
-	  			this.setState({
-	  				alreadyLikedPost: true
-	  			}, () => {
-	  				this.RBSheet.close();
-	  			})
+	  			const { posts } = this.state;
+	  			
+				return posts.filter((x) => {
+					if (x.id === this.state.selected.id) {
+						console.log("x", x);
+						x.likes.push({
+							username: this.props.username,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							id: uuid(),
+							reaction: reaction
+						})
+						this.setState({
+							posts: this.state.posts
+						}, () => {
+							this.RBSheet.close(); 
+						})
+					};
+				})
 	  		}
 	  	}).catch((err) => {
 	  		console.log(err);
@@ -236,6 +250,48 @@ constructor(props) {
 	}
 	takeBackLike = () => {
 		console.log("TAKE BACK LIKE....");
+	}
+	renderResponseButton = (post) => {
+		let count = 0;
+		for (let i = 0; i < post.likes.length; i++) {
+			let element = post.likes[i];
+			if (element.username === this.props.username && count === 0) {
+				count++
+				return (
+					<NativeButton onPress={() => {
+			        	this.takeBackLike();
+			        }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "#858AE3", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+		              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "white" }}>Un-Like</NativeText>
+		            </NativeButton>
+				);
+			} 
+		}
+		if (post.likes.length === 0) {
+			return (
+				<NativeButton onPress={() => {
+		        	this.setState({
+		        		selected: post
+		        	}, () => {
+		        		this.RBSheet.open();
+		        	})
+		        	
+		        }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+	              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Like</NativeText>
+	            </NativeButton>
+			);
+		}
+		return (
+			<NativeButton onPress={() => {
+	        	this.setState({
+	        		selected: post
+	        	}, () => {
+	        		this.RBSheet.open();
+	        	})
+	        	
+	        }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Like</NativeText>
+            </NativeButton>
+		);
 	}
 	render() {
 		return (
@@ -277,33 +333,9 @@ constructor(props) {
 								<Text style={this.props.dark_mode ? { textAlign: "right", color: "white", position: "absolute", right: 6, bottom: 10 } : { textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{post.replies.length} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
 							</TouchableOpacity>
 			            </CardItem>
-			            <Footer style={{ width: width * 0.99 }}>
+			            <Footer style={{ width: width * 0.99 }}>  
 				          <FooterTab>
-					        {post.likes.map((like, index) => {
-								if (like.username === this.props.username) {
-									return (
-										<NativeButton onPress={() => {
-								        	this.takeBackLike();
-								        }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
-							              <NativeText>Un-Like</NativeText>
-							            </NativeButton>
-									);
-								} 
-								if (like.username !== this.props.username) {
-									return (
-										<NativeButton onPress={() => {
-								        	this.setState({
-								        		selected: post
-								        	}, () => {
-								        		this.RBSheet.open();
-								        	})
-								        	
-								        }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
-							              <NativeText>Like</NativeText>
-							            </NativeButton>
-									);
-								}
-					        })}
+					        {this.renderResponseButton(post)}
 				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
 				              <NativeText style={this.props.dark_mode ? { color: "white", marginLeft: 6 } : { color: "black" }}>Comment</NativeText>
 				            </NativeButton>

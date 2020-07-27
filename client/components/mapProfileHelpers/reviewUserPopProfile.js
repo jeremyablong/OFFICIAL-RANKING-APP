@@ -50,7 +50,7 @@ constructor(props) {
 
 		if (user.coverPhoto) {
 			return (
-				<ImageBackground source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${user.coverPhoto}` }} style={{ height: 350 }}>
+				<ImageBackground source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${user.coverPhoto}` }} style={{ height: 350, paddingTop: 50 }}>
             <View style={styles.headerContent}>
                 <Image style={styles.avatar} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${user.profilePic[user.profilePic.length - 1].picture}` }}/>
                 <Text style={styles.name}>
@@ -219,12 +219,7 @@ constructor(props) {
 			          <View style={styles.body}>
 			            <View style={styles.bodyContent}>
 			              <Text style={{ textAlign: "center", fontSize: 25, top: -15 }}>{user.fullName} has a social ranking of <Text style={{ color: "darkred", fontWeight: "bold" }}>579</Text></Text>
-			              <NativeButton style={{ backgroundColor: "#999999",width: width * 0.95, justifyContent: "center", alignItems: "center", alignContent: "center" }} onPress={() => {
-          							console.log("clicked user interface...");
-          							 {/*this.props.navigation.navigate("chat-users");*/}
-          							}} hasText>
-          								<Text style={{ color: "white", fontSize: 22, fontWeight: "bold", paddingBottom: 10 }}>Review This User  <Image style={{ width: 40, height: 40, marginBottom: 10, marginTop: 15 }} source={require("../../assets/icons/review-two.png")}/>  </Text>
-          							</NativeButton>
+			             
 			              <Text style={styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 			            </View>
 
@@ -405,6 +400,7 @@ const styles = StyleSheet.create({
   headerContent:{
     padding:30,
     alignItems: 'center',
+    paddingTop: 50
   },
   avatar: {
     width: 130,
@@ -428,7 +424,8 @@ const styles = StyleSheet.create({
   },
   profileDetail:{
     alignSelf: 'center',
-    marginTop:250,
+    marginTop:315,
+    zIndex: 9999,
     alignItems: 'center',
     flexDirection: 'row',
     position:'absolute',

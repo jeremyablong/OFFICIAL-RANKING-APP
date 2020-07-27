@@ -87,7 +87,10 @@ constructor(props) {
 						this.props.authenticated(res.data.user);
 	          			this.props.navigation.navigate("dashboard");
 	          		} else {
-	          			alert("We could not identify your account because your photo does not match the verfication photo in our records.")
+	          			this.RBSheet.close();
+	          			setTimeout(() => {
+	          				alert("We could not identify your account because your photo does not match the verfication photo in our records.")
+	          			}, 1750);
 	          		}
 	          	}).catch((err) => {
 	          		console.log(err);
@@ -123,6 +126,7 @@ constructor(props) {
 			  if (res.data.message === "User could NOT be found...") {
 			  	this.RBSheet.close();
 	          	setTimeout(() => {
+	          		this.RBSheet.close();
 	          		alert("Please enter valid credentials...")
 	          	}, 1500)
 			  }
@@ -151,7 +155,10 @@ constructor(props) {
 						this.props.authenticated(res.data.user);
 	          			this.props.navigation.navigate("dashboard");
 	          		} else {
-	          			alert("We could not identify your account because your photo does not match the verfication photo in our records.")
+	          			this.RBSheet.close();
+	          			setTimeout(() => {
+	          				alert("We could not identify your account because your photo does not match the verfication photo in our records.")
+	          			}, 1750);
 	          		}
 	          	}).catch((err) => {
 	          		console.log(err);
@@ -163,6 +170,7 @@ constructor(props) {
 	          } else if (res.data.message === "Password/email did match our records...") {
 	          	this.RBSheet.close();
 	          	setTimeout(() => {
+	          		this.RBSheet.close();
 					alert(res.data.message);
 	          	}, 1500)
 	          }

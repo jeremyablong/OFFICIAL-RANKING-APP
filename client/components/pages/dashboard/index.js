@@ -211,22 +211,22 @@ constructor(props) {
           <NativeButton style={styles.mainBtn} onPress={() => {
                  this.props.navigation.navigate("rank-nearby-users");
             }} hasText>
-            <NativeText style={{ color: "black" }}>Rate Users Nearby In Your Proximity </NativeText>
+            <NativeText style={{ color: "white" }}>Rate Users Nearby In Your Proximity </NativeText>
           </NativeButton>
         </View>
           <SearchBar    
-        ref="searchBar"
-        placeholder="Search by user-name..."
-        onChangeText={(value) => {
-          this.setState({
-            searchValue: value,
-            searching: true,
-            isOpen: false
-          })
-        }} 
-        onSearchButtonPress={this.handleSearch}
-        onCancelButtonPress={this.handleCancel}
-      />
+            ref="searchBar"
+            placeholder="Search by user-name..."
+            onChangeText={(value) => {
+              this.setState({
+                searchValue: value,
+                searching: true,
+                isOpen: false
+              })
+            }} 
+            onSearchButtonPress={this.handleSearch}
+            onCancelButtonPress={this.handleCancel}
+          />
     </Animated.View>
    
     <View style={this.props.dark_mode ? { flex: 1, backgroundColor: "black" } : { flex: 1, backgroundColor: "white" }}>
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   mainBtn: {
     width: width * 0.95, 
     marginBottom: 20,
-    backgroundColor: "#97DFFC", 
+    backgroundColor: "#858AE3", 
     alignItems: "center", 
     borderColor: "black", 
     borderWidth: 3, 

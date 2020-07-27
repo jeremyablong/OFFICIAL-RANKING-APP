@@ -819,9 +819,13 @@ constructor(props) {
 					                <Image style={styles.image} source={{uri: reply.profilePhoto}}/>
 					              </TouchableOpacity>
 					              <View style={styles.content}>
-					                <View style={styles.contentHeader}>
+					                <TouchableOpacity onPress={() => {
+					                	this.props.navigation.navigate("profile-individual", { user: { 
+					                		username: reply.author
+					                	}})
+					                }} style={styles.contentHeader}>
 					                  <Text  style={styles.name}>{reply.author}</Text>
-					                </View>
+					                </TouchableOpacity>
 					                <Text style={{ fontSize: 13, color: "grey", paddingBottom: 10 }}>
 					                    {reply.date}
 					                </Text>

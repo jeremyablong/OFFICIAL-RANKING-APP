@@ -140,13 +140,25 @@ constructor(props) {
 						}}>
 							<View style={this.props.dark_mode === false ? styles.shortItem : styles.longItem}>
 								<Image source={require("../../../assets/icons/dark.png")} style={styles.icon} />
-								<Text style={[styles.boxText, { paddingTop: 10 }]}>Enable/Disable Dark Mode</Text>
+								<Text style={[styles.boxText, { paddingTop: 10 }]}>Enable / Disable Dark Mode</Text>
 							</View>
 						</TouchableOpacity>
+						<TouchableOpacity onPress={() => {
+							this.props.navigation.navigate("rank-nearby-users");
+						}}>
 							<View style={this.props.dark_mode === false ? styles.shortItem : styles.longItem}>
 								<Image source={require("../../../assets/icons/location-location.png")} style={styles.icon} />
 								<Text style={styles.boxText}>Rank Users</Text>
 							</View>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => {
+							this.props.navigation.navigate("rank-nearby-users");
+						}}>
+							<View style={this.props.dark_mode === false ? styles.shortItem : styles.longItem}>
+								<Image source={require("../../../assets/icons/writer.png")} style={styles.icon} />
+								<Text style={styles.boxText}>Rank Requests</Text>
+							</View>
+						</TouchableOpacity>
 							<View style={this.props.dark_mode === false ? styles.shortItem : styles.longItem}>
 								<Image source={require("../../../assets/icons/privacy.png")} style={styles.icon} />		
 								<Text style={styles.boxText}>Privacy Settings</Text>						

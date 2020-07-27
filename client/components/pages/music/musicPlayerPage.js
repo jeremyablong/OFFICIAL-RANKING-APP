@@ -25,7 +25,7 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import DocumentPicker from 'react-native-document-picker';
 import PhotoUpload from 'react-native-photo-upload';
 import * as Progress from 'react-native-progress';
-import TrackPlayer from 'react-native-track-player';
+
 
 const { width, height } = Dimensions.get("window");
 

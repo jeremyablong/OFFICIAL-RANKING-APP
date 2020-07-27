@@ -247,14 +247,14 @@ constructor(props) {
 	          }}
 	          height={400}
 	          openDuration={250}
-	          customStyles={{
+	          customStyles={{ 
 	            container: {
 	              justifyContent: "center",
 	              alignItems: "center"
 	            }
 	          }}
 	        >
-	          <ImageBackground source={require("../../../assets/images/modern.jpg")} style={{ flex: 1, height: height, width: width, alignItems: "center", justifyContent: "center" }}>
+	          <ImageBackground source={require("../../../assets/images/classic.jpg")} style={{ flex: 1, height: height, width: width, alignItems: "center", justifyContent: "center" }}>
 		          <KeyboardAwareScrollView style={{ marginTop: 30 }} contentContainerStyle={{ justifyContent: "center", alignItems: "center" }}>
 			          {/*<Image style={{ width: 300, height: 300, marginBottom: 40}} source={require("../../../assets/images/123.jpg")} />*/}
 			          <Text style={styles.customTexttt}>You are messaging <Text style={{ color: "aquamarine" }}>{this.state.user !== null ? this.state.user.fullName : "--"}</Text>... </Text>

@@ -15,7 +15,6 @@ import {
   FlatList
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Card, CardItem, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
-const TrackPlayer = require("react-native-track-player");
 import { connect } from "react-redux";
 import SlidingUpPanel from 'rn-sliding-up-panel';
 import PhotoUpload from 'react-native-photo-upload';
@@ -27,7 +26,7 @@ import NavigationDrawer from "../../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import ProgressiveImage from "../../../image/image.js";
 import Modal from 'react-native-modal';
- 
+   
  
 
 const { width, height } = Dimensions.get("window");
@@ -90,32 +89,32 @@ constructor(props) {
           console.log(err);
         });         
 	}  
-	start = async () => {
-		console.log("pressed...");
-		if (TrackPlayer) {
-			this.setState({
-				playing: !this.state.playing
-			}, async () => {
-				if (this.state.playing === true) {
-					// Set up the player
-				    await TrackPlayer.setupPlayer();
+	// start = async () => {
+	// 	console.log("pressed...");
+	// 	if (TrackPlayer) {
+	// 		this.setState({
+	// 			playing: !this.state.playing
+	// 		}, async () => {
+	// 			if (this.state.playing === true) {
+	// 				// Set up the player
+	// 			    await TrackPlayer.setupPlayer();
 
-				    // Add a track to the queue
-				    await TrackPlayer.add({
-				        id: 'trackId',
-				        url: require("../../../../assets/music/tom.mp3"),
-				        title: 'Track Title',
-				        artist: 'Track Artist'
-				    });
+	// 			    // Add a track to the queue
+	// 			    await TrackPlayer.add({
+	// 			        id: 'trackId',
+	// 			        url: require("../../../../assets/music/tom.mp3"),
+	// 			        title: 'Track Title',
+	// 			        artist: 'Track Artist'
+	// 			    });
 
-				    // Start playing it
-				    await TrackPlayer.play();
-				} else {
-					TrackPlayer.stop();
-				}
-			})
-		}
-	};
+	// 			    // Start playing it
+	// 			    await TrackPlayer.play();
+	// 			} else {
+	// 				TrackPlayer.stop();
+	// 			}
+	// 		})
+	// 	}
+	// };
 	uploadCoverPhoto = () => { 
 		
 		const { avatar } = this.state;

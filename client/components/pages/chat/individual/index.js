@@ -119,13 +119,13 @@ class MessageIndividual extends Component {
 
 			  axios.post("http://recovery-social-media.ngrok.io/get/first/message/private", {
 		  		id: this.props.route.params.user.id
-		  	}).then((res) => {
+		  	}).then((res) => { 
 		  		if (res.data.message === "FOUND user!") {
   					if (res.data.messages.replies) {
-  						this.setState({
+  						this.setState({ 
   							first: res.data.messages,
   							replies: res.data.messages.replies.reverse()
-  						}, () => {
+  						}, () => { 
                 const sender = this.state.first;
                 axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
                   username: this.state.first.author === this.props.username ? this.state.first.reciever : this.state.first.author
@@ -136,7 +136,7 @@ class MessageIndividual extends Component {
                   // append picture to object
                   sender["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
 
-                  this.setState({
+                  this.setState({ 
                     first: sender
                   })    
                 }).catch((err) => {

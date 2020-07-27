@@ -34,7 +34,7 @@ const { width, height } = Dimensions.get("window");
 
 let row = [];
 let prevOpenedRow;
-
+  
 class ProfilePicView extends Component {
 constructor(props) {
   super(props);

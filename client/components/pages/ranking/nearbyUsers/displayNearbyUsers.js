@@ -24,6 +24,7 @@ import MapView, { Marker } from 'react-native-maps';
 import axios from "axios";
 import RBSheet from "react-native-raw-bottom-sheet";
 import ProfileSub from "../../../mapProfileHelpers/reviewUserPopProfile.js";
+import { connect } from "react-redux";
 
 const { width, height } = Dimensions.get("window");
 
@@ -37,7 +38,8 @@ constructor(props) {
   	isOpen: false,
   	markers: [],
   	showSlide: false,
-  	marker: null
+  	marker: null,
+  	user: null
   };
 }
 	componentDidMount() {
@@ -48,7 +50,7 @@ constructor(props) {
 	  	  })
 	    }).catch((err) => {
 	  	  console.log(err);
-	    })
+	    });
 	}
 	renderSlideUp = () => {
 		return (
@@ -57,8 +59,8 @@ constructor(props) {
 				  ref={ref => {
 				    this.RBSheet = ref;
 				  }}
-				  height={450}
-				  openDuration={250}
+				  height={500}
+				  openDuration={250} 
 				  customStyles={{
 				    container: {
 				      justifyContent: "center",
@@ -67,11 +69,31 @@ constructor(props) {
 				  }}
 				>
 				  <View style={{ width: width, backgroundColor: "white" }}>
-					<ProfileSub user={this.state.marker} />
+					<ProfileSub navigation={this.props.navigation} user={this.state.marker} />
+					 <NativeButton style={{ backgroundColor: "#999999", width: width, justifyContent: "center", marginBottom: 40, alignItems: "center", alignContent: "center" }} onPress={() => {
+          					console.log("clicked user interface...");
+                        	 this.RBSheet.close();
+  							 this.props.navigation.navigate("rank-from-map-view", { user: this.state.marker });
+  							}} hasText>
+  								<Text style={{ color: "white", fontSize: 22, fontWeight: "bold", paddingBottom: 10 }}>Review This User  <Image style={{ width: 40, height: 40, marginBottom: 10, marginTop: 15 }} source={require("../../../../assets/icons/review-two.png")}/>  </Text>
+  					</NativeButton>
 				  </View>
 				</RBSheet>
 		</View>
 		);
+	}
+	loop = (marker) => {
+		console.log("marka :", marker);
+		if (marker.rankedUsers) {
+			for (var i = 0; i < marker.rankedUsers.length; i++) {
+				let element = marker.rankedUsers[i];
+				console.log("elementtttt :", element);
+				if (element.reciever === marker.username || marker.username === this.props.username) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	render() {
 		console.log("marker state :", this.state);
@@ -114,7 +136,7 @@ constructor(props) {
 						  >
 							{this.state.markers.map((marker, index) => {
 								console.log("MARKER: ", marker);
-								if (marker.location) {
+								if (marker.location && this.loop(marker)) {
 									let latitude = marker.location.coords.latitude;
 									let longitude = marker.location.coords.longitude;
 									let activityType = marker.location.activity.type;
@@ -154,7 +176,7 @@ constructor(props) {
 			        <View style={{ position: "absolute", bottom: 0, width: width }}>
 					<Footer>
 			          <FooterTab>
-			            <NativeButton active onPress={() => {
+			            <NativeButton onPress={() => {
 				            	this.props.navigation.navigate("dashboard");
 				            }}>
 			              <Image style={{ width: 35, height: 35 }} source={require("../../../../assets/icons/home-run.png")} />
@@ -196,4 +218,10 @@ const styles = StyleSheet.create({
 	}
 })
 
-export default DisplayNearbyUsers;
+const mapStateToProps = state => {
+	return {
+		username: state.auth.authenticated.username
+	}
+}
+
+export default connect(mapStateToProps, {  })(DisplayNearbyUsers);

@@ -52,6 +52,8 @@ import ProfileMenuListDisplay from "./components/pages/profile/profile_menu_list
 import MusicPlayerPage from "./components/pages/music/musicPlayerPage.js";
 import StoriesPageSlider from "./components/pages/stories/slider/storiesPageSlider.js";
 import CreateStoryFeedPage from "./components/pages/stories/create.js";
+import RankFromMap from "./components/pages/ranking/rank/rankFromMap.js";
+import SecondPageRankUsersNearby from "./components/pages/ranking/rank/secondPageRankUsersNearby.js";
 
 import { locationBackground, latLngLocation } from "./actions/location/getLocation.js";
 
@@ -137,14 +139,17 @@ constructor(props) {
     }, (state) => {
       console.log("- BackgroundGeolocation is configured and ready: ", state);
       // should be (!state.enabled)
-      if (state.enabled) {
-        ////
-        // 3. Start tracking!
-        //
-        BackgroundGeolocation.start(() => {
-          console.log("- Start success");
-        });
-      }
+      // if (state.enabled) {
+      //   ////
+      //   // 3. Start tracking!
+      //   //
+      //   BackgroundGeolocation.start(() => {
+      //     console.log("- Start success");
+      //   });
+      // }
+      BackgroundGeolocation.start(() => {
+        console.log("- Start success");
+      });
     });
   }
   onLocation = (location) => {
@@ -218,6 +223,8 @@ constructor(props) {
             <Stack.Screen name="profile-music-playlist" component={MusicPlayerPage} />
             <Stack.Screen name="stories-review-show" component={StoriesPageSlider} />
             <Stack.Screen name="create-story-feed" component={CreateStoryFeedPage} />
+            <Stack.Screen name="rank-from-map-view" component={RankFromMap} /> 
+            <Stack.Screen name="review-rate-nearby" component={SecondPageRankUsersNearby} />
           </Stack.Navigator>
         </NavigationContainer>
     );
