@@ -172,6 +172,22 @@ constructor(props) {
 	        })
   		} else if (data.data === "sent you a friend request!") {
 			this.props.navigation.navigate(data.route, { data });
+  		} else if (data.data === "reviewed you... You can now review them. Click to be directed to the review/response page") {
+			axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+	          username: data.user
+	        }).then((res) => {
+	          console.log(res.data);
+	          if (res.data.message === "FOUND user!") {
+	          	this.setState({
+	          		user: res.data.user,
+	          		navigate: true
+	          	}, () => {
+					this.props.navigation.navigate(data.route, { user: this.state.user, index: data.index });
+	          	})
+	          }
+	        }).catch((err) => {
+	          console.log(err);
+	        })
   		}
 	}
 	returnNonMessage = () => {

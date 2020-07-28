@@ -54,6 +54,9 @@ import StoriesPageSlider from "./components/pages/stories/slider/storiesPageSlid
 import CreateStoryFeedPage from "./components/pages/stories/create.js";
 import RankFromMap from "./components/pages/ranking/rank/rankFromMap.js";
 import SecondPageRankUsersNearby from "./components/pages/ranking/rank/secondPageRankUsersNearby.js";
+import RankFromNotification from "./components/pages/ranking/rank/rankFromNotification.js";
+import RankPageTwoNotification from "./components/pages/ranking/rank/rankPageTwoNotification.js";
+
 
 import { locationBackground, latLngLocation } from "./actions/location/getLocation.js";
 
@@ -225,6 +228,9 @@ constructor(props) {
             <Stack.Screen name="create-story-feed" component={CreateStoryFeedPage} />
             <Stack.Screen name="rank-from-map-view" component={RankFromMap} /> 
             <Stack.Screen name="review-rate-nearby" component={SecondPageRankUsersNearby} />
+            <Stack.Screen name="complete-review-process" component={RankFromNotification} />
+            <Stack.Screen name="rank-response-page-two" component={RankPageTwoNotification} />
+
           </Stack.Navigator>
         </NavigationContainer>
     );

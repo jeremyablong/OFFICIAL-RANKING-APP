@@ -29,7 +29,7 @@ import { connect } from "react-redux";
 const { width, height } = Dimensions.get("window");
 
 const URL = "http://recovery-social-media.ngrok.io";
-
+ 
 class DisplayNearbyUsers extends Component {
 constructor(props) {
   super(props);
