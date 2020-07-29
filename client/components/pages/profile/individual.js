@@ -162,14 +162,14 @@ constructor(props) {
           console.log(err);
         })
 	}
-	render() {
+	render() { 
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		console.log(this.state);
 		const { user } = this.state;
 		return (
 			<Fragment>
 			<SideMenu isOpen={this.state.isOpen} menu={menu}>
-				<Header>
+				<Header style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 		          <Left>
 		            <NativeButton onPress={() => {
 		              this.props.navigation.navigate("dashboard");
@@ -178,7 +178,7 @@ constructor(props) {
 		            </NativeButton>
 		          </Left>
 		          <Body>
-		            <Title>{user !== null ? user.username : "--"}</Title>
+		            <Title style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{user !== null ? user.username : "--"}</Title>
 		          </Body>
 		          <Right>
 		            <NativeButton onPress={() => {
@@ -449,7 +449,8 @@ const styles = StyleSheet.create({
 });
 const mapStateToProps = state => {
 	return {
-		username: state.auth.authenticated.username
+		username: state.auth.authenticated.username,
+		dark_mode: state.mode.dark_mode
 	}
 }
 export default connect(mapStateToProps, {  })(ProfileIndividual);

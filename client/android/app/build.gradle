@@ -204,7 +204,10 @@ dependencies {
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
-
+    compile project(':react-native-video')
+    
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
+    
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }

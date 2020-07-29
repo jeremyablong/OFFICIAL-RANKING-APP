@@ -429,6 +429,8 @@ PODS:
     - react-native-camera/RN
   - react-native-document-picker (3.5.3):
     - React
+  - react-native-fetch-blob (0.10.6):
+    - React-Core
   - react-native-google-maps (0.27.1):
     - Google-Maps-iOS-Utils (= 2.1.0)
     - GoogleMaps (= 3.5.0)
@@ -453,6 +455,11 @@ PODS:
   - react-native-safe-area-context (3.0.5):
     - React
   - react-native-track-player (1.2.3):
+    - React
+  - react-native-video (4.4.5):
+    - React
+    - react-native-video/Video (= 4.4.5)
+  - react-native-video/Video (4.4.5):
     - React
   - react-native-view-shot (3.1.2):
     - React
@@ -624,6 +631,7 @@ DEPENDENCIES:
   - react-native-camera/FaceDetectorMLKit (from `../node_modules/react-native-camera`)
   - react-native-camera/TextDetector (from `../node_modules/react-native-camera`)
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
@@ -633,6 +641,7 @@ DEPENDENCIES:
   - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-track-player (from `../node_modules/react-native-track-player`)
+  - react-native-video (from `../node_modules/react-native-video/react-native-video.podspec`)
   - react-native-view-shot (from `../node_modules/react-native-view-shot`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -762,6 +771,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
+  react-native-fetch-blob:
+    :path: "../node_modules/react-native-fetch-blob"
   react-native-google-maps:
     :path: "../node_modules/react-native-maps"
   react-native-image-picker:
@@ -780,6 +791,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-track-player:
     :path: "../node_modules/react-native-track-player"
+  react-native-video:
+    :path: "../node_modules/react-native-video/react-native-video.podspec"
   react-native-view-shot:
     :path: "../node_modules/react-native-view-shot"
   React-RCTActionSheet:
@@ -918,6 +931,7 @@ SPEC CHECKSUMS:
   react-native-ble-manager: 73a2c5d7ca510866d2bdf67d56bec42bd76c004f
   react-native-camera: 679479bfe0f59103aca704e8dc39b0cedf5e2f65
   react-native-document-picker: b1b4a52c0051e10642c54cfc10933759e8ccdda4
+  react-native-fetch-blob: 0cbdf9764c75d9438c162427395f4bc35a857d5a
   react-native-google-maps: 0a989abda71059db2caa98b9dacca7a8f38a47d0
   react-native-image-picker: 668e72d0277dc8c12ae90e835507c1eddd2e4f85
   react-native-image-resizer: 3a0a2ab15953b2aec5dda20338e3c6bd6c26e528
@@ -927,6 +941,7 @@ SPEC CHECKSUMS:
   react-native-nodemediaclient: b52eb3bc317ff2fc1a55803c360d030ee5f9fa02
   react-native-safe-area-context: e9a863c2dbbc0d42d2b12209d63fa79dfbc9662c
   react-native-track-player: 84552605df7d90e199ff8b5deceddff58d658523
+  react-native-video: aa527b0acb37f94c4491e70df0274cb26979405d
   react-native-view-shot: 08c46c9e8e92f6681e8f2ffa55ac3d06e7e99070
   React-RCTActionSheet: f41ea8a811aac770e0cc6e0ad6b270c644ea8b7c
   React-RCTAnimation: 49ab98b1c1ff4445148b72a3d61554138565bad0
@@ -969,6 +984,6 @@ SPEC CHECKSUMS:
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 2d139ecef16ff0ce4ef9309a2217a2cf1cde37ce
+PODFILE CHECKSUM: ef0d3be52aa6865e9bd43e3f456d1875f94de9e8
 
 COCOAPODS: 1.9.1

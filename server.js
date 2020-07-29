@@ -88,6 +88,7 @@ app.use("/gather/general/comments/feed", require("./routes/wall/comments/gatherG
 app.use("/react/emoji/main/wall/posts", require("./routes/wall/homeWall/replyEmoji.js"));
 app.use("/post/rating/interaction", require("./routes/ranking/rateUserExperience.js"));
 app.use("/post/rating/interaction/confirmation", require("./routes/ranking/confirmationResponse.js"));
+app.use("/upload/video/wall/post", require("./routes/wall/postWall/postVideoWall.js"));
 
 app.get("/blockchain", (req, res) => {
   res.send(gemshire);

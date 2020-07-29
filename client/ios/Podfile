@@ -77,7 +77,8 @@ target 'client' do
 
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
-  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
+  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec' 
+  pod 'react-native-video', :path => '../node_modules/react-native-video/react-native-video.podspec'
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
 
@@ -115,7 +116,9 @@ target 'client' do
 
   pod 'UMCore', path: '../node_modules/@unimodules/core/ios'
 
-  pod 'react-native-view-shot', :path => '../node_modules/react-native-view-shot'
+  pod 'react-native-view-shot', :path => '../node_modules/react-native-view-shot' 
+
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob' 
 
   target 'clientTests' do
     inherit! :complete
