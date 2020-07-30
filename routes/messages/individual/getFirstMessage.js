@@ -29,6 +29,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 							})
 						}
 					}
+					return;
 				} else {
 					res.json({
 						message: "User could NOT be found..."

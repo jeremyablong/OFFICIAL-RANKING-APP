@@ -10,7 +10,8 @@ import {
   Alert, 
   ImageBackground, 
   Dimensions, 
-  TouchableOpacity
+  TouchableOpacity, 
+  RefreshControl
 } from 'react-native';
 import axios from "axios";
 import { connect } from "react-redux";
@@ -22,6 +23,8 @@ import Popover from 'react-native-popover-view';
 import RBSheet from "react-native-raw-bottom-sheet";
 import moment from "moment";
 import uuid from "react-uuid";
+import Video from 'react-native-video';
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 
 const { width, height } = Dimensions.get("window");
 
@@ -40,7 +43,11 @@ constructor(props) {
     showModal: false,
     showPopover: false,
     selected: null,
-    alreadyLikedPost: false
+    alreadyLikedPost: false,
+    refreshing: false,
+    statusText: "",
+    selectedShare: null,
+    user: null
   };
 }
 
@@ -293,10 +300,87 @@ constructor(props) {
             </NativeButton>
 		);
 	}
+	onRefresh = () => {
+		this.setState({
+			refreshing: true
+		})
+	}
+	loadContent = () => {
+		axios.get("http://recovery-social-media.ngrok.io/gather/wall/posts/all").then((res) => {
+          console.log("RES.Data :", res.data);
+          if (res.data.message === "Successfully gather all wall postings...") {
+          	for (var i = 0; i < res.data.wall.length; i++) {
+          		let post = res.data.wall[i];
+          		console.log("postieeee ", post);
+          		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+					username: post.author
+				}).then((res) => {
+					console.log("resolution :", res.data);
+					const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+					// append picture to object
+					post["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+					this.setState({
+						posts: [post, ...this.state.posts]
+					})
+				}).catch((err) => {
+					console.log("FAILURE :", err);
+				})
+          	}
+          	this.setState({
+          		ready: true 
+          	})
+          }
+        }).catch((err) => {
+          console.log(err);
+        });
+	}
+	renderSignedCreds = () => {
+		axios.post(`${URL}/get/user/by/username`, {
+	  		username: this.props.username
+	  	}).then((res) => {
+			if (res.data) {
+				console.log("This is the magic :", res.data);
+				this.setState({
+					user: res.data.user
+				}, () => {
+					this.RBSheetTwo.open();
+				})
+			}
+	  	}).catch((err) => {
+	  		console.log(err);
+	  	});
+		
+	}
+	renderShareSubmission = () => {
+		console.log("submit.");
+		axios.post(`${URL}/share/post`, {
+			username: this.props.username,
+			post: this.state.selectedShare,
+			text: this.state.statusText
+		}).then((res) => {
+			console.log(res.data);
+			if (res.data.message === "Successfully shared this post...") {
+				this.setState({
+					posts: [res.data.original, ...this.state.posts]
+				}, () => {
+					this.RBSheetTwo.close();
+				})
+			}
+		}).catch((err) => {
+			console.log(err);
+		})
+	}
 	render() {
+		console.log("state - state : ", this.state);
 		return (
 			<Fragment>
 			<Content>
+			{this.state.posts.length === 0 ? <View style={{ justifyContent: "center", alignContent: "center", alignItems: "center" }}><NativeButton style={{ justifyContent: "center", backgroundColor: "#613DC1", marginBottom: 100, marginTop: 50, width: width * 0.90 }} onPress={() => {
+				this.loadContent();
+			}}>
+				<NativeText>Load Page...</NativeText>
+			</NativeButton></View> : null}
 			{this.renderModal()}
 				{this.state.posts && this.state.ready === true ? this.state.posts.map((post, index) => {
 					console.log("post... :", post);
@@ -322,6 +406,45 @@ constructor(props) {
 					          {post.images.length >= 2 && post.images.length != 4 && this.renderTwo(post.images)}
 					          {post.images.length >= 4 && this.renderThree(post.images)}
 					      </View> : null} 
+						  
+
+						  {post.original ? <Fragment><Card style={{flex: 0, width: width * 0.92, minHeight: 400, marginBottom: 35, borderWidth: 3, borderColor: "#4E148C" }}>
+				            <CardItem>
+				              <Left>
+				                <Thumbnail source={{uri: post.original.picture }} />
+				                <Body> 
+				                  <Text>{post.original.author}</Text>
+				                  <Text note>{post.original.date}</Text>
+				                </Body>
+				              </Left>
+				            </CardItem>
+				            <CardItem>
+				              <Body>
+				                {post.original.images ? <View style={this.props.dark_mode ? styles.containerDark : styles.container}>
+						          {[1, 3, 4].includes(post.original.images.length)  && this.renderOne(post.original.images)}
+						          {post.original.images.length >= 2 && post.original.images.length != 4 && this.renderTwo(post.original.images)}
+						          {post.original.images.length >= 4 && this.renderThree(post.original.images)}
+					      		</View> : null} 
+				              </Body>
+				            </CardItem>
+				            {post.original.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20, marginBottom: 60 }}>{post.original.text}</NativeText> : null}
+				             
+				          
+				          </Card></Fragment> : null}
+
+					      {post.videoID ? <Video 
+					      	   paused={true} 
+					      	   ignoreSilentSwitch={"ignore"} 
+					      	   muted={false} 
+					      	   resizeMode={"cover"} 
+					      	   controls={true} 
+					      	   source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${post.videoID}` }} 
+						       ref={(ref) => {
+						         this.player = ref
+						       }}                                  
+						       onBuffer={this.onBuffer}            
+						       onError={this.videoError}          
+						       style={styles.backgroundVideo} /> : null}
 					      
 			            </CardItem>
 			            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
@@ -339,7 +462,13 @@ constructor(props) {
 				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
 				              <NativeText style={this.props.dark_mode ? { color: "white", marginLeft: 6 } : { color: "black" }}>Comment</NativeText>
 				            </NativeButton>
-				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+				            <NativeButton onPress={() => {
+				            	this.setState({
+				            		selectedShare: post
+				            	}, () => {
+				            		this.renderSignedCreds();
+				            	})
+				            }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
 				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Share</NativeText>
 				            </NativeButton>
 				          </FooterTab>
@@ -351,6 +480,45 @@ constructor(props) {
 				}) : null}
 			<RBSheet
 	          ref={ref => {
+	            this.RBSheetTwo = ref;
+	          }}
+	          height={375}
+	          openDuration={250}
+	          customStyles={{
+	            
+	          }}
+	        >
+	          {this.state.user !== null ? <Fragment><View>
+	          	<ListItem avatar>
+	              <Left>
+	                <Thumbnail source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.profilePic[this.state.user.profilePic.length - 1].picture}` }} />
+	              </Left>
+	              <Body> 
+	                <Text style={{ color: "blue" }}>{this.state.user.username}</Text>
+	                <Text note>What's on your mind? You can post freely and opening... We got your back!</Text>
+	              </Body> 
+	              {/*<Right>
+	                <Text note>3:43 pm</Text> 
+	              </Right>*/}
+	            </ListItem>
+				<View style={{ margin: 20 }}>
+					<AutoGrowingTextInput onChangeText={(value) => {
+					this.setState({
+						statusText: value
+					})
+				}} value={this.state.statusText} style={styles.textInput} placeholderTextColor={"grey"} placeholder={`What's on your mind...?`} />
+				</View>
+	          </View>
+	          	<View style={styles.btnContainer}>
+					<NativeButton style={styles.submitBtn} onPress={() => {
+						this.renderShareSubmission();
+					}}>
+						<NativeText>Submit</NativeText>
+					</NativeButton>
+				</View></Fragment> : <Text>Error loading content...</Text>}
+	        </RBSheet>
+			<RBSheet
+	          ref={ref => { 
 	            this.RBSheet = ref;
 	          }}
 	          height={height * 0.10}
@@ -395,10 +563,24 @@ constructor(props) {
 	        </RBSheet>
 			</Content>
 			</Fragment>
-		)
+		) 
 	}
 }
 const styles = StyleSheet.create({
+	btnContainer: {
+		position: "absolute", 
+		bottom: 0, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center"
+	},
+	backgroundVideo: {
+		width: width * 0.90,
+		height: 250,
+		minHeight: 250, 
+		minWidth: width * 0.90,
+		marginBottom: 40
+	},
 	popoverPop: {
 	    height: "100%", 
 	    width: "100%", 
@@ -466,6 +648,13 @@ const styles = StyleSheet.create({
   imageContent1:{
     width:'100%',
     height: 350
+  },
+  submitBtn: {
+	justifyContent: "center", 
+	alignItems: "center", 
+	alignContent: "center",
+	width: width,
+	backgroundColor: "#613DC1"
   },
   imageContentDark: {
   	backgroundColor: "black",

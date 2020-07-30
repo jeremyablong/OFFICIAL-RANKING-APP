@@ -25,11 +25,12 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						if (element.replies) {
 							for (var i = 0; i < element.replies.length; i++) {
 								const message = element.replies[i];
-								console.log("222 :", message);
+								console.log("message :", message);
 								if (message.id === id) {
 									finalMessage.push(message);
 								}
 							}
+							return;
 						}
 					}
 					res.json({

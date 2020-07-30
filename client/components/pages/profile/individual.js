@@ -33,7 +33,7 @@ const { width, height } = Dimensions.get("window");
 const URL = "http://recovery-social-media.ngrok.io";
 
 class ProfileIndividual extends React.Component {
-constructor(props) {
+constructor(props) { 
   super(props);
 
   this.state = {

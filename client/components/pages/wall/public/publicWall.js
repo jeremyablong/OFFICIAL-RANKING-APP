@@ -12,7 +12,8 @@ import {
   ImageBackground, 
   Dimensions, 
   ScrollView, 
-  FlatList
+  FlatList,
+  RefreshControl
 } from 'react-native';
 import { Container, Header, Thumbnail, Left, Body, Right, Card, CardItem, Button as NativeButton, Title, Text as NativeText, ListItem, List, Footer, FooterTab, Badge } from 'native-base';
 import { connect } from "react-redux";
@@ -26,7 +27,7 @@ import NavigationDrawer from "../../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import ProgressiveImage from "../../../image/image.js";
 import Modal from 'react-native-modal';
-   
+import Video from 'react-native-video';   
  
 
 const { width, height } = Dimensions.get("window");
@@ -48,7 +49,8 @@ constructor(props) {
     conditionalRender: false,
 	modalImageValue: null,
 	showModal: false,
-	playing: false
+	playing: false,
+	refreshing: false
   };  
     
   
@@ -151,6 +153,12 @@ constructor(props) {
 	        })  
 		}
 	} 
+	onBuffer = () => {
+
+	}
+	videoError = () => {
+
+	}
 	handleRerender = () => {
 		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
           username: this.props.username
@@ -307,10 +315,52 @@ constructor(props) {
 	        </Modal>
 		);
 	}
+	onRefresh = () => {
+		this.setState({
+			refreshing: true
+		}, () => {
+			axios.post(`${URL}/get/user/by/username`, {
+	          username: this.props.username
+	        }).then((res) => {
+	          console.log("UUU :", res.data);
+	          if (res.data.message === "FOUND user!") {
+	          	this.setState({
+	          		user: res.data.user
+	          	});  
+				if (res.data.user.wall) {
+					for (var i = 0; i < res.data.user.wall.length; i++) {
+		          		let post = res.data.user.wall[i];
+		          		console.log("postieeee ", post);
+		          		axios.post("http://recovery-social-media.ngrok.io/get/user/by/username", {
+							username: post.author
+						}).then((res) => {
+							console.log("resolution :", res.data);
+							const picture = res.data.user.profilePic[res.data.user.profilePic.length - 1].picture;
+							// append picture to object
+							post["picture"] = `https://s3.us-west-1.wasabisys.com/rating-people/${picture}`;
+
+							this.setState({
+								posts: [post, ...this.state.posts]
+							})
+						}).catch((err) => {
+							console.log("FAILURE :", err);
+						})
+		          	}
+				}
+	          	this.setState({
+	          		ready: true,
+	          		refreshing: false
+	          	})
+	          }  
+	        }).catch((err) => {
+	          console.log(err);
+	        });
+		})
+	}
 	renderContent = () => {
 		if (this.state.ready === true) {
 			return (
-				<ScrollView contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={styles.container}>
+				<ScrollView refreshControl={<RefreshControl refreshing={this.state.refreshing} onRefresh={this.onRefresh} />} contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false} style={styles.container}>
 		          {this.state.ready ? <ImageBackground resizeMode='cover' source={{ uri: this.state.cover !== null ? `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.cover}` : `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.user.coverPhoto}` }} style={styles.header}><TouchableOpacity onPress={() => {
 		          	console.log("clicked..");
 		          	this._panel.show()
@@ -383,6 +433,20 @@ constructor(props) {
 							          {post.images.length >= 4 && this.renderThree(post.images)}
 							      </View> : null}
 							      
+							      {post.videoID ? <Video 
+							      	   ignoreSilentSwitch={"ignore"} 
+							      	   muted={false} 
+							      	   paused={true}  
+							      	   resizeMode={"cover"} 
+							      	   controls={true} 
+							      	   source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${post.videoID}` }} 
+									   ref={(ref) => {
+									     this.player = ref
+									   }}                                  
+									   onBuffer={this.onBuffer}            
+									   onError={this.videoError}          
+									   style={styles.backgroundVideo} 
+									/> : null }
 					            </CardItem>
 					            <CardItem style={this.props.dark_mode ? { backgroundColor: "black", paddingTop: 15, paddingBottom: 10 } : { backgroundColor: "white", paddingTop: 15, paddingBottom: 10 }}>
 									<Text style={{ textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😂😍😁</Text>
@@ -530,6 +594,13 @@ constructor(props) {
 }
 
 const styles = StyleSheet.create({
+	backgroundVideo: {
+		width: width * 0.90,
+		height: 250,
+		minHeight: 250, 
+		minWidth: width * 0.90,
+		marginBottom: 40
+	},
 	darkText: {
 		color: "white"
 	},

@@ -205,8 +205,17 @@ constructor(props) {
 				username: this.props.username
 			}).then((res) => {
 				console.log(res.data);
+				if (res.data.message === "GREAT SUCCESS - Video uploaded...") {
+					
+					this.props.navigation.navigate("dashboard");
+
+					setTimeout(() => {
+						alert(res.data.message);
+					}, 1500)
+				} 
 			}).catch((err) => {
 				console.log(err);
+				alert("An error occurred... Please try again.")
 			}) 
 		}).catch(err => {
 		    console.log(err.message, err.code);
@@ -256,7 +265,7 @@ constructor(props) {
 							<Footer>
 					          <FooterTab>
 					            <NativeButton onPress={() => {
-									this.RBSheetTwo.open();
+									{/*this.RBSheetTwo.open();*/}
 									this.uploadImg();
 					            }}>
 					              <NativeText>Upload Image</NativeText>

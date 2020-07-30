@@ -141,7 +141,7 @@ constructor(props) {
 					break;
 				case 2:
 					return (
-						<Card style={styles.shadow}>
+						<Card style={styles.shadow}> 
 				            <CardItem>
 				              <Left>
 				                <Thumbnail source={{uri: post.picture }} />
@@ -149,7 +149,7 @@ constructor(props) {
 				                  <NativeText>{post.author}</NativeText>
 				                  <NativeText note>{post.date}</NativeText>
 				                </Body>
-				              </Left>
+				              </Left> 
 				            </CardItem>
 				            <CardItem>
 				              <Body>

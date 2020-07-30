@@ -19,30 +19,32 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			console.log("req.body", req.body);
 
 			collection.findOne({ username }).then((user) => {
-				if (user.messages) {
-					console.log("USAAAAA :", user.messages.reverse());
-					
-					const reversed = user.messages.sort((left, right) => {
-					    return moment.utc(left.date).diff(moment.utc(right.date));
-					});
+				if (user) {
+					if (user.messages.length > 0) {
+						console.log("USAAAAA :", user.messages.reverse());
+						
+						const reversed = user.messages.sort((left, right) => {
+						    return moment.utc(left.date).diff(moment.utc(right.date));
+						});
 
-					 console.log("REV :", reversed);
+						 console.log("REV :", reversed);
 
-					if (user) {
-						res.json({
-							message: "FOUND user!",
-							messages: reversed,
-							user
-						})
+						if (user) {
+							res.json({
+								message: "FOUND user!",
+								messages: reversed,
+								user
+							})
+						} else {
+							res.json({
+								message: "User could NOT be found..."
+							})
+						}
 					} else {
 						res.json({
-							message: "User could NOT be found..."
+							message: "You have no messages yet, message some users!"
 						})
 					}
-				} else {
-					res.json({
-						message: "You have no messages yet, message some users!"
-					})
 				}
 			}).catch((err) => {
 				console.log("ERRRRRRR :", err);
