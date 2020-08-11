@@ -22,7 +22,7 @@ constructor(props) {
         {id:8, title: "Articulate", image: require("../../../../assets/icons/easy-return.png")} ,
         {id:9, title: "Charismatic",image: require("../../../../assets/icons/charm.png")} ,
         {id:10, title: "Talkative",image: require("../../../../assets/icons/phone-set.png")}
-      ],
+      ], 
     selected: []
   }; 
 } 

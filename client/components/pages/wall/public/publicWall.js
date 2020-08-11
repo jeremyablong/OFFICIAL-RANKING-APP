@@ -28,9 +28,13 @@ import SideMenu from 'react-native-side-menu';
 import ProgressiveImage from "../../../image/image.js";
 import Modal from 'react-native-modal';
 import Video from 'react-native-video';   
- 
+import Popover from 'react-native-popover-view';
+import RBSheet from "react-native-raw-bottom-sheet";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+
 
 const { width, height } = Dimensions.get("window");
+
  
 const URL = "http://recovery-social-media.ngrok.io";
  
@@ -50,12 +54,28 @@ constructor(props) {
 	modalImageValue: null,
 	showModal: false,
 	playing: false,
-	refreshing: false
+	refreshing: false,
+	showPopover: false,
+	isLoading: true,
+	ranking: 0
   };  
     
   
 } 
 	componentDidMount() {
+
+		axios.post(`${URL}/gather/post/ratings/total`, {
+			username: this.props.username
+		}).then((res) => {
+			console.log(res.data);
+			if (res.data.message === "Successfully calculated score!") {
+				this.setState({
+					ranking: res.data.ranking
+				})
+			}
+		}).catch((err) => {
+			console.log(err);
+		})
 
 		axios.post(`${URL}/get/user/by/username`, {
           username: this.props.username
@@ -84,7 +104,8 @@ constructor(props) {
 				})
           	}
           	this.setState({
-          		ready: true
+          		ready: true,
+          		isLoading: false
           	})
           }  
         }).catch((err) => {
@@ -117,6 +138,64 @@ constructor(props) {
 	// 		})
 	// 	}
 	// };
+	renderEmojisReturn = (post) => { 
+		console.log("POSTIE :", post);
+
+		const emojis = [];
+
+		for (let key in post) {
+			let element = post[key];
+
+			console.log("key ", key);
+ 
+			if (element > 0) {
+				switch (key) {   
+					case "angry":
+						console.log("angry");
+						emojis.push("🤬");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>🤬</Text>;
+						break;  
+					case "frustrated":
+						console.log("frustrated");
+						emojis.push("😤");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😤</Text>;
+						break;
+					case "heart":
+						console.log("heart");
+						emojis.push("❤️");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>❤️</Text>;
+						break;
+					case "heartFace":
+						console.log("heartFace");
+						emojis.push("😍");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😍</Text>;
+						break;
+					case "laugh":
+						console.log("laugh");
+						emojis.push("😆");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😆</Text>;
+						break;
+					case "puke":
+						console.log("puke");
+						emojis.push("🤮");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>🤮</Text>;
+						break;
+					case "sad":
+						console.log("sad");
+						emojis.push("😢");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😢</Text>;
+						break;
+					default:
+						return;
+						break;
+				} 
+			}
+
+			console.log("elemenntttttttttttt :" , element);
+		}
+		console.log("emoji array ---------- :", emojis);
+		return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>{emojis}</Text>;
+	}
 	uploadCoverPhoto = () => { 
 		
 		const { avatar } = this.state;
@@ -317,7 +396,8 @@ constructor(props) {
 	}
 	onRefresh = () => {
 		this.setState({
-			refreshing: true
+			refreshing: true,
+			posts: []
 		}, () => {
 			axios.post(`${URL}/get/user/by/username`, {
 	          username: this.props.username
@@ -389,7 +469,7 @@ constructor(props) {
 		              }}><Image source={require("../../../../assets/icons/music.png")} style={this.props.dark_mode ? styles.darkMusicIcon : styles.lightMusicIcon} /></TouchableOpacity>
 		              
 		              <Text style={this.props.dark_mode ? styles.nameDark : styles.name}>{this.state.user !== null ? this.state.user.fullName : "--"}</Text>
-		              <Text style={styles.ranking}><Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Social Ranking:</Text>834</Text>
+		              <Text style={styles.ranking}><Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Social Ranking:</Text>{Math.round(this.state.ranking) || "----"}</Text>
 		              <Text style={styles.info}>{this.state.user ? this.state.user.username : "--"}</Text>
 		              <Text style={this.props.dark_mode ? styles.descriptionDark : styles.description}>Lorem ipsum dolor sit amet, saepe sapientem eu nam. Qui ne assum electram expetendis, omittam deseruisse consequuntur ius an,</Text>
 		              <View style={styles.customContainer}>
@@ -433,9 +513,41 @@ constructor(props) {
 							          {post.images.length >= 4 && this.renderThree(post.images)}
 							      </View> : null}
 							      
+								  {post.original ? <Fragment><Card style={{flex: 0, width: width * 0.88, minHeight: 250, marginBottom: 35, borderWidth: 3, marginLeft: 10, borderColor: "#4E148C" }}>
+						            <CardItem>
+						              <Left>
+						                <Thumbnail source={{uri: post.original.picture }} />
+						                <Body> 
+						                  <TouchableOpacity onPress={() => {
+						                  	this.props.navigation.navigate("profile-individual", {
+						                  		user: {
+						                  			username: post.original.author 
+						                  		}
+						                  	})
+						                  }}>
+											<Text>{post.original.author}</Text>
+						                  </TouchableOpacity>
+						                  <Text note>{post.original.date}</Text>
+						                </Body>
+						              </Left>
+						            </CardItem>
+						            <CardItem>
+						              <Body>
+						                {post.original.images ? <View style={this.props.dark_mode ? styles.containerDark : styles.container}>
+								          {[1, 3, 4].includes(post.original.images.length)  && this.renderOne(post.original.images)}
+								          {post.original.images.length >= 2 && post.original.images.length != 4 && this.renderTwo(post.original.images)}
+								          {post.original.images.length >= 4 && this.renderThree(post.original.images)}
+							      		</View> : null} 
+						              </Body>
+						            </CardItem>
+						            {post.original.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20, marginBottom: 60 }}>{post.original.text}</NativeText> : null}
+						             
+						          
+						          </Card></Fragment> : null}
+
 							      {post.videoID ? <Video 
 							      	   ignoreSilentSwitch={"ignore"} 
-							      	   muted={false} 
+							      	   muted={false}  
 							      	   paused={true}  
 							      	   resizeMode={"cover"} 
 							      	   controls={true} 
@@ -448,15 +560,21 @@ constructor(props) {
 									   style={styles.backgroundVideo} 
 									/> : null }
 					            </CardItem>
-					            <CardItem style={this.props.dark_mode ? { backgroundColor: "black", paddingTop: 15, paddingBottom: 10 } : { backgroundColor: "white", paddingTop: 15, paddingBottom: 10 }}>
-									<Text style={{ textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😂😍😁</Text>
-									<Text style={this.props.dark_mode ? { textAlign: "right", position: "absolute", right: 6, bottom: 10, color: "white" } : { textAlign: "right", position: "absolute", color: "black", right: 6, bottom: 10 }}>{Math.floor(Math.random() * (33 - 0 + 1)) + 0} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
+					            <CardItem style={this.props.dark_mode ? { backgroundColor: "black", paddingTop: 15, paddingTop: 40, paddingBottom: 10 } : { backgroundColor: "white", paddingTop: 40, paddingBottom: 10 }}>
+									<TouchableOpacity onPress={() => {
+										console.log("clicked.")
+										this.props.navigation.navigate("wall-individual", { post });
+									}}>
+										{this.renderEmojisReturn(post.reactions)}
+										<Text style={this.props.dark_mode ? { textAlign: "right", color: "white", position: "absolute", right: 6, bottom: 10 } : { textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{post.replies.length} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
+									</TouchableOpacity>
 					            </CardItem>
 					            <Footer style={{ width: width * 0.98 }}>
 						          <FooterTab>
-						            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderWidth: 3, borderColor: "white" } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }} onPress={() => {
-						            	this.likePost();
-						            }}>
+ 								
+									<NativeButton onPress={() => {
+							        	this.RBSheettt.open();
+							        }} style={this.props.dark_mode ? { backgroundColor: "black", borderWidth: 3, borderColor: "white" } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
 						              <NativeText style={this.props.dark_mode ? styles.darkText : styles.lightText}>Like</NativeText>
 						            </NativeButton>
 						            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderWidth: 3, borderColor: "white" } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
@@ -523,7 +641,80 @@ constructor(props) {
 		            </NativeButton>
 		          </Right>
 		        </Header>
-		        {this.renderContent()}
+		   
+		        <RBSheet
+		          ref={ref => {
+		            this.RBSheettt = ref;
+		          }}
+		          height={100}
+		          openDuration={250}
+		          customStyles={{
+		            container: {
+		               
+		            }
+		          }}
+		        >
+		          <View style={styles.popoverPop}> 
+				      <TouchableOpacity onPress={() => {
+				        console.log("clicked...");
+				        this.handleEmojiSubmission("laugh");                  
+				      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😆</Text></TouchableOpacity>
+				      <TouchableOpacity onPress={() => {
+				        console.log("clicked...");
+				        this.handleEmojiSubmission("heartFace");
+				      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😍</Text></TouchableOpacity>
+				      <TouchableOpacity onPress={() => {
+				        console.log("clicked...");
+				        this.handleEmojiSubmission("frustrated");
+				      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😤</Text></TouchableOpacity>
+				      <TouchableOpacity onPress={() => {
+				        console.log("clicked...");
+				        this.handleEmojiSubmission("heart");
+				      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>❤️</Text></TouchableOpacity>
+				      <TouchableOpacity onPress={() => {
+				        console.log("clicked...");
+				        this.handleEmojiSubmission("angry");
+				      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>🤬</Text></TouchableOpacity>
+				      <TouchableOpacity onPress={() => {
+				        console.log("clicked...");
+				        this.handleEmojiSubmission("sad");
+				      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>😢</Text></TouchableOpacity>
+				      <TouchableOpacity style={{ left: -10 }} onPress={() => {
+				        console.log("clicked...");
+				        this.handleEmojiSubmission("puke");
+				      }}><Text style={{ height: 50, width: 50, fontSize: 40 }}>🤮</Text></TouchableOpacity>
+				  </View>  
+		        </RBSheet>
+		    		{this.state.isLoading ? <SkeletonPlaceholder>
+				      <View style={{ flexDirection: "row", alignItems: "center", width, backgroundColor: "white" }}>
+				        <View style={{ width: width * 0.95, height: 300, marginLeft: 10 }} />
+				        <View style={{ marginLeft: 20 }}>
+				          <View style={{ width: 120, height: 20, borderRadius: 4 }} />
+				          <View
+				            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+				          />
+				        </View>
+				      </View>
+				      <View style={{ paddingTop: 40, width, paddingLeft: 20, paddingBottom: 20, backgroundColor: "white", flexDirection: "row" }}>
+						<View style={{ width: 70, height: 70, borderRadius: 60 }}>
+
+				      	</View>
+				      	<View style={{ width: width * 0.70, height: 40, marginLeft: 20, marginTop: 20 }}>
+
+				      	</View>
+				      </View>
+				      <View style={{ backgroundColor: "white", height: 400 }}>
+						<View style={{ width: width * 0.55, marginLeft: 15, height: 40, marginBottom: 20 }}>
+
+				     	</View>
+				     	<View style={{ width: width * 0.45, marginLeft: 15, height: 40, marginTop: 20 }}>
+
+				     	</View>
+				     	<View style={{ width: width * 0.85, marginLeft: 15, height: 40, marginTop: 20 }}>
+
+				     	</View>
+				      </View>
+				    </SkeletonPlaceholder> : this.renderContent()}
 		      		<SlidingUpPanel ref={c => this._panel = c}>
 			          <View style={styles.slide}>
 			            <PhotoUpload
@@ -616,6 +807,16 @@ const styles = StyleSheet.create({
 		alignItems: "center", 
 		alignContent: "center"
 	},
+	popoverPop: {
+	    height: "100%", 
+	    width: "100%", 
+	    backgroundColor: "white", 
+	    flex: 1, 
+	    flexDirection: 'row', 
+	    justifyContent: 'space-between', 
+	    paddingTop: 10, 
+	    paddingBottom: 10
+	},
 	backLight: {
 		flex: 1, 
 		backgroundColor: "white", 
@@ -640,6 +841,10 @@ const styles = StyleSheet.create({
 		tintColor: "black",
 		width: 40, 
 		height: 40		
+	},
+	icon: {
+		width: 25, 
+		height: 25
 	},
 	darkMusicIcon: {
 		tintColor: "white", 

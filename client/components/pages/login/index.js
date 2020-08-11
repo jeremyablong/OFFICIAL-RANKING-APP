@@ -264,7 +264,7 @@ constructor(props) {
 		              secureTextEntry={this.state.show}
 		              underlineColorAndroid='transparent'
 		              onChangeText={(password) => this.setState({
-		                password
+		                password 
 		              })}/>
 		        </View>
 			 	<PhotoUpload
@@ -277,7 +277,8 @@ constructor(props) {
 				     }
 				   }}
 				   imagePickerProps={{
-				    chooseFromLibraryButtonTitle: null 
+				   	// turn to null for production - chooseFromLibraryButtonTitle: null
+				    //  chooseFromLibraryButtonTitle: null 
 				  }}
 				 >
 				   <Image

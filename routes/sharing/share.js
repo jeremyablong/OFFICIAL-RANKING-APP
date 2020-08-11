@@ -29,7 +29,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 						id,
 						text,
-						reactions: [],
+						reactions: {
+							laugh: 0,
+							heartFace: 0,
+							frustrated: 0,
+							heart: 0,
+							angry: 0,
+							sad: 0,
+							puke: 0
+						},
 						likes: [],
 						replies: [],
 						shareable: false,
@@ -41,7 +49,15 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 						id,
 						text,
-						reactions: [],
+						reactions: {
+							laugh: 0,
+							heartFace: 0,
+							frustrated: 0,
+							heart: 0,
+							angry: 0,
+							sad: 0,
+							puke: 0
+						},
 						likes: [],
 						replies: [],
 						shareable: false,

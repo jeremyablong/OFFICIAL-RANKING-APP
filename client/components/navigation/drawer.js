@@ -27,7 +27,7 @@ constructor(props) {
         {id: 4, route: "dashboard", title: "Social Ranking Repair", image: require("../../assets/icons/repair.png") } ,
         {id: 5, route: "dashboard", title: "Edit Profile", image: require("../../assets/icons/user.png") },
         {id: 6, route: "dashboard", title: "Privacy Shortcuts", image: require("../../assets/icons/privacy.png") } ,
-        {id: 7, route: "dashboard", title: "Dating", image: require("../../assets/icons/online-dating.png") } ,
+        {id: 7, route: "dating-homepage", title: "Dating", image: require("../../assets/icons/online-dating.png") } ,
         {id: 8, route: "dashboard", title: "View Friends", image: require("../../assets/icons/sport-team.png") } ,
         {id:9, title: "Sign-Out", image: require("../../assets/icons/logout.png") } ,
         // {id:9, title: "Option 9", image:"https://img.icons8.com/color/70/000000/coworking.png"} ,

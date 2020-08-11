@@ -22,7 +22,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			entertaining, 
 			offensive, 
 			respectful, 
-			happy, 
+			happy,  
 			overall,
 			username
 		} = req.body;

@@ -11,7 +11,7 @@ const URL = "http://recovery-social-media.ngrok.io";
 
 class SecondPageRankUsersNearby extends Component {
 constructor(props) {
-  super(props);
+  super(props); 
 
   this.state = {
 	selected: [],
@@ -20,13 +20,25 @@ constructor(props) {
 	offensive: null,
 	respectful: null,
 	happy: null,
-	overall: null
+	overall: null,
+	compliments: []
   };
 }
 	componentDidMount() {
-	  this.setState({
-	  	selected: this.props.route.params.selected
-	  })
+		let compliments = [];
+
+	  	for (var i = 0; i < this.props.route.params.selected.length; i++) {
+
+	  		let element = this.props.route.params.selected[i];
+			
+			compliments.push(element.title);
+	  	}
+
+	  	this.setState({
+	  		compliments
+	  	}, () => {
+	  		console.log(this.state.compliments)
+	  	})
 	}
 	handleRatingSubmission = () => {
 		console.log("handle submission...", this.props.username);
@@ -43,7 +55,8 @@ constructor(props) {
 			happy, 
 			overall,
 			username: custom.username,
-			user: this.props.username
+			user: this.props.username,
+			compli: this.state.compliments
 		}).then((res) => {
 			if (res.data.message === "Successfully calculated ranking...") {
 				console.log(res.data);
@@ -55,7 +68,7 @@ constructor(props) {
 		})
 	}
 	render() {
-		console.log("this.props :", this.props);
+		console.log("this.state :", this.state);
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		return (
 			<Fragment>

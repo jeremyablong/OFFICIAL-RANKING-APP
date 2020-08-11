@@ -31,10 +31,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
     	const { videoBASE64, username } = req.body;
 
-    	// console.log("REQQQQ-BODY :", req.body);
-
-    	// var data = fs.readFileSync(videoBASE64);
-
         const generated = uuidv4(); 
 
         const collection = db.collection("users");
@@ -50,7 +46,16 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         				shareable: true,
         				likes: [],
         				replies: [],
-        				author: username
+        				author: username,
+        				reactions: {
+							laugh: 0,
+							heartFace: 0,
+							frustrated: 0,
+							heart: 0,
+							angry: 0,
+							sad: 0,
+							puke: 0
+						}
         			}]
         		} else {
         			user.wall.push({
@@ -60,7 +65,16 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
         				shareable: true,
         				likes: [],
         				replies: [],
-        				author: username
+        				author: username,
+        				reactions: {
+							laugh: 0,
+							heartFace: 0,
+							frustrated: 0,
+							heart: 0,
+							angry: 0,
+							sad: 0,
+							puke: 0
+						}
         			})
         		}
 
@@ -104,40 +118,6 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				base64_decode(videoBASE64, `assets/images/${generated}.mp4`);
 
 
-        		// const bodyStream = fs.createReadStream(videoBASE64);
-
-        		// console.log("BodyStream :", bodyStream);
-
-    //     		s3.putObject({
-				//   Body: bodyStream,
-				//   Bucket: "rating-people",
-				//   Key: generated,
-				//   ContentEncoding: 'base64',
-				//   ContentType: 'video/mp4'
-				// }
-				// , (err, data) => {
-				//   if (err) {
-				//      console.log(err);
-				//   }
-				//   // console.log("JACKPOT : ", data);
-				// });
-
-        		// Setting up S3 upload parameters
-				// const params = {
-				//     Bucket: "rating-people",
-				//     Key: 'cat.jpg', // File name you want to save as in S3
-				//     Body: fileContent
-				// };
-
-				// console.log("USER :", user);
-
-				// // Uploading files to the bucket
-				// s3.upload(params, (err, data) => {
-				//     if (err) {
-				//         throw err;
-				//     }
-				//     console.log(`File uploaded successfully. ${data.Location}`);
-				// });
         	} else {
         		res.json({
         			message: "User could NOT be found."

@@ -14,11 +14,14 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 		const collection = db.collection("users");
 
 		const { reaction, poster, id, username } = req.body;
+
+		console.log("req.bodyyyy :", req.body);
  
 		collection.findOne({ username: poster }).then((user) => {
 			for (let i = 0; i < user.wall.length; i++) {
 				let wallPosting = user.wall[i];
 				if (wallPosting.id === id) {
+						console.log("wallPosting", wallPosting);
 					if (!wallPosting.reactions[reaction]) {
 						wallPosting.reactions[reaction] = 1;
 					} else {

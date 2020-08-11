@@ -16,6 +16,8 @@
 #import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
 #import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
 
+@import GoogleMobileAds;
+
 static void InitializeFlipper(UIApplication *application) {
   FlipperClient *client = [FlipperClient sharedClient];
   SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
@@ -37,7 +39,7 @@ static void InitializeFlipper(UIApplication *application) {
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-
+  [[GADMobileAds sharedInstance] startWithCompletionHandler:nil];
   [GMSServices provideAPIKey:@"AIzaSyBdJh-NGr0nCUTTcawLgiNsQuDsKtT8ERw"];
   [FIRApp configure];
   

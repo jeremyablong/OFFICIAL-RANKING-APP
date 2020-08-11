@@ -77,7 +77,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						frustrated: 0,
 						heart: 0,
 						angry: 0,
-						sad: 0
+						sad: 0,
+						puke: 0
 					},
 					likes: [],
 					replies: []
@@ -133,7 +134,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						frustrated: 0,
 						heart: 0,
 						angry: 0,
-						sad: 0
+						sad: 0,
+						puke: 0
 					},
 					likes: [],
 					replies: []
@@ -162,7 +164,8 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						frustrated: 0,
 						heart: 0,
 						angry: 0,
-						sad: 0
+						sad: 0,
+						puke: 0
 					},
 					likes: [],
 					replies: []

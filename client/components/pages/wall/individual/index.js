@@ -24,6 +24,9 @@ import axios from "axios";
 import { connect } from "react-redux";
 import ProgressiveImage from "../../../image/image.js";
 import Popover from 'react-native-popover-view';
+import Modal from 'react-native-modal';
+import Video from 'react-native-video';
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 
 const URL = "http://recovery-social-media.ngrok.io";
 
@@ -47,9 +50,196 @@ constructor(props) {
 	    typing: false,
 	    response: "",
 	    replies: [],
-	    showPopover: false
+	    showPopover: false,
+	    modalImageValue: null,
+	    showModal: false,
+	    countFrom: 5,
+	    isLoading: true
     }
 }
+	renderEmojisReturn = (post) => { 
+		console.log("POSTIE :", post);
+
+		const emojis = [];
+
+		for (let key in post) {
+			let element = post[key];
+
+			console.log("key ", key);
+ 
+			if (element > 0) {
+				switch (key) {   
+					case "angry":
+						console.log("angry");
+						emojis.push("🤬");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>🤬</Text>;
+						break;  
+					case "frustrated":
+						console.log("frustrated");
+						emojis.push("😤");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😤</Text>;
+						break;
+					case "heart":
+						console.log("heart");
+						emojis.push("❤️");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>❤️</Text>;
+						break;
+					case "heartFace":
+						console.log("heartFace");
+						emojis.push("😍");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😍</Text>;
+						break;
+					case "laugh":
+						console.log("laugh");
+						emojis.push("😆");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😆</Text>;
+						break;
+					case "puke":
+						console.log("puke");
+						emojis.push("🤮");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>🤮</Text>;
+						break;
+					case "sad":
+						console.log("sad");
+						emojis.push("😢");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😢</Text>;
+						break;
+					default:
+						return;
+						break;
+				} 
+			}
+
+			console.log("elemenntttttttttttt :" , element);
+		}
+		console.log("emoji array ---------- :", emojis);
+		return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 0, top: 40 } : { textAlign: "left", position: "absolute", left: 6, bottom: 0, top: 40 }}>{emojis}</Text>;
+	}
+	renderOne = (images) => {
+	    const {countFrom} = this.state;
+	    return(
+	      <View style={styles.row}>
+	        <TouchableOpacity style={[styles.imageContent, styles.imageContent1]} onPress={() => {
+	        	this.viewImage();
+	        }}>
+	          <ProgressiveImage style={styles.image} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${images[0]}`}}/>
+	        </TouchableOpacity>
+	      </View>
+	    );
+	}
+	viewImage = (imageUrl) => {
+		console.log("clicked image...", imageUrl);
+		this.setState({
+			modalImageValue: imageUrl,
+			showModal: true
+		})
+	}
+	renderModal = () => {
+		return (
+			<Modal isVisible={this.state.showModal}>
+	          <View style={this.props.dark_mode ? styles.modalViewDark : styles.modalView}>
+	            <ProgressiveImage source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${this.state.modalImageValue}` }} style={{ width: width - 75, height: height * 0.60 }} />
+	            <NativeButton onPress={() => {
+	            	this.setState({
+	            		showModal: false
+	            	})
+	            }} style={styles.closeBtn}>
+					<NativeText style={{ color: "white" }}>Close</NativeText>
+	            </NativeButton>
+	          </View>
+	        </Modal>
+		);
+	}
+	renderTwo = (images) => {
+	    const { countFrom } = this.state;
+	    const conditionalRender = [3, 4].includes(images.length) || images.length > +countFrom && [3, 4].includes(+countFrom);
+
+	    return(
+	      <View style={styles.row}>
+	        <TouchableOpacity resizeMode={"contain"} style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent2] : [styles.imageContent, styles.imageContent2]} onPress={() => {
+	        	if (conditionalRender) {
+					this.viewImage(images[1]);
+	        	} else {
+	        		this.viewImage(images[0]);
+	        	}
+	        }}>
+	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[1]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[0]}`}}/>
+	        </TouchableOpacity>
+	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent2] : [styles.imageContent, styles.imageContent2]} onPress={() => {
+	        	if (conditionalRender) {
+					this.viewImage(images[2]);
+	        	} else {
+	        		this.viewImage(images[1]);
+	        	}
+	        }}>
+	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[2]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[1]}`}}/>
+	        </TouchableOpacity>
+	      </View>
+	    );
+	}
+
+	renderThree = (images) => {
+	    const { countFrom } = this.state;
+	    const overlay = !countFrom || countFrom > 5 || images.length > countFrom && [4, 5].includes(+countFrom) ? this.renderCountOverlay(images) : this.renderOverlay(images);
+	    const conditionalRender = images.length == 4 || images.length > +countFrom && +countFrom == 4;
+
+	    return(
+	      <View style={styles.row}>
+	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent3] : [styles.imageContent, styles.imageContent3]} onPress={() => {
+	        	if (conditionalRender) {
+					this.viewImage(images[1]);
+	        	} else {
+	        		this.viewImage(images[2]);
+	        	}
+	        	
+	        }}>
+	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[1]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[2]}`}}/>
+	        </TouchableOpacity>
+	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent3] : [styles.imageContent, styles.imageContent3]} onPress={() => {
+	        	if (conditionalRender) {
+					this.viewImage(images[2]);
+	        	} else {
+	        		this.viewImage(images[3]);
+	        	}
+	        }}>
+	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[2]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[3]}`}}/>
+	        </TouchableOpacity>
+	        {overlay}
+	      </View>
+	    );
+	}
+
+	renderOverlay = (images) => {
+	    return(
+	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent3] : [styles.imageContent, styles.imageContent3]} onPress={() => {
+	        	this.viewImage(images[images.length - 1]);
+	        }}>
+	          <ProgressiveImage style={styles.image} source={{uri: `https://s3.us-west-1.wasabisys.com/rating-people/${images[images.length - 1]}`}}/>
+	        </TouchableOpacity>
+	    );
+	}
+
+	renderCountOverlay = (images) => {
+	    const {countFrom} = this.state;
+	    const extra = images.length - (countFrom && countFrom > 5 ? 5 : countFrom);
+	    const conditionalRender = images.length == 4 || images.length > + countFrom && +countFrom == 4;
+	    return(
+	        <TouchableOpacity style={[styles.imageContent, styles.imageContent3]} onPress={() => {
+	        	if (conditionalRender) {
+	        		this.viewImage(images[3]);
+	        	} else {
+	        		this.viewImage(images[4]);
+	        	}
+	        }}>
+	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[3]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[4]}`}}/>
+	          <View style={this.props.dark_mode ? styles.overlayContentDark : styles.overlayContent}>
+	            <View>
+	              <Text style={styles.count}>+{extra}</Text>
+	            </View>
+	          </View>
+	        </TouchableOpacity>
+	    );
+	}
 	renderContent = () => {
 		const post = this.props.route.params.post; 
 
@@ -73,8 +263,15 @@ constructor(props) {
 				                <NativeText style={{ paddingTop: 10 }}>
 				                  {post.text}
 				                </NativeText>
+
+				                
 				              </Body>
 				            </CardItem> : null}
+
+				            <CardItem>
+								{this.renderEmojisReturn(post.reactions)}
+				            </CardItem>
+				            
 				            <CardItem>
 								<Footer style={styles.footer}>
 						          <FooterTab>
@@ -168,7 +365,12 @@ constructor(props) {
 						        {post.text ? <NativeText style={{ paddingTop: 20 }}>
 				                  {post.text}
 				                </NativeText> : null}
+
+				                
 				              </Body>
+				            </CardItem>
+				            <CardItem>
+								{this.renderEmojisReturn(post.reactions)}
 				            </CardItem>
 				            <CardItem>
 								<Footer style={styles.footer}>
@@ -264,7 +466,12 @@ constructor(props) {
 						        {post.text ? <NativeText style={{ paddingTop: 20 }}>
 				                  {post.text}
 				                </NativeText> : null}
+
+				                
 				              </Body>
+				            </CardItem>
+				            <CardItem>
+								{this.renderEmojisReturn(post.reactions)}
 				            </CardItem>
 				            <CardItem>
 								<Footer style={styles.footer}>
@@ -361,7 +568,12 @@ constructor(props) {
 						        {post.text ? <NativeText style={{ paddingTop: 20 }}>
 				                  {post.text}
 				                </NativeText> : null}
+
+				                
 				              </Body>
+				            </CardItem>
+				            <CardItem>
+								{this.renderEmojisReturn(post.reactions)}
 				            </CardItem>
 				            <CardItem>
 								<Footer style={styles.footer}>
@@ -459,7 +671,12 @@ constructor(props) {
 						        {post.text ? <NativeText style={{ paddingTop: 20 }}>
 				                  {post.text}
 				                </NativeText> : null}
+
+				                
 				              </Body>
+				            </CardItem>
+				            <CardItem>
+								{this.renderEmojisReturn(post.reactions)}
 				            </CardItem>
 				            <CardItem>
 								<Footer style={styles.footer}>
@@ -549,6 +766,54 @@ constructor(props) {
 	                </NativeText>
 	              </Body>
 	            </CardItem> : null}
+        		{post.original ? <Fragment><Card style={{flex: 0, width: width * 0.92, minHeight: 400, marginBottom: 35, borderWidth: 3, marginLeft: 15, borderColor: "#4E148C" }}>
+		            <CardItem>
+		              <Left>
+		                <Thumbnail source={{uri: post.original.picture }} />
+		                <Body> 
+		                  <TouchableOpacity onPress={() => {
+		                  	this.props.navigation.navigate("profile-individual", {
+		                  		user: {
+		                  			username: post.original.author 
+		                  		}
+		                  	})
+		                  }}>
+							<Text>{post.original.author}</Text>
+		                  </TouchableOpacity>
+		                  <Text note>{post.original.date}</Text>
+		                </Body>
+		              </Left>
+		            </CardItem>
+		            <CardItem>
+		              <Body>
+		                {post.original.images ? <View style={this.props.dark_mode ? styles.containerDark : styles.container}>
+				          {[1, 3, 4].includes(post.original.images.length)  && this.renderOne(post.original.images)}
+				          {post.original.images.length >= 2 && post.original.images.length != 4 && this.renderTwo(post.original.images)}
+				          {post.original.images.length >= 4 && this.renderThree(post.original.images)}
+			      		</View> : null} 
+
+			      		
+		              </Body>
+		            </CardItem>
+		            {post.original.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20, marginBottom: 60 }}>{post.original.text}</NativeText> : null}
+		             
+		          
+		          </Card></Fragment> : null}
+
+
+					{post.videoID ? <View style={{ marginLeft: 20 }}><Video 
+			      	   paused={true} 
+			      	   ignoreSilentSwitch={"ignore"} 
+			      	   muted={false} 
+			      	   resizeMode={"cover"} 
+			      	   controls={true} 
+			      	   source={{ uri: `https://s3.us-west-1.wasabisys.com/rating-people/${post.videoID}` }} 
+				       ref={(ref) => {
+				         this.player = ref
+				       }}                                  
+				       onBuffer={this.onBuffer}            
+				       onError={this.videoError}          
+				       style={styles.backgroundVideo} /></View> : null}
 	            <CardItem>
 					<Footer style={styles.footer}>
 			          <FooterTab>
@@ -604,7 +869,7 @@ constructor(props) {
 			            }}>
 			              <NativeText><Image source={require("../../../../assets/icons/chat.png")} style={styles.icon} />Comment</NativeText>
 			            </NativeButton>
-			            <NativeButton active>
+			            <NativeButton>
 			              <NativeText><Image source={require("../../../../assets/icons/fb-share.png")} style={styles.icon} />Share</NativeText>
 			            </NativeButton>
 			          </FooterTab>
@@ -770,6 +1035,9 @@ constructor(props) {
 						console.log("FAILURE :", err);
 					})
   				}
+  				this.setState({
+  					isLoading: false
+  				})
 	  		}
 	    }).catch((err) => {
 	  		console.log(err);
@@ -807,21 +1075,54 @@ constructor(props) {
 				  </Right>
 				</Header>
 				<ScrollView showsVerticalScrollIndicator={false} style={{ width, height, backgroundColor: "white" }}>
-					{this.renderContent()}
+
+					{this.state.isLoading === true ? <SkeletonPlaceholder>
+				      <View style={{ flexDirection: "row", alignItems: "center", width, backgroundColor: "white" }}>
+				        <View style={{ width: width * 0.95, height: 300, marginLeft: 10 }} />
+				        <View style={{ marginLeft: 20 }}>
+				          <View style={{ width: 120, height: 20, borderRadius: 4 }} />
+				          <View
+				            style={{ marginTop: 6, width: 80, height: 20, borderRadius: 4 }}
+				          />
+				        </View>
+				      </View>
+				      <View style={{ paddingTop: 40, width, paddingLeft: 20, paddingBottom: 20, backgroundColor: "white", flexDirection: "row" }}>
+						<View style={{ width: 70, height: 70, borderRadius: 60 }}>
+
+				      	</View>
+				      	<View style={{ width: width * 0.70, height: 40, marginLeft: 20, marginTop: 20 }}>
+
+				      	</View>
+				      </View>
+				      <View style={{ backgroundColor: "white", height: 400 }}>
+						<View style={{ width: width * 0.55, marginLeft: 15, height: 40, marginBottom: 20 }}>
+
+				     	</View>
+				     	<View style={{ width: width * 0.45, marginLeft: 15, height: 40, marginTop: 20 }}>
+
+				     	</View>
+				     	<View style={{ width: width * 0.85, marginLeft: 15, height: 40, marginTop: 20 }}>
+
+				     	</View>
+				      </View>
+				    </SkeletonPlaceholder> : this.renderContent()}
+
+					{this.renderModal()}
+
 					{this.state.replies ? this.state.replies.map((reply, index) => {
 						console.log("ITEMMMMMMMMM :", reply);
 				          return(
 				       		<Fragment>
-					            <View key={index} style={styles.container}>
+					            <View key={index} style={styles.containerTwo}>
 					              <TouchableOpacity onPress={() => {
 									console.log("clicked...", reply);
 					              }}>
-					                <Image style={styles.image} source={{uri: reply.profilePhoto}}/>
+					                <Image style={styles.imageTwo} source={{uri: reply.profilePhoto}}/>
 					              </TouchableOpacity>
 					              <View style={styles.content}>
-					                <TouchableOpacity onPress={() => {
+					                <TouchableOpacity onPress={() => { 
 					                	this.props.navigation.navigate("profile-individual", { user: { 
-					                		username: reply.author
+					                		username: reply.author 
 					                	}})
 					                }} style={styles.contentHeader}>
 					                  <Text  style={styles.name}>{reply.author}</Text>
@@ -965,7 +1266,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     marginTop:10,
   },
-  container: {
+  containerTwo: {
     paddingLeft: 19,
     paddingRight: 16,
     paddingVertical: 12,
@@ -986,7 +1287,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#CCCCCC"
   },
-  image:{
+  imageTwo:{
     width:45,
     height:45,
     borderRadius:20,
@@ -1000,6 +1301,142 @@ const styles = StyleSheet.create({
     fontSize:16,
     fontWeight:"bold",
   },
+	btnContainer: {
+		position: "absolute", 
+		bottom: 0, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center"
+	},
+	backgroundVideo: {
+		width: width * 0.90,
+		height: 250,
+		minHeight: 250, 
+		minWidth: width * 0.90,
+		marginBottom: 40
+	},
+	popoverPop: {
+	    height: "100%", 
+	    width: "100%", 
+	    backgroundColor: "white", 
+	    flex: 1, 
+	    flexDirection: 'row', 
+	    justifyContent: 'space-between', 
+	    paddingTop: 10, 
+	    paddingBottom: 10
+    },
+	backgroundBlack: {
+		backgroundColor: "black"
+	},
+	backgroundWhite: {	
+		backgroundColor: "white"
+	},
+	modalView: {
+		flex: 1, 
+		backgroundColor: "white", 
+		width: width * 0.90, 
+		height: height, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center"
+	},
+	closeBtn: {
+		width: width - 75, 
+		backgroundColor: "#613DC1", 
+		marginTop: 50, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center"
+	},
+	slide: {
+		justifyContent: "center",
+		alignItems: "center",
+		alignContent: "center"
+	},
+	modalViewDark: {
+		flex: 1, 
+		backgroundColor: "black", 
+		width: width * 0.90, 
+		height: height, 
+		justifyContent: "center", 
+		alignItems: "center", 
+		alignContent: "center"
+	},
+  container: {
+    flex: 1,
+    marginVertical: 20,
+  },
+  containerDark: {
+	backgroundColor: "black",
+	flex: 1,
+    marginVertical: 20,
+  },
+  row:{
+    flexDirection:'row'
+  },
+  imageContent:{
+    borderWidth:1,
+    borderColor:'black',
+    height:120, 
+  },
+  imageContent1:{
+    width:'100%',
+    height: 350
+  },
+  submitBtn: {
+	justifyContent: "center", 
+	alignItems: "center", 
+	alignContent: "center",
+	width: width,
+	backgroundColor: "#613DC1"
+  },
+  imageContentDark: {
+  	backgroundColor: "black",
+    borderWidth:1,
+    borderColor:'black',
+    height:120
+  },
+  imageContent2:{
+    width:'50%',
+  },
+  imageContent3:{
+    width:'33.33%',
+  },
+  image:{
+    width:'100%',
+    height:'100%'
+  },
+  //overlay efect
+  overlayContent: {
+    flex: 1,
+    position: 'absolute',
+    zIndex: 100,
+    right: 0,
+    width:'100%',
+    height:'100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  overlayContentDark: {
+    flex: 1,
+    position: 'absolute',
+    zIndex: 100,
+    right: 0,
+    width:'100%',
+    height:'100%',
+    backgroundColor: 'black',
+    justifyContent:'center',
+    alignItems:'center' 	
+  },
+  count:{
+    fontSize:50,
+    color: "#ffffff",
+    fontWeight:'bold',
+    textShadowColor: 'rgba(0, 0, 139, 1)',
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 10
+  }
 });
 const mapStateToProps = state => {
 	return {

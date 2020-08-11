@@ -18,7 +18,7 @@ constructor(props) {
 	relatable: null,
 	entertaining: null,
 	offensive: null,
-	respectful: null,
+	respectful: null, 
 	happy: null,
 	overall: null
   };

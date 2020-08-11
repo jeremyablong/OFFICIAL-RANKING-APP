@@ -103,10 +103,14 @@ constructor(props) {
 								<Text style={styles.boxText}>Art - Buy/Sell</Text>
 								<Text style={{ marginTop: 50, padding: 5, paddingBottom: 10 }}>Buy and sell art on our platform stricly geared towards helping artist's get paid for their work</Text>
 							</View>
-							<View style={this.props.dark_mode === false ? styles.shortItem : styles.longItem}>
-								<Image source={require("../../../assets/icons/dating.png")} style={styles.icon} />
-								<Text style={styles.boxText}>Dating</Text>
-							</View>
+							<TouchableOpacity onPress={() => {
+								this.props.navigation.navigate("dating-homepage");
+							}}>
+								<View style={this.props.dark_mode === false ? styles.shortItem : styles.longItem}>
+									<Image source={require("../../../assets/icons/dating.png")} style={styles.icon} />
+									<Text style={styles.boxText}>Dating</Text>
+								</View>
+							</TouchableOpacity>
 							<View style={this.props.dark_mode === false ? styles.shortItem : styles.longItem}>
 								<Image source={require("../../../assets/icons/recommendations-1.png")} style={styles.icon} />
 								<Text style={styles.boxText}>Rank Users</Text>

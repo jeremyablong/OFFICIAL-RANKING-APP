@@ -427,8 +427,8 @@ constructor(props) {
 	              		sum: this.state.sum - 1,
 	              		alreadyLiked: false
 	              	})
-					setTimeout(() => {
-						alert("You've unliked this post.");
+					setTimeout(() => {   
+						alert("You've unliked this post."); 
 					}, 1000);
 				}
 			}).catch((err) => {

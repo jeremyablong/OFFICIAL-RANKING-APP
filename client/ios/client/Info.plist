@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-8407497341801047~1416300168</string>
 	<key>CFBundleDisplayName</key>
 	<string>client</string>
 	<key>CFBundleExecutable</key>

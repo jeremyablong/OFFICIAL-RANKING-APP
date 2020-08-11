@@ -6,7 +6,8 @@ import {
   ScrollView,
   View,
   Text,
-  StatusBar,
+  StatusBar, 
+  FacebookAds
 } from 'react-native';
 
 import {
@@ -56,7 +57,11 @@ import RankFromMap from "./components/pages/ranking/rank/rankFromMap.js";
 import SecondPageRankUsersNearby from "./components/pages/ranking/rank/secondPageRankUsersNearby.js";
 import RankFromNotification from "./components/pages/ranking/rank/rankFromNotification.js";
 import RankPageTwoNotification from "./components/pages/ranking/rank/rankPageTwoNotification.js";
-
+import ReviewPostWall from "./components/pages/ranking/review_post/review.js";
+import ReviewPostPageTwo from "./components/pages/ranking/review_post/pageTwo.js";
+import DatingHomepage from "./components/pages/dating/datingHomepage.js";
+import DatingSwiperDeck from "./components/pages/dating/homepage/homepage.js";
+import UploadPicturesDating from "./components/pages/dating/pictures/uploadPictures.js";
 
 import { locationBackground, latLngLocation } from "./actions/location/getLocation.js";
 
@@ -69,6 +74,8 @@ const Stack = createStackNavigator();
 // blue violet color wheel - #4E148C
 // russian violet - #2C0735
 // #5eb8db
+
+// admob ad ID === ca-app-pub-8407497341801047~1416300168
 
 class App extends Component {
 constructor(props) {
@@ -98,6 +105,12 @@ constructor(props) {
       return "homepage";
   }
   componentDidMount() {
+ 
+    // FacebookAds.NativeAdManager.showAd("293382628547757_293384335214253").then(() => {
+    //   console.log("AD SHOWN...");
+    // }).catch((err) => {
+    //   console.log(err); 
+    // })
     ////
     // 1.  Wire up event-listeners
     //
@@ -230,7 +243,11 @@ constructor(props) {
             <Stack.Screen name="review-rate-nearby" component={SecondPageRankUsersNearby} />
             <Stack.Screen name="complete-review-process" component={RankFromNotification} />
             <Stack.Screen name="rank-response-page-two" component={RankPageTwoNotification} />
-
+            <Stack.Screen name="review-wall-posting" component={ReviewPostWall} />
+            <Stack.Screen name="rank-post-page-two" component={ReviewPostPageTwo} />
+            <Stack.Screen name="dating-homepage" component={DatingHomepage} /> 
+            <Stack.Screen name="dating-homepage-after" component={DatingSwiperDeck} />
+            <Stack.Screen name="upload-pictures-dating" component={UploadPicturesDating} />
           </Stack.Navigator>
         </NavigationContainer>
     );

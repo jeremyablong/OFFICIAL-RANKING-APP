@@ -9,9 +9,10 @@ import {
   Image,
   Alert, 
   ImageBackground, 
-  Dimensions, 
+  Dimensions,  
   TouchableOpacity, 
-  RefreshControl
+  RefreshControl, 
+  FacebookAds 
 } from 'react-native';
 import axios from "axios";
 import { connect } from "react-redux";
@@ -24,10 +25,10 @@ import RBSheet from "react-native-raw-bottom-sheet";
 import moment from "moment";
 import uuid from "react-uuid";
 import Video from 'react-native-video';
-import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
-
+import {AutoGrowingTextInput} from 'react-native-autogrow-textinput'; 
+  
 const { width, height } = Dimensions.get("window");
-
+ 
 const URL = "http://recovery-social-media.ngrok.io";
 
 class HomePostsPage extends Component {
@@ -47,11 +48,18 @@ constructor(props) {
     refreshing: false,
     statusText: "",
     selectedShare: null,
-    user: null
+    user: null,
+    shouldUpdate: true,
+    updateContent: false,
+    postie: null,
+    unlikedList: []
   };
 }
 
 	componentDidMount() {
+
+		console.log("MOUNTED.");
+
 		axios.get("http://recovery-social-media.ngrok.io/gather/wall/posts/all").then((res) => {
           console.log("RES.Data :", res.data);
           if (res.data.message === "Successfully gather all wall postings...") {
@@ -81,7 +89,7 @@ constructor(props) {
           console.log(err);
         })
 	}	
-	renderOne(images) {
+	renderOne = (images) => {
 	    const {countFrom} = this.state;
 	    return(
 	      <View style={styles.row}>
@@ -116,7 +124,7 @@ constructor(props) {
 	        </Modal>
 		);
 	}
-	renderTwo(images) {
+	renderTwo = (images) => {
 	    const { countFrom } = this.state;
 	    const conditionalRender = [3, 4].includes(images.length) || images.length > +countFrom && [3, 4].includes(+countFrom);
 
@@ -144,7 +152,7 @@ constructor(props) {
 	    );
 	}
 
-	renderThree(images) {
+	renderThree = (images) => {
 	    const { countFrom } = this.state;
 	    const overlay = !countFrom || countFrom > 5 || images.length > countFrom && [4, 5].includes(+countFrom) ? this.renderCountOverlay(images) : this.renderOverlay(images);
 	    const conditionalRender = images.length == 4 || images.length > +countFrom && +countFrom == 4;
@@ -175,7 +183,7 @@ constructor(props) {
 	    );
 	}
 
-	renderOverlay(images) {
+	renderOverlay = (images) => {
 	    return(
 	        <TouchableOpacity style={this.props.dark_mode ? [styles.imageContentDark, styles.imageContent3] : [styles.imageContent, styles.imageContent3]} onPress={() => {
 	        	this.viewImage(images[images.length - 1]);
@@ -185,7 +193,7 @@ constructor(props) {
 	    );
 	}
 
-	renderCountOverlay(images) {
+	renderCountOverlay = (images) => {
 	    const {countFrom} = this.state;
 	    const extra = images.length - (countFrom && countFrom > 5 ? 5 : countFrom);
 	    const conditionalRender = images.length == 4 || images.length > + countFrom && +countFrom == 4;
@@ -198,7 +206,7 @@ constructor(props) {
 	        	}
 	        }}>
 	          <ProgressiveImage style={styles.image} source={{uri: (conditionalRender) ? `https://s3.us-west-1.wasabisys.com/rating-people/${images[3]}` : `https://s3.us-west-1.wasabisys.com/rating-people/${images[4]}`}}/>
-	          <View style={this.props.dark_mode ? styles.overlayContentDark : overlayContent}>
+	          <View style={this.props.dark_mode ? styles.overlayContentDark : styles.overlayContent}>
 	            <View>
 	              <Text style={styles.count}>+{extra}</Text>
 	            </View>
@@ -255,20 +263,39 @@ constructor(props) {
 	  		console.log(err);
 	  	})
 	}
-	takeBackLike = () => {
-		console.log("TAKE BACK LIKE....");
+	takeBackLike = (post) => {
+
+		console.log("TAKE BACK LIKE....", post);
+
+		axios.post(`${URL}/take/like/back/wall/home`, {
+			username: this.props.username,
+			post
+		}).then((res) => {
+
+			console.log(res.data);
+
+			if (res.data.message === "Unliked post!") {
+
+				console.log("RES.DATA.POST :", res.data.post);
+
+				alert("You've un-liked this post...")
+			}
+		}).catch((err) => {
+			console.log(err);
+		})
 	}
 	renderResponseButton = (post) => {
 		let count = 0;
+
 		for (let i = 0; i < post.likes.length; i++) {
 			let element = post.likes[i];
 			if (element.username === this.props.username && count === 0) {
 				count++
 				return (
 					<NativeButton onPress={() => {
-			        	this.takeBackLike();
-			        }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "#858AE3", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
-		              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "white" }}>Un-Like</NativeText>
+			        	this.takeBackLike(post);
+			        }} style={this.props.dark_mode ? { backgroundColor: "white", borderColor: "white", borderWidth: 2 } : { backgroundColor: "#858AE3", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+		              <NativeText style={this.props.dark_mode ? { color: "black" } : { color: "white" }}>Un-Like</NativeText>
 		            </NativeButton>
 				);
 			} 
@@ -371,8 +398,153 @@ constructor(props) {
 			console.log(err);
 		})
 	}
+	renderEmojisReturn = (post) => { 
+		console.log("POSTIE :", post);
+
+		const emojis = [];
+
+		for (let key in post) {
+			let element = post[key];
+
+			console.log("key ", key);
+ 
+			if (element > 0) {
+				switch (key) {   
+					case "angry":
+						console.log("angry");
+						emojis.push("🤬");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>🤬</Text>;
+						break;  
+					case "frustrated":
+						console.log("frustrated");
+						emojis.push("😤");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😤</Text>;
+						break;
+					case "heart":
+						console.log("heart");
+						emojis.push("❤️");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>❤️</Text>;
+						break;
+					case "heartFace":
+						console.log("heartFace");
+						emojis.push("😍");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😍</Text>;
+						break;
+					case "laugh":
+						console.log("laugh");
+						emojis.push("😆");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😆</Text>;
+						break;
+					case "puke":
+						console.log("puke");
+						emojis.push("🤮");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>🤮</Text>;
+						break;
+					case "sad":
+						console.log("sad");
+						emojis.push("😢");
+						// return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😢</Text>;
+						break;
+					default:
+						return;
+						break;
+				} 
+			}
+
+			console.log("elemenntttttttttttt :" , element);
+		}
+		console.log("emoji array ---------- :", emojis);
+		return <Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>{emojis}</Text>;
+	}
+	renderShare = (post) => {
+		console.log("render share...");
+		if (post.shareable === true) {
+			return (
+				<NativeButton onPress={() => { 
+	            	this.setState({
+	            		selectedShare: post
+	            	}, () => {
+	            		this.renderSignedCreds();
+	            	})
+	            }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
+	              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Share</NativeText>
+	            </NativeButton>
+			);
+		} else {
+			return null;
+		}
+	}
+	showOrNot = (post) => {
+		console.log("POST POST POST :", post);
+		if (post.rankings) {
+			for (let i = 0; i < post.rankings.length; i++) {
+				let element = post.rankings[i];
+				console.log("elemennttttttttttttooooooooo :", element);
+				if (element.reviewedBy === this.props.username || this.state.selectedID === post.id) {
+					return null;
+				} else {
+					return (
+						<TouchableOpacity onPress={() => {
+
+				          	this.setState({
+				          		selectedID: post.id
+				          	}, () => {
+				          		console.log(this.state);
+				          		this.props.navigation.navigate("review-wall-posting", { post });
+				          	})
+
+				          }} style={{ position: "absolute", right: 0, top: 0 }}>
+							<Image source={require("../../../assets/icons/ui-review.png")} style={{ width: 45, height: 45 }} />
+				        </TouchableOpacity>
+					);
+				}
+			}
+		} else {
+			if (this.state.selectedID === post.id) {
+				return null;
+			} else {
+				return (
+					<TouchableOpacity onPress={() => {
+
+			          	this.setState({
+			          		selectedID: post.id
+			          	}, () => {
+			          		console.log(this.state);
+			          		this.props.navigation.navigate("review-wall-posting", { post });
+			          	})
+
+			          }} style={{ position: "absolute", right: 0, top: 0 }}>
+						<Image source={require("../../../assets/icons/ui-review.png")} style={{ width: 45, height: 45 }} />
+			        </TouchableOpacity>
+				);
+			}
+		}
+		
+	}
+	componentDidUpdate(prevProps, prevState) {
+		console.log("component DID update - prevState :", prevState);
+		if (prevState.updateContent !== this.state.updateContent) {
+			console.log("update!!!!!!!!!");
+			// this.setState({
+			// 	posts: this.state.posts
+			// })
+			
+		}
+	}
 	render() {
-		console.log("state - state : ", this.state);
+		console.log("PROPS - PROPS : ", this.props); 
+		// if (this.props.newPost && this.state.shouldUpdate) {
+		// 	console.log("we should nOW update.");
+		// 	this.state.posts.filter((x) => {
+		// 		console.log("x ---- :", x);
+		// 		if (x.id === this.props.newPost.id) {
+		// 			console.log("DOESNT EQUAL MATCH ----- :", x);
+		// 		}
+		// 	});
+		// 	this.setState({
+		// 		shouldUpdate: false
+		// 	})
+		// } 
 		return (
 			<Fragment>
 			<Content>
@@ -383,6 +555,7 @@ constructor(props) {
 			</NativeButton></View> : null}
 			{this.renderModal()}
 				{this.state.posts && this.state.ready === true ? this.state.posts.map((post, index) => {
+
 					console.log("post... :", post);
 					return (
 						<Card>
@@ -394,9 +567,12 @@ constructor(props) {
 			                  	this.handleRedirect(post);
 			                  }}><NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{post.author}</NativeText></TouchableOpacity>
 			                  <NativeText note>{post.date}</NativeText>
+
+			                  {this.showOrNot(post)}
+
 			                </Body>
 			              </Left>
-			            </CardItem>
+			            </CardItem>  
 			            <CardItem cardBody style={this.props.dark_mode ? { flex: 1, backgroundColor: "black" } : { flex: 1 }}>
 			              {post.text ?  <NativeText style={this.props.dark_mode ? { textAlign: "left", color: "white", paddingLeft: 20, paddingRight: 20 } : { textAlign: "left", color: "black", paddingLeft: 20, paddingRight: 20, marginBottom: 60 }}>{post.text}</NativeText> : null}
 			            </CardItem>
@@ -406,19 +582,27 @@ constructor(props) {
 					          {post.images.length >= 2 && post.images.length != 4 && this.renderTwo(post.images)}
 					          {post.images.length >= 4 && this.renderThree(post.images)}
 					      </View> : null} 
-						  
+						   
 
-						  {post.original ? <Fragment><Card style={{flex: 0, width: width * 0.92, minHeight: 400, marginBottom: 35, borderWidth: 3, borderColor: "#4E148C" }}>
-				            <CardItem>
+						  {post.original ? <Fragment><Card style={this.props.dark_mode ? styles.darkModeCard : styles.lightModeCard}>
+				            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 				              <Left>
 				                <Thumbnail source={{uri: post.original.picture }} />
 				                <Body> 
-				                  <Text>{post.original.author}</Text>
-				                  <Text note>{post.original.date}</Text>
+				                  <TouchableOpacity onPress={() => {
+				                  	this.props.navigation.navigate("profile-individual", {
+				                  		user: {
+				                  			username: post.original.author  
+				                  		}
+				                  	})
+				                  }}>
+									<Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>{post.original.author}</Text>
+				                  </TouchableOpacity>
+				                  <Text style={this.props.dark_mode ? { color: "white" } : { color: "black" }} note>{post.original.date}</Text>
 				                </Body>
 				              </Left>
 				            </CardItem>
-				            <CardItem>
+				            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 				              <Body>
 				                {post.original.images ? <View style={this.props.dark_mode ? styles.containerDark : styles.container}>
 						          {[1, 3, 4].includes(post.original.images.length)  && this.renderOne(post.original.images)}
@@ -444,15 +628,15 @@ constructor(props) {
 						       }}                                  
 						       onBuffer={this.onBuffer}            
 						       onError={this.videoError}          
-						       style={styles.backgroundVideo} /> : null}
-					      
+						       style={styles.backgroundVideo} /> : null} 
+					        
 			            </CardItem>
 			            <CardItem style={this.props.dark_mode ? { backgroundColor: "black" } : { backgroundColor: "white" }}>
 							<TouchableOpacity onPress={() => {
 								console.log("clicked.")
 								this.props.navigation.navigate("wall-individual", { post });
 							}}>
-								<Text style={this.props.dark_mode ? { textAlign: "left", color: "white", position: "absolute", left: 6, bottom: 10 } : { textAlign: "left", position: "absolute", left: 6, bottom: 10 }}>😂😍😁</Text>
+								{this.renderEmojisReturn(post.reactions)}
 								<Text style={this.props.dark_mode ? { textAlign: "right", color: "white", position: "absolute", right: 6, bottom: 10 } : { textAlign: "right", position: "absolute", right: 6, bottom: 10 }}>{post.replies.length} Comments - {Math.floor(Math.random() * (9 - 0 + 1)) + 0} Shares</Text>
 							</TouchableOpacity>
 			            </CardItem>
@@ -462,15 +646,7 @@ constructor(props) {
 				            <NativeButton style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
 				              <NativeText style={this.props.dark_mode ? { color: "white", marginLeft: 6 } : { color: "black" }}>Comment</NativeText>
 				            </NativeButton>
-				            <NativeButton onPress={() => {
-				            	this.setState({
-				            		selectedShare: post
-				            	}, () => {
-				            		this.renderSignedCreds();
-				            	})
-				            }} style={this.props.dark_mode ? { backgroundColor: "black", borderColor: "white", borderWidth: 2 } : { backgroundColor: "white", borderWidth: 3, borderColor: "lightgrey", margin: 3 }}>
-				              <NativeText style={this.props.dark_mode ? { color: "white" } : { color: "black" }}>Share</NativeText>
-				            </NativeButton>
+				            {this.renderShare(post)}
 				          </FooterTab>
 				        </Footer>
 			            
@@ -567,6 +743,24 @@ constructor(props) {
 	}
 }
 const styles = StyleSheet.create({
+	lightModeCard: {
+		flex: 0, 
+		width: width * 0.92, 
+		minHeight: 250, 
+		marginBottom: 35, 
+		borderWidth: 3, 
+		borderColor: "#4E148C" 
+	},
+	darkModeCard: {
+		flex: 0, 
+		width: width * 0.92, 
+		minHeight: 250, 
+		marginBottom: 35, 
+		borderWidth: 3, 
+		borderColor: "white",
+		backgroundColor: "black",
+		paddingBottom: 20
+	},
 	btnContainer: {
 		position: "absolute", 
 		bottom: 0, 

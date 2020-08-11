@@ -31,7 +31,7 @@ import { connect } from "react-redux";
 import * as RNFS from 'react-native-fs';
 import Video from 'react-native-video';
 import RNFetchBlob from 'react-native-fetch-blob';
-
+import LoadingTwoLoading from "../../../loader/loaderTwo.js";
 
 const URL = "http://recovery-social-media.ngrok.io";
 
@@ -44,11 +44,11 @@ const options = {
     skipBackup: true,
     path: 'images',
   },
-};
+}; 
 
 class PostToWallPage extends Component {
 constructor(props) {
-  super(props);
+  super(props); 
 
   this.state = {
   	isOpen: false,
@@ -191,6 +191,8 @@ constructor(props) {
 	handleVideoSubmission = async () => {
 		console.log("handle video submission...", this.state.video);
 
+		this.RBSheetThree.open();
+
 		const path = this.state.video.path;
 
 		// write the file
@@ -207,10 +209,10 @@ constructor(props) {
 				console.log(res.data);
 				if (res.data.message === "GREAT SUCCESS - Video uploaded...") {
 					
-					this.props.navigation.navigate("dashboard");
+					this.RBSheetThree.close();
 
 					setTimeout(() => {
-						alert(res.data.message);
+						alert("Successfully uploaded video!");
 					}, 1500)
 				} 
 			}).catch((err) => {
@@ -226,6 +228,7 @@ constructor(props) {
 	handleCameraRoll = () => {
     	ImagePicker.openPicker({
 		  mediaType: "video",
+		  compressVideoPreset: "HighQuality"   
 		}).then((video) => {
 		  console.log(video);
 		  this.setState({
@@ -451,13 +454,13 @@ constructor(props) {
 						      </TouchableOpacity>
 						    </ListItem>
 						    <ListItem noIndent style={{ backgroundColor: "white" }}>
-						     <TouchableOpacity onPress={() => {
+						     <TouchableOpacity onPress={() => { 
 						      	console.log("pressed...");
 						      }}>
 						      <Left>
 						        <Image source={require("../../../../assets/icons/live-1.png")} style={{ width: 50, height: 50 }} />
 						        <Text style={styles.specialTxt}>Live Video</Text>
-						      </Left>
+						      </Left> 
 						      </TouchableOpacity>
 						    </ListItem>
 						    <ListItem noIndent style={{ backgroundColor: "lightgrey" }}>
@@ -477,7 +480,7 @@ constructor(props) {
 						      <Left>
 						        <Image source={require("../../../../assets/icons/recommendations-1.png")} style={{ width: 50, height: 50 }} />
 						        <Text style={styles.specialTxt}>Ask For Recommendations</Text>
-						      </Left>
+						      </Left> 
 						      </TouchableOpacity>
 						    </ListItem>
 						    <ListItem noIndent style={{ backgroundColor: "lightgrey" }}>
@@ -547,7 +550,21 @@ constructor(props) {
 		          </View>
 		        </SlidingUpPanel>
 		       </SideMenu>
-		       
+		       <RBSheet
+		          ref={ref => {
+		            this.RBSheetThree = ref;
+		          }}
+		          height={height}
+		          openDuration={250}
+		          customStyles={{
+		            container: {
+		              justifyContent: "center",
+		              alignItems: "center"
+		            }
+		          }}
+		        >
+		          <LoadingTwoLoading />
+		        </RBSheet>
 			</Fragment>
 		)
 	}

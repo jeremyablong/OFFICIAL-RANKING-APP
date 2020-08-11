@@ -27,7 +27,7 @@ import NavigationDrawer from "../../navigation/drawer.js";
 import SideMenu from 'react-native-side-menu';
 import RBSheet from "react-native-raw-bottom-sheet";
 import HomePostsPage from "../../wall/displayPosts/homePostsPage.js";
-
+ 
 
 const { width, height } = Dimensions.get("window");
 
@@ -178,7 +178,7 @@ constructor(props) {
     }
   }
 	render() {
-		console.log(this.state);
+		console.log(this.props);
 		const menu = <NavigationDrawer navigation={this.props.navigation}/>;
 		return (
 		<Fragment>
@@ -300,7 +300,7 @@ constructor(props) {
 
                   <View style={styles.cardContent}> 
                     <TouchableOpacity style={styles.followButton} onPress={() => {
-              this.RBSheet.close();
+                      this.RBSheet.close();
                     }}>
                       <Text style={styles.followButtonTextWhite}>Cancel</Text>  
                     </TouchableOpacity>

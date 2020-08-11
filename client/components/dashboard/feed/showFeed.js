@@ -18,7 +18,7 @@ import {
 import { Container, Header, Left, Body, Right, Button as NativeButton, Title, Text as NativeText, Footer, FooterTab, Badge, List, ListItem } from 'native-base';
 import StoriesComponent from "..//stories/index.js";
 import axios from "axios";
-import Modal from 'react-native-modal';
+import Modal from 'react-native-modal';  
 import { AutoGrowingTextInput } from 'react-native-autogrow-textinput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import PhotoUpload from 'react-native-photo-upload';
@@ -65,6 +65,7 @@ constructor(props) {
 		console.log("clicked...");
 	}
 	render() {
+		console.log("this.PROPY :", this.props);
 		return (
 			<Fragment>
 			<View style={{ flex: 1 }}>

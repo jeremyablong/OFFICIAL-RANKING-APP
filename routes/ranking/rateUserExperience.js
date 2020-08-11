@@ -26,7 +26,9 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 			respectful, 
 			happy, 
 			overall,
-			username
+			username, 
+			user, 
+			compli
 		} = req.body;
 
 		collection.find({ username: { $in: [ username, req.body.user ] }}).toArray((err, users) => {
@@ -46,27 +48,36 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 				let user = users[i];
 				
 				if (user.username === username) {
+
 					const calculated = Math.round((relatable + entertaining + offensive + respectful + happy + overall) / 6);
 
 					if (!user.ranking) {
 
 						
 
-						user["ranking"] = calculated;
+						user["ranking"] = [{
+							compliments: compli,
+							overall: calculated,
+							reviewedBy: req.body.user,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							id: uuidv4()
+						}];
 
 						if (!user.rankedUsers) {
 							user["rankedUsers"] = [{
 								username,
 								date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 								id,
-								rankedBy: req.body.user 
+								rankedBy: req.body.user,
+								completed: false 
 							}]
 						} else if (user.rankedUsers) {
 							user.rankedUsers.push({
 								username,
 								date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
 								id,
-								rankedBy: req.body.user
+								rankedBy: req.body.user,
+								completed: false
 							})
 						}
 						request({ 
@@ -80,7 +91,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 
 							console.log("BODY :", body);
 
-							if (user.notifications) {
+							if (!user.notifications) {
 								user["notifications"] = [{
 									user: body.user.username,
 									userObject: body.user,
@@ -89,7 +100,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 									data: "reviewed you... You can now review them. Click to be directed to the review/response page",
 									route: "complete-review-process"
 								}]
-							} else if (!user.notifications) {
+							} else if (user.notifications) {
 								user.notifications.push({
 									user: body.user.username,
 									userObject: body.user,
@@ -100,37 +111,108 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 								})
 							}
 
-							if (user.rankedUsers) {
-								user["rankedUsers"] = [{
-									reciever: username,
-									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-									id,
-									rankedBy: req.body.user,
-									completed: false
-								}];
-							} else if (!user.rankedUsers) {
-								user.rankedUsers.push({
-									reciever: username,
-									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
-									id,
-									rankedBy: req.body.user,
-									completed: false
-								});
-							}
+							// if (!user.rankedUsers) {
+							// 	user["rankedUsers"] = [{
+							// 		reciever: username,
+							// 		date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							// 		id,
+							// 		rankedBy: req.body.user,
+							// 		completed: false
+							// 	}];
+							// } else if (user.rankedUsers) {
+							// 	user.rankedUsers.push({
+							// 		reciever: username,
+							// 		date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							// 		id,
+							// 		rankedBy: req.body.user,
+							// 		completed: false
+							// 	});
+							// }
 
-							collection.save(user);
+							
 
 							console.log("pop the bag ONE... ", user);
 
 
-					  // console.error('error:', error); // Print the error if one occurred
-					  // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-					  // console.log('body:', body); // Print the HTML for the Google homepage.
-					});
+							  // console.error('error:', error); // Print the error if one occurred
+							  // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+							  // console.log('body:', body); // Print the HTML for the Google homepage.
+						});
 
 						count + 1;
 
+				
+
 						console.log("user AGAIN : ", user);
+					} else {
+						user.ranking.push({
+							compliments: compli,
+							overall: calculated,
+							reviewedBy: req.body.user,
+							date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+							id: uuidv4()
+						});
+
+						if (!user.rankedUsers) {
+							user["rankedUsers"] = [{
+								username,
+								date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+								id,
+								rankedBy: req.body.user,
+								completed: false 
+							}]
+						} else if (user.rankedUsers) {
+							user.rankedUsers.push({
+								username,
+								date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+								id,
+								rankedBy: req.body.user,
+								completed: false
+							})
+						}
+						request({ 
+							method: "POST",
+							url: 'http://recovery-social-media.ngrok.io/get/user/by/username', 
+							body: {
+								username: req.body.user
+							},
+							json: true
+						}, (error, response, body) => {
+
+							console.log("BODY :", body);
+
+							if (!user.notifications) {
+								user["notifications"] = [{
+									user: body.user.username,
+									userObject: body.user,
+									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+									id: uuidv4(),
+									data: "reviewed you... You can now review them. Click to be directed to the review/response page",
+									route: "complete-review-process"
+								}]
+							} else if (user.notifications) {
+								user.notifications.push({
+									user: body.user.username,
+									userObject: body.user,
+									date: moment(new Date()).format("dddd, MMMM Do YYYY, h:mm:ss a"),
+									id: uuidv4(),
+									data: "reviewed you... You can now review them. Click to be directed to the review/response page",
+									route: "complete-review-process"
+								})
+							}
+
+							
+
+							console.log("pop the bag ONE... ", user);
+
+
+							  // console.error('error:', error); // Print the error if one occurred
+							  // console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+							  // console.log('body:', body); // Print the HTML for the Google homepage.
+						});
+
+
+						collection.save(user);
 					}
 				} else if (user.username === req.body.user) {
 					
@@ -153,7 +235,7 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 						});
 					}
 
-					collection.save(user);
+					
 
 					console.log("!!!", user);
 
@@ -161,7 +243,13 @@ mongo.connect(config.get("mongoURI"),  { useNewUrlParser: true }, { useUnifiedTo
 		
 					
 				}
+
+				collection.save(user);
 			}
+
+			
+
+
 			res.json({
 				message: "Successfully calculated ranking..."
 			})

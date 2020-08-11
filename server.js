@@ -90,9 +90,12 @@ app.use("/post/rating/interaction", require("./routes/ranking/rateUserExperience
 app.use("/post/rating/interaction/confirmation", require("./routes/ranking/confirmationResponse.js"));
 app.use("/upload/video/wall/post", require("./routes/wall/postWall/postVideoWall.js"));
 app.use("/share/post", require("./routes/sharing/share.js"));
-
-
-
+app.use("/post/ranking/wall/posting", require("./routes/ranking/reviewWallPosting.js"));
+app.use("/gather/post/ratings/total", require("./routes/wall/homeWall/gatherRatingReviews.js"));
+app.use("/take/like/back/wall/home", require("./routes/wall/homeWall/takeLikeBack.js"));
+app.use("/register/dating", require("./routes/dating/signup.js"));
+app.use("/check/if/dating/applicable", require("./routes/dating/check.js"));
+app.use("/upload/dating/picture", require("./routes/dating/pictures/uploadPicture.js"));
 
 app.get("/blockchain", (req, res) => {
   res.send(gemshire);
