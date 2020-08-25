@@ -27,7 +27,7 @@
     "gl-react": "^4.0.1",
     "gl-react-native": "^4.0.1",
     "hoist-non-react-statics": "^3.3.2",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.27.0",
     "native-base": "^2.13.12",
     "pusher-js": "^6.0.3",
