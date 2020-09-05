@@ -12,8 +12,8 @@ const wasabiEndpoint = new AWS.Endpoint('s3.us-west-1.wasabisys.com');
 const { v4: uuidv4 } = require('uuid');
 const moment = require("moment");
 
-const accessKeyId = 'J4FR4IVQL0CV0DFTMYBJ';
-const secretAccessKey = 'wuUJoRXlWkSpVfPusz5XEf3ijhgvRtbwXc4oFofP';
+const accessKeyId = null;
+const secretAccessKey = null;
 
 const s3 = new S3({
 	endpoint: wasabiEndpoint,
