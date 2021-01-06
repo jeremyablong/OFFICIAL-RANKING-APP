@@ -17,7 +17,7 @@
     "@react-navigation/stack": "^5.5.1",
     "@unimodules/core": "^5.3.0",
     "@unimodules/react-native-adapter": "^5.4.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "base64-arraybuffer": "^0.2.0",
     "box2dweb": "^2.1.0-b",
     "buffer": "^5.6.0",
