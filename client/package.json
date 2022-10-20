@@ -71,7 +71,7 @@
     "react-native-prompt-android": "^1.1.0",
     "react-native-ratings": "^7.2.0",
     "react-native-raw-bottom-sheet": "^2.2.0",
-    "react-native-reanimated": "^1.9.0",
+    "react-native-reanimated": "^2.10.0",
     "react-native-safe-area-context": "^3.0.5",
     "react-native-screens": "^2.9.0",
     "react-native-search-bar": "^3.5.1",
