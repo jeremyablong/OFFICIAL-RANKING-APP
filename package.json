@@ -26,7 +26,7 @@
     "cors": "^2.8.5",
     "elliptic": "^6.5.3",
     "express": "^4.17.1",
-    "express-fileupload": "^1.1.7-alpha.4",
+    "express-fileupload": "^1.1.10",
     "face-api.js": "^0.22.2",
     "fs": "0.0.1-security",
     "http": "0.0.1-security",
